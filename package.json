@@ -1,0 +1,34 @@
+{
+  "name": "listening-party",
+  "version": "1.0.0",
+  "description": "A web application for listening to music with friends simultaneously via your music provider",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "server": "nodemon server",
+    "client": "npm start --prefix front-end",
+    "dev": "concurrently \"npm run client\" \"npm run server\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alex-is-martin/listening-party.git"
+  },
+  "author": "Justin Fisher & Alexis Martin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alex-is-martin/listening-party/issues"
+  },
+  "homepage": "https://github.com/alex-is-martin/listening-party#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "query-string": "^7.0.1",
+    "request": "^2.88.2"
+  },
+  "devDependencies": {
+    "concurrently": "^6.3.0",
+    "nodemon": "^2.0.13"
+  }
+}
