@@ -24,7 +24,7 @@ var generateRandomString = function (length) {
 	return text;
 };
 
-router.get('/login', function (res) {
+router.get('/login', function (req, res) {
 	const state = generateRandomString(16);
 	res.cookie(stateKey, state);
 
