@@ -5,16 +5,17 @@ const http = require('http');
 const socketio = require('socket.io');
 const socketsHandler = require('./sockets/socketsHandler');
 
+const frontEndUrl = '' || 'http://localhost:3000';
+
 const app = express();
 app
-	.use(express.static(__dirname + '/public'))
 	.use(cors())
 	.use(cookieParser())
 	.use('/spotify', require('./routes/spotify'));
 
 const server = http.createServer(app);
 const ioCors = {
-	cors: { origin: 'http://localhost:3000', methods: ['GET', 'POST'] },
+	cors: { origin: frontEndUrl, methods: ['GET', 'POST'] },
 };
 const io = socketio(server, ioCors);
 socketsHandler(io);
