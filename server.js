@@ -11,7 +11,8 @@ const app = express();
 app
 	.use(cors())
 	.use(cookieParser())
-	.use('/spotify', require('./routes/spotify'));
+	.use('/spotify', require('./routes/spotify'))
+	.use('/apple', require('./routes/apple'));
 
 const server = http.createServer(app);
 const ioCors = {

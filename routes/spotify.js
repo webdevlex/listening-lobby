@@ -71,9 +71,9 @@ router.get('/callback', function (req, res) {
 		axios
 			.post(endPoint, body, config)
 			.then((response) => {
-				const urlObj = new URL('http://localhost:3000/logged-in');
+				const urlObj = new URL('http://localhost:3000/lobby');
 				urlObj.search = new URLSearchParams({
-					access_token: response.data.access_token,
+					token: response.data.access_token,
 					refresh_token: response.data.refresh_token,
 				});
 				res.redirect(urlObj.toString());
