@@ -24,7 +24,6 @@ function socketsHandler(io) {
       data.user_id = socket.id;
       socket.join(lobby_id);
 
-<<<<<<< HEAD
       if (!lobbyExists(lobby_id)) {
         createNewLobby(data);
         io.to(lobby_id).emit("setLobbyInfo", {
@@ -38,29 +37,11 @@ function socketsHandler(io) {
           lobbyMessages: getLobbyMessages(lobby_id),
         });
       }
-
-      const test = getLobbyById(lobby_id);
     });
-=======
-			if (!lobbyExists(lobby_id)) {
-				createNewLobby(data);
-				io.to(lobby_id).emit('setLobbyInfo', {
-					members: [username],
-					lobbyMessages: [],
-				});
-			} else {
-				joinLobby(data);
-				io.to(lobby_id).emit('setLobbyInfo', {
-					members: getMemberUsernames(lobby_id),
-					lobbyMessages: getLobbyMessages(lobby_id),
-				});
-			}
-		});
 
-		socket.on('disconnect', () => {
-			console.log('----- disconnected -----');
-		});
->>>>>>> eb39c4cb9b627fbeda3a4d32dec604238d45b355
+    socket.on("disconnect", () => {
+      console.log("----- disconnected -----");
+    });
 
     // Handle when someone send a message in their lobby
     socket.on("message", ({ lobby_id, message }) => {
