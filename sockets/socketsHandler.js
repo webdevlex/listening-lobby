@@ -35,8 +35,10 @@ function socketsHandler(io) {
 					lobbyMessages: getLobbyMessages(lobby_id),
 				});
 			}
+		});
 
-			const test = getLobbyById(lobby_id);
+		socket.on('disconnect', () => {
+			console.log('----- disconnected -----');
 		});
 
 		// Handle when someone send a message in their lobby
