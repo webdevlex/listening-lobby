@@ -23,6 +23,9 @@ function ApplePlayer({ lobby_id }) {
         musicKit.player.volume = 0.05;
       });
     };
+    socket.on("searchResults", (searchResults) => {
+      setSearchResults(searchResults);
+    });
   }, []);
 
   let setSong = async (songId) => {
@@ -39,7 +42,7 @@ function ApplePlayer({ lobby_id }) {
 
   function searchSong(data) {
     setValue("song", "");
-    socket.emit("appleSearch", data.song, setSearchResults);
+    socket.emit("appleSearch", data.song, lobby_id);
   }
 
   return (

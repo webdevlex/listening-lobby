@@ -51,8 +51,10 @@ function socketsHandler(io) {
     });
 
     // Handle Apple search request
-    socket.on("appleSearch", (data, setSearchResults) => {
-      searchSong(data, setSearchResults);
+    socket.on("appleSearch", async (song, lobby_id) => {
+      const user = getUserById(lobby_id, socket.id);
+      let searchResults = await searchSong(song, user.token);
+      io.to(socket.id).emit("searchResults", searchResults);
     });
 
     // Handle when someone clicks play
