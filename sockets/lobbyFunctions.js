@@ -31,6 +31,47 @@ function getLobbyIndex(lobby_id) {
 	return lobbies.findIndex((lobby) => lobby.lobby_id == lobby_id);
 }
 
+// function getLobbyIdAndUsernameByUserId(passedUserId) {
+// 	const { lobbyIndex, userIndex } =
+// 		findIndexOfLobbyAndUserByUserId(passedUserId);
+// 	const lobby = lobbies[lobbyIndex];
+// 	const lobby_id = lobby.lobby_id;
+// 	const username = lobby.users[userIndex].username;
+
+// 	return { lobby_id, username };
+// }
+
+// function findIndexOfLobbyAndUserByUserId(passedUserId) {
+// 	let lobbyIndex = 0;
+// 	let userIndex = 0;
+// 	let userFound = false;
+
+// 	while (!userFound) {
+// 		let currentLobby = lobbies[lobbyIndex];
+// 		let everyUserInLobbyIdChecked = false;
+// 		userIndex = 0;
+
+// 		while (!everyUserInLobbyIdChecked) {
+// 			const { users } = currentLobby;
+// 			const amountOfUserIndicies = users.length - 1;
+// 			let currentUserId = users[userIndex].user_id;
+
+// 			if (currentUserId == passedUserId) {
+// 				everyUserInLobbyIdChecked = true;
+// 				userFound = true;
+// 			} else if (amountOfUserIndicies == userIndex) {
+// 				everyUserInLobbyIdChecked = true;
+// 			} else {
+// 				++userIndex;
+// 			}
+// 		}
+// 		if (!userFound) {
+// 			++lobbyIndex;
+// 		}
+// 	}
+// 	return { lobbyIndex, userIndex };
+// }
+
 function joinLobby(data) {
 	const { lobby_id } = data;
 	const lobbyIndex = getLobbyIndex(lobby_id);
