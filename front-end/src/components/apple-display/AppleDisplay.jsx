@@ -1,8 +1,8 @@
 import "./AppleDisplay.css";
 import { AppleMusicContext } from "../../context/AppleMusicContext";
 import React, { useEffect, useContext, useState } from "react";
-import { SocketContext } from "../../context/socketContext";
 
+//Displays playing song info
 function AppleDisplay() {
   const [musicKit, setMusicKit] = useContext(AppleMusicContext);
   const [ran, setRan] = useState(false);
@@ -13,7 +13,6 @@ function AppleDisplay() {
   //Event listener
 
   if (!ran) {
-    console.log("ran");
     musicKit.addEventListener("mediaItemDidChange", () => {
       changeSongInfo();
     });

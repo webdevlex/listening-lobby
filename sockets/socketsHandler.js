@@ -54,7 +54,7 @@ function socketsHandler(io) {
     socket.on("appleSearch", async (song, lobby_id) => {
       const user = getUserById(lobby_id, socket.id);
       let searchResults = await searchSong(song, user.token);
-      io.to(socket.id).emit("searchResults", searchResults);
+      io.to(socket.id).emit("appleSearchResults", searchResults);
     });
 
     // Handle when someone clicks play

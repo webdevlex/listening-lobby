@@ -1,16 +1,13 @@
 import React, { useEffect, useContext, useState } from "react";
 import { SocketContext } from "../../context/socketContext";
 import { AppleMusicContext } from "../../context/AppleMusicContext";
-import { useForm } from "react-hook-form";
 import "./apple-player.scss";
 import AppleDisplay from "../apple-display/AppleDisplay";
 import AppleQueue from "../apple-queue/AppleQueue";
-
+import AppleSearch from "../apple-search/AppleSearch";
 function ApplePlayer({ lobby_id }) {
   const socket = useContext(SocketContext);
   const [musicKit, setMusicKit] = useContext(AppleMusicContext);
-  const [searchResults, setSearchResults] = useState([]);
-  const { register, handleSubmit, setValue } = useForm();
   const [queue, setQueue] = useState([]);
 
   useEffect(() => {
@@ -26,13 +23,11 @@ function ApplePlayer({ lobby_id }) {
         musicKit.player.volume = 0.05;
       });
     };
-
-    //Apple Search Controller
-    socket.on("searchResults", (searchResults) => {
-      setSearchResults(searchResults);
-    });
   }, []);
 
+  function playSong() {
+    socket.emit("playSong", lobby_id);
+  }
   async function setSong(song) {
     await musicKit.authorize().then(async () => {
       let musicQueue = musicKit.player.queue;
@@ -47,14 +42,6 @@ function ApplePlayer({ lobby_id }) {
         },
       ]);
     });
-  }
-  function playSong() {
-    socket.emit("playSong", lobby_id);
-  }
-
-  function searchSong(data) {
-    setValue("song", "");
-    socket.emit("appleSearch", data.song, lobby_id);
   }
 
   // TEMP PLAYER CONTROLS --- FOR TESTING
@@ -85,30 +72,7 @@ function ApplePlayer({ lobby_id }) {
         <button onClick={() => nextSong()}>Next</button>
       </div>
       <AppleDisplay></AppleDisplay>
-      <form className="" onSubmit={handleSubmit(searchSong)}>
-        <div className="song-name">
-          <input {...register("song")} />
-        </div>
-        <button type="submit" className="search-button">
-          Search
-        </button>
-      </form>
-
-      {searchResults.length === 0 ? (
-        <div>no results</div>
-      ) : (
-        searchResults.map((song) => (
-          <div>
-            {song.attributes.artistName} - {song.attributes.name}
-            <button
-              className="search-results-button"
-              onClick={() => setSong(song)}
-            >
-              Add
-            </button>
-          </div>
-        ))
-      )}
+      <AppleSearch lobbyId={lobby_id} setSong={setSong}></AppleSearch>
       <AppleQueue queue={queue}></AppleQueue>
     </div>
   );
