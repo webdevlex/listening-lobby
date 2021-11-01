@@ -72,8 +72,8 @@ function ApplePlayer({ lobby_id }) {
         <button onClick={() => nextSong()}>Next</button>
       </div>
       <AppleDisplay></AppleDisplay>
-      <AppleSearch lobbyId={lobby_id} setSong={setSong}></AppleSearch>
-      <AppleQueue queue={queue}></AppleQueue>
+      <AppleSearch lobbyId={lobby_id} setSong={setSong} />
+      <AppleQueue queue={queue} />
     </div>
   );
 }
