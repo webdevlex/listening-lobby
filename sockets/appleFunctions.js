@@ -17,7 +17,6 @@ async function searchSong(song, token) {
       if (response.data.meta.results.order.length > 0) {
         searchResults = response.data.results.songs.data;
       } else {
-        console.log("else");
         searchResults = [];
       }
     })

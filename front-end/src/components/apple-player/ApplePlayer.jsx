@@ -3,12 +3,15 @@ import { SocketContext } from "../../context/socketContext";
 import { AppleMusicContext } from "../../context/AppleMusicContext";
 import { useForm } from "react-hook-form";
 import "./apple-player.scss";
+import AppleDisplay from "../apple-display/AppleDisplay";
+import AppleQueue from "../apple-queue/AppleQueue";
 
 function ApplePlayer({ lobby_id }) {
   const socket = useContext(SocketContext);
   const [musicKit, setMusicKit] = useContext(AppleMusicContext);
   const [searchResults, setSearchResults] = useState([]);
   const { register, handleSubmit, setValue } = useForm();
+  const [queue, setQueue] = useState([]);
 
   useEffect(() => {
     // Apple Socket Functions
@@ -23,19 +26,28 @@ function ApplePlayer({ lobby_id }) {
         musicKit.player.volume = 0.05;
       });
     };
+
+    //Apple Search Controller
     socket.on("searchResults", (searchResults) => {
       setSearchResults(searchResults);
     });
   }, []);
 
-  let setSong = async (songId) => {
+  async function setSong(song) {
     await musicKit.authorize().then(async () => {
-      await musicKit.setQueue({
-        song: songId,
-      });
-      alert("Song added to Queue");
+      let musicQueue = musicKit.player.queue;
+      musicQueue.append(song);
+      setQueue([
+        ...queue,
+        {
+          attributes: {
+            artistName: song.attributes.artistName,
+            name: song.attributes.name,
+          },
+        },
+      ]);
     });
-  };
+  }
   function playSong() {
     socket.emit("playSong", lobby_id);
   }
@@ -45,11 +57,34 @@ function ApplePlayer({ lobby_id }) {
     socket.emit("appleSearch", data.song, lobby_id);
   }
 
+  // TEMP PLAYER CONTROLS --- FOR TESTING
+  let nextSong = async () => {
+    await musicKit.authorize().then(async () => {
+      await musicKit.skipToNextItem();
+    });
+  };
+  let prevSong = async () => {
+    await musicKit.authorize().then(async () => {
+      await musicKit.skipToPreviousItem();
+    });
+  };
+  let pauseSong = async () => {
+    await musicKit.authorize().then(async () => {
+      await musicKit.pause();
+    });
+  };
+
+  // TEMP PLAYER CONTROLS --- FOR TESTING
+
   return (
     <div className="apple-player">
       <div>
-        <button onClick={() => playSong()}>play</button>
+        <button onClick={() => playSong()}>Play</button>
+        <button onClick={() => prevSong()}>Prev</button>
+        <button onClick={() => pauseSong()}>Pause</button>
+        <button onClick={() => nextSong()}>Next</button>
       </div>
+      <AppleDisplay></AppleDisplay>
       <form className="" onSubmit={handleSubmit(searchSong)}>
         <div className="song-name">
           <input {...register("song")} />
@@ -67,13 +102,14 @@ function ApplePlayer({ lobby_id }) {
             {song.attributes.artistName} - {song.attributes.name}
             <button
               className="search-results-button"
-              onClick={async () => await setSong(song.id)}
+              onClick={() => setSong(song)}
             >
               Add
             </button>
           </div>
         ))
       )}
+      <AppleQueue queue={queue}></AppleQueue>
     </div>
   );
 }
