@@ -28,9 +28,9 @@ export function setUpMusicKit(
 
 				setupMusicKit
 					.then((musicKitInstance) => {
+						musicKitInstance.authorize();
 						setMusicKit(musicKitInstance);
 						setAuthorized(true);
-						musicKitInstance.authorize();
 					})
 					.catch((error) => {});
 			}

@@ -32,7 +32,14 @@ function SocketHandler({
 			setMembers(members);
 			setMessages(lobbyMessages);
 		});
-	}, []);
+	}, [
+		socket,
+		token,
+		refresh_token,
+		setMembers,
+		setMessages,
+		setUser,
+	]);
 
 	return <></>;
 }

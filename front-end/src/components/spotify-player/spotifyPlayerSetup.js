@@ -21,7 +21,6 @@ export function setupSpotifyPlayer() {
 
 		player.addListener('ready', ({ device_id }) => {
 			// set current device to new web player
-			console.log(device_id);
 			axios
 				.put(
 					'https://api.spotify.com/v1/me/player',

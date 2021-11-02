@@ -6,14 +6,19 @@ import MessagesForm from '../../components/messages-form/MessagesForm';
 import SocketHandler from '../../components/socket-handler/SocketHandler';
 
 function Lobby() {
+	// Local storage data
+	const { username, music_provider, lobby_id } = JSON.parse(
+		localStorage.getItem('user')
+	);
+
 	// State managament
 	const [members, setMembers] = useState([]);
 	const [messages, setMessages] = useState([]);
 	const [playlist, setPlaylist] = useState([]);
 	const [user, setUser] = useState({
-		username: '',
-		music_provider: '',
-		lobby_id: '',
+		username,
+		music_provider,
+		lobby_id,
 	});
 
 	return (
