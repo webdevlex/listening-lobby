@@ -12,7 +12,7 @@ const {
   getLobbyById,
 } = lobbyFunctions;
 const { playSong } = spotifyFunctions;
-const { searchSong } = appleFunctions;
+const { appleSearch } = appleFunctions;
 
 function socketsHandler(io) {
   io.sockets.on("connection", function (socket) {
@@ -53,7 +53,7 @@ function socketsHandler(io) {
     // Handle Apple search request
     socket.on("appleSearch", async (song, lobby_id) => {
       const user = getUserById(lobby_id, socket.id);
-      let searchResults = await searchSong(song, user.token);
+      let searchResults = await appleSearch(song, user.token);
       io.to(socket.id).emit("appleSearchResults", searchResults);
     });
 

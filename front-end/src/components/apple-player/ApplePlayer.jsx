@@ -31,7 +31,9 @@ function ApplePlayer({ lobby_id }) {
   async function setSong(song) {
     await musicKit.authorize().then(async () => {
       let musicQueue = musicKit.player.queue;
+
       musicQueue.append(song);
+
       setQueue([
         ...queue,
         {
@@ -42,6 +44,45 @@ function ApplePlayer({ lobby_id }) {
         },
       ]);
     });
+  }
+  async function setAlbum(album) {
+    let currentQueue = musicKit.player.queue.items;
+    let arrayQueue = [];
+    currentQueue.map(({ id }) => {
+      arrayQueue.push(id);
+    });
+
+    //Added by album id (issue: clears entire queue before adding)
+    await musicKit.authorize().then(async () => {
+      await musicKit.setQueue({
+        album: album.id,
+      });
+    });
+
+    //If we have existing songs, we will push those
+    let newQueue = musicKit.player.queue.items;
+    if (arrayQueue.length > 0) {
+      newQueue.map(({ id }) => {
+        arrayQueue.push(id);
+      });
+
+      await musicKit.authorize().then(async () => {
+        await musicKit.setQueue({
+          songs: arrayQueue,
+        });
+      });
+    }
+    //Displaying everysong
+    let displayQueue = [];
+    newQueue.map(({ attributes }) => {
+      displayQueue.push({
+        attributes: {
+          artistName: attributes.artistName,
+          name: attributes.name,
+        },
+      });
+    });
+    setQueue([...queue, ...displayQueue]);
   }
 
   // TEMP PLAYER CONTROLS --- FOR TESTING
@@ -72,8 +113,10 @@ function ApplePlayer({ lobby_id }) {
         <button onClick={() => nextSong()}>Next</button>
       </div>
       <AppleDisplay />
-      <AppleSearch lobbyId={lobby_id} setSong={setSong} />
-      <AppleQueue queue={queue} />
+      <div class="temp-ui">
+        <AppleSearch lobbyId={lobby_id} setSong={setSong} setAlbum={setAlbum} />
+        <AppleQueue queue={queue} />
+      </div>
     </div>
   );
 }

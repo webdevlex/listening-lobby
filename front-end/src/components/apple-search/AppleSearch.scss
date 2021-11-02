@@ -1,0 +1,18 @@
+.all-results {
+  display: flex;
+}
+.song-results {
+  flex-basis: 100%;
+}
+.album-results {
+  flex-basis: 100%;
+}
+.add-button {
+  margin-left: 5px;
+}
+.songInfo {
+  height: 35px;
+}
+.albumInfo {
+  height: 40px;
+}

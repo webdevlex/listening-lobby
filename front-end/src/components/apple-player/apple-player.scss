@@ -2,3 +2,9 @@
   height: 20px;
   width: 3%;
 }
+.temp-ui {
+  display: flex;
+}
+.temp-ui > * {
+  flex-basis: 100%;
+}

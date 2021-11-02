@@ -1,12 +1,12 @@
 const axios = require("axios");
 
-async function searchSong(song, token) {
+async function appleSearch(query, token) {
   let searchResults;
   await axios
     .get(
       "https://api.music.apple.com/v1/catalog/us/search?term=" +
-        song +
-        "&limit=5&types=songs",
+        query +
+        "&limit=5&types=songs,albums",
       {
         headers: {
           Authorization: "Bearer " + token,
@@ -15,7 +15,7 @@ async function searchSong(song, token) {
     )
     .then((response) => {
       if (response.data.meta.results.order.length > 0) {
-        searchResults = response.data.results.songs.data;
+        searchResults = response.data.results;
       } else {
         searchResults = [];
       }
@@ -27,6 +27,6 @@ async function searchSong(song, token) {
 }
 
 module.exports = {
-  searchSong,
+  appleSearch,
 };
 exports = module.exports;
