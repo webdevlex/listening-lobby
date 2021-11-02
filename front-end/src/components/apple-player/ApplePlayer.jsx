@@ -23,7 +23,7 @@ function ApplePlayer({ lobby_id }) {
         musicKit.player.volume = 0.05;
       });
     };
-  }, []);
+  }, [socket, musicKit]);
 
   function playSong() {
     socket.emit("playSong", lobby_id);
