@@ -1,7 +1,16 @@
 const axios = require("axios");
 
 async function appleSearch(query, token) {
+  let defaultValue = {
+    songs: {
+      data: [],
+    },
+    albums: {
+      data: [],
+    },
+  };
   let searchResults;
+
   await axios
     .get(
       "https://api.music.apple.com/v1/catalog/us/search?term=" +
@@ -17,11 +26,11 @@ async function appleSearch(query, token) {
       if (response.data.meta.results.order.length > 0) {
         searchResults = response.data.results;
       } else {
-        searchResults = [];
+        searchResults = defaultValue;
       }
     })
     .catch((error) => {
-      searchResults = [];
+      searchResults = defaultValue;
     });
   return searchResults;
 }
