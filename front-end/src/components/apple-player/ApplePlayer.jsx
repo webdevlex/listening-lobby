@@ -7,7 +7,7 @@ import AppleQueue from "../apple-queue/AppleQueue";
 import AppleSearch from "../apple-search/AppleSearch";
 function ApplePlayer({ lobby_id }) {
   const socket = useContext(SocketContext);
-  const [musicKit, setMusicKit] = useContext(AppleMusicContext);
+  const [musicKit] = useContext(AppleMusicContext);
   const [queue, setQueue] = useState([]);
 
   useEffect(() => {
@@ -62,7 +62,7 @@ function ApplePlayer({ lobby_id }) {
     });
     playSong();
   }
-  console.log(musicKit);
+
   async function setSong(song) {
     await musicKit.authorize().then(async () => {
       let musicQueue = musicKit.player.queue;
@@ -83,7 +83,7 @@ function ApplePlayer({ lobby_id }) {
   async function setAlbum(album) {
     let currentQueue = musicKit.player.queue.items;
     let arrayQueue = [];
-    currentQueue.map(({ id }) => {
+    currentQueue.forEach(({ id }) => {
       arrayQueue.push(id);
     });
 
@@ -97,7 +97,7 @@ function ApplePlayer({ lobby_id }) {
     //If we have existing songs, we will push those
     let newQueue = musicKit.player.queue.items;
     if (arrayQueue.length > 0) {
-      newQueue.map(({ id }) => {
+      newQueue.forEach(({ id }) => {
         arrayQueue.push(id);
       });
 
@@ -110,7 +110,7 @@ function ApplePlayer({ lobby_id }) {
 
     //Displaying everysong
     let displayQueue = [];
-    newQueue.map(({ attributes }) => {
+    newQueue.forEach(({ attributes }) => {
       displayQueue.push({
         attributes: {
           artistName: attributes.artistName,
