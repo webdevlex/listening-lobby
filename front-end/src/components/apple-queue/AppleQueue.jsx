@@ -7,10 +7,10 @@ function AppleQueue({
 }) {
   return (
     <div>
-      <div className="queue-menu">
+      <div className='queue-menu'>
         <h1>QUEUE</h1>
         <button
-          className="delete-btn"
+          className='delete-btn'
           onClick={() => removeAllItemsFromQueue()}
         >
           Delete all
@@ -20,9 +20,9 @@ function AppleQueue({
         <div>No Queue</div>
       ) : (
         queue.map((song, index) => (
-          <div className="queue-item">
+          <div className='queue-item'>
             <div
-              className="queue-name"
+              className='queue-name'
               onClick={() => {
                 playSongByIndex(index);
               }}
@@ -30,7 +30,7 @@ function AppleQueue({
               {song.attributes.artistName} - {song.attributes.name}
             </div>
             <button
-              className="delete-btn"
+              className='delete-btn'
               onClick={() => {
                 removeItemFromQueue(index);
               }}

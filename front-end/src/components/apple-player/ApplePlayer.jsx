@@ -141,7 +141,7 @@ function ApplePlayer({ lobby_id }) {
   // TEMP PLAYER CONTROLS --- FOR TESTING
 
   return (
-    <div className="apple-player">
+    <div className='apple-player'>
       <div>
         <button onClick={() => playSong()}>Play</button>
         <button onClick={() => prevSong()}>Prev</button>
@@ -149,7 +149,7 @@ function ApplePlayer({ lobby_id }) {
         <button onClick={() => nextSong()}>Next</button>
       </div>
       <AppleDisplay />
-      <div class="temp-ui">
+      <div class='temp-ui'>
         <AppleSearch lobbyId={lobby_id} setSong={setSong} setAlbum={setAlbum} />
         <AppleQueue
           queue={queue}
