@@ -1,10 +1,13 @@
 import "./AppleQueue.scss";
+import React, { useContext, useState } from "react";
+import { AppleMusicContext } from "../../context/AppleMusicContext";
 function AppleQueue({
   queue,
   playSongByIndex,
   removeItemFromQueue,
   removeAllItemsFromQueue,
 }) {
+  const [musicKit] = useContext(AppleMusicContext);
   return (
     <div>
       <div className='queue-menu'>
@@ -32,7 +35,9 @@ function AppleQueue({
             <button
               className='delete-btn'
               onClick={() => {
-                removeItemFromQueue(index);
+                index != musicKit.player.queue.position
+                  ? removeItemFromQueue(index)
+                  : alert("cant delete playing song");
               }}
             >
               delete

@@ -11,6 +11,7 @@ function ApplePlayer({ lobby_id }) {
   const [queue, setQueue] = useState([]);
 
   useEffect(() => {
+    console.log(musicKit);
     // Apple Socket Functions
     socket.on("playApple", async () => {
       await play();
@@ -18,16 +19,16 @@ function ApplePlayer({ lobby_id }) {
 
     // Apple Player Controllers
     let play = async () => {
-      await musicKit.authorize().then(async () => {
-        await musicKit.play();
-        musicKit.player.volume = 0.05;
-      });
+      await musicKit.authorize();
+      await musicKit.play();
+      musicKit.player.volume = 0.05;
     };
   }, [socket, musicKit]);
 
   function playSong() {
     socket.emit("playSong", lobby_id);
   }
+
   async function removeItemFromQueue(index) {
     //Changing the display of the queue
     let tempQueue = queue;
@@ -36,50 +37,57 @@ function ApplePlayer({ lobby_id }) {
 
     //Changing MusicKit Queue
     let currentQueue = musicKit.player.queue.items;
+
+    //Resets Index of Music player
+    if (index < musicKit.player.queue.position) {
+      musicKit.player.queue.position = musicKit.player.queue.position - 1;
+    }
+
     currentQueue.splice(index, 1);
-    await musicKit.authorize().then(async () => {
-      await musicKit.setQueue({
-        songs: currentQueue,
-      });
+
+    await musicKit.authorize();
+    await musicKit.setQueue({
+      songs: currentQueue,
     });
   }
+
   async function removeAllItemsFromQueue() {
     //Changing the display of the queue
 
     await setQueue([]);
     //Changing MusicKit Queue
-    await musicKit.authorize().then(async () => {
-      await musicKit.setQueue({
-        songs: [],
-      });
+    await musicKit.authorize();
+    await musicKit.setQueue({
+      songs: [],
     });
+    await musicKit.pause();
   }
 
   async function playSongByIndex(index) {
-    await musicKit.authorize().then(async () => {
-      await musicKit.changeToMediaAtIndex(index);
-      musicKit.player.volume = 0.05;
-    });
+    await musicKit.authorize();
+    await musicKit.changeToMediaAtIndex(index);
+    musicKit.player.volume = 0.05;
+
     playSong();
   }
 
   async function setSong(song) {
-    await musicKit.authorize().then(async () => {
-      let musicQueue = musicKit.player.queue;
+    await musicKit.authorize();
+    let musicQueue = musicKit.player.queue;
 
-      musicQueue.append(song);
+    musicQueue.append(song);
 
-      setQueue([
-        ...queue,
-        {
-          attributes: {
-            artistName: song.attributes.artistName,
-            name: song.attributes.name,
-          },
+    setQueue([
+      ...queue,
+      {
+        attributes: {
+          artistName: song.attributes.artistName,
+          name: song.attributes.name,
         },
-      ]);
-    });
+      },
+    ]);
   }
+
   async function setAlbum(album) {
     let currentQueue = musicKit.player.queue.items;
     let arrayQueue = [];
@@ -88,10 +96,9 @@ function ApplePlayer({ lobby_id }) {
     });
 
     //Added by album id (issue: clears entire queue before adding)
-    await musicKit.authorize().then(async () => {
-      await musicKit.setQueue({
-        album: album.id,
-      });
+    await musicKit.authorize();
+    await musicKit.setQueue({
+      album: album.id,
     });
 
     //If we have existing songs, we will push those
@@ -101,10 +108,9 @@ function ApplePlayer({ lobby_id }) {
         arrayQueue.push(id);
       });
 
-      await musicKit.authorize().then(async () => {
-        await musicKit.setQueue({
-          songs: arrayQueue,
-        });
+      await musicKit.authorize();
+      await musicKit.setQueue({
+        songs: arrayQueue,
       });
     }
 
@@ -123,19 +129,16 @@ function ApplePlayer({ lobby_id }) {
 
   // TEMP PLAYER CONTROLS --- FOR TESTING
   let nextSong = async () => {
-    await musicKit.authorize().then(async () => {
-      await musicKit.skipToNextItem();
-    });
+    await musicKit.authorize();
+    await musicKit.skipToNextItem();
   };
   let prevSong = async () => {
-    await musicKit.authorize().then(async () => {
-      await musicKit.skipToPreviousItem();
-    });
+    await musicKit.authorize();
+    await musicKit.skipToPreviousItem();
   };
   let pauseSong = async () => {
-    await musicKit.authorize().then(async () => {
-      await musicKit.pause();
-    });
+    await musicKit.authorize();
+    await musicKit.pause();
   };
 
   // TEMP PLAYER CONTROLS --- FOR TESTING
