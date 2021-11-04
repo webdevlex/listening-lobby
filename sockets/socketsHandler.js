@@ -1,6 +1,7 @@
 const lobbyFunctions = require('./lobbyFunctions');
 const spotifyFunctions = require('./spotifyFunctions');
 const appleFunctions = require('./appleFunctions');
+const helperFunctions = require('./helperFunctions');
 const {
 	createNewLobby,
 	joinLobby,
@@ -13,6 +14,7 @@ const {
 } = lobbyFunctions;
 const { playSong, search } = spotifyFunctions;
 const { appleSearch } = appleFunctions;
+const { formatSearchResults } = helperFunctions;
 
 function socketsHandler(io) {
 	io.sockets.on('connection', function (socket) {
@@ -61,9 +63,34 @@ function socketsHandler(io) {
 		});
 
 		// Handle Spotify search request
-		socket.on('spotifySearch', async (searchValue, token) => {
-			const searchResults = await search(searchValue, token);
-			io.to(socket.id).emit('spotifySearchResults', searchResults);
+		socket.on(
+			'uniSearch',
+			async (searchValue, token, { music_provider }) => {
+				let searchResults;
+				if (music_provider === 'spotify') {
+					searchResults = await search(searchValue, token);
+				} else {
+					searchResults = await appleSearch(searchValue, token);
+				}
+
+				const formattedSearchResults = formatSearchResults(
+					searchResults,
+					music_provider
+				);
+
+				io.to(socket.id).emit(
+					'uniSearchResults',
+					formattedSearchResults
+				);
+			}
+		);
+
+		// [{ id, type: 'album or song'}]
+		socket.on('addSongToQueue', (song) => {
+			console.log(song);
+			// handle spotify or apple
+
+			// send dispaly queue
 		});
 
 		// Handle when someone clicks play

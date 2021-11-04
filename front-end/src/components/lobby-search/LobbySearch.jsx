@@ -1,11 +1,11 @@
 import React from 'react';
-import SpotfiySearch from '../spotify-search/SpotfiySearch';
+import UniSearch from '../uni-search/UniSearch';
 import './lobby-search.scss';
 
-export default function LobbySearch() {
+export default function LobbySearch({ user }) {
 	return (
 		<div className='lobby-search'>
-			<SpotfiySearch />
+			<UniSearch user={user} />
 		</div>
 	);
 }

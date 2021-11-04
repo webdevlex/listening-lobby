@@ -22,6 +22,7 @@ function createNewLobby(data) {
 		users: [newUser],
 		queue: [],
 		messages: [],
+		players: '',
 	};
 
 	lobbies.push(newLobby);

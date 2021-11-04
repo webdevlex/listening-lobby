@@ -47,7 +47,11 @@ function Lobby() {
 				<LobbyMessages messages={messages} user={user} />
 			</div>
 			<div className='center-grid'>
-				<LobbyCenter centerDisplay={centerDisplay} queue={queue} />
+				<LobbyCenter
+					centerDisplay={centerDisplay}
+					queue={queue}
+					user={user}
+				/>
 			</div>
 			<div className='player-grid'>
 				<DesignatedPlayer

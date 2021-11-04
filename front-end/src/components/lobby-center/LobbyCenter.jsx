@@ -3,13 +3,13 @@ import LobbyTrackDisplay from '../lobby-track-display/LobbyTrackDisplay';
 import LobbyQueue from '../lobby-queue/LobbyQueue';
 import LobbySearch from '../lobby-search/LobbySearch';
 
-export default function LobbyCenter({ centerDisplay }) {
+export default function LobbyCenter({ centerDisplay, queue, user }) {
 	return centerDisplay === 'player' ? (
 		<>
 			<LobbyTrackDisplay />
 			<LobbyQueue />
 		</>
 	) : (
-		<LobbySearch />
+		<LobbySearch user={user} />
 	);
 }

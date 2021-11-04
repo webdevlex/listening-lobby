@@ -40,7 +40,7 @@ async function search(searchValue, token) {
 		const res = await axios.get(endPoint, config);
 		return res.data;
 	} catch (err) {
-		console.log(err);
+		console.log(err.response.status);
 	}
 }
 

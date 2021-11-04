@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
-
 import TrackDisplay from '../track-display/TrackDisplay';
 import AlbumDispaly from '../album-display/AlbumDispaly';
-import SpotifySearchForm from '../spotify-search-form/SpotifySearchForm';
-import './spotify-search.scss';
+import UniSearchForm from '../uni-search-form/UniSearchForm';
+import './uni-search.scss';
 
-export default function SpotfiySearch() {
+function UniSearch({ user }) {
 	const [albums, setAlbums] = useState([]);
 	const [tracks, setTracks] = useState([]);
 
 	return (
 		<>
-			<SpotifySearchForm
+			<UniSearchForm
 				setAlbums={setAlbums}
 				setTracks={setTracks}
+				user={user}
 			/>
 			<div className='results'>
 				<TrackDisplay tracks={tracks} />
@@ -22,3 +22,5 @@ export default function SpotfiySearch() {
 		</>
 	);
 }
+
+export default UniSearch;
