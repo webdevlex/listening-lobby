@@ -5,7 +5,7 @@ function SocketHandler({
 	setUser,
 	setMembers,
 	setMessages,
-	setPlaylist,
+	setQueue,
 }) {
 	const params = new URLSearchParams(window.location.search);
 	const token = params.get('token');
@@ -41,7 +41,7 @@ function SocketHandler({
 		setUser,
 	]);
 
-	return <></>;
+	return null;
 }
 
 export default SocketHandler;

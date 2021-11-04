@@ -1,20 +1,9 @@
-.results-display {
-	border: 1px solid black;
-	width: fit-content;
-	margin-block: 10px;
-	padding: 10px;
+.search-form {
 	display: flex;
 }
 
-.album-cover-container {
-	width: 50px;
-	height: 50px;
-
-	img {
-		height: 100%;
-	}
-}
-
-.text {
-	margin-left: 20px;
+.results {
+	width: 100%;
+	display: flex;
+	position: relative;
 }

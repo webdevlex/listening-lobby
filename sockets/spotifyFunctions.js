@@ -1,5 +1,4 @@
 const axios = require('axios');
-const { response } = require('express');
 
 function playSong(token) {
 	axios
@@ -31,9 +30,9 @@ async function search(searchValue, token) {
 			Authorization: 'Bearer ' + token,
 		},
 		params: {
-			q: `name:${searchValue}`,
+			q: searchValue,
 			type: 'album,track',
-			limit: '10',
+			limit: '5',
 		},
 	};
 

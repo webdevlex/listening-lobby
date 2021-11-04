@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Members({ members }) {
+function LobbyMembers({ members }) {
 	return (
 		<div>
 			<h4>Members</h4>
@@ -11,4 +11,4 @@ function Members({ members }) {
 	);
 }
 
-export default Members;
+export default LobbyMembers;

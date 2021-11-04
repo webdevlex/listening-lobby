@@ -1,6 +1,7 @@
 import React from 'react';
+import MessagesForm from '../messages-form/MessagesForm';
 
-function Messages({ messages }) {
+function LobbyMessages({ messages, user }) {
 	return (
 		<div>
 			<h4>Messages</h4>
@@ -8,8 +9,9 @@ function Messages({ messages }) {
 				messages.map(({ username, message }) => {
 					return <p key={username}>{`${username}: ${message}`}</p>;
 				})}
+			<MessagesForm user={user} />
 		</div>
 	);
 }
 
-export default Messages;
+export default LobbyMessages;
