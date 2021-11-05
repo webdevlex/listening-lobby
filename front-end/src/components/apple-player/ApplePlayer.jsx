@@ -34,9 +34,8 @@ function ApplePlayer({ lobby_id }) {
     } else if (item.type === "albums") {
       let album = await musicKit.api.album(item.id);
       let tracks = album.relationships.tracks.data;
-      let musicKitQueue = musicKit.player.queue;
       tracks.forEach((song) => {
-        musicKitQueue.append(song);
+        musicQueue.append(song);
       });
     }
   }
