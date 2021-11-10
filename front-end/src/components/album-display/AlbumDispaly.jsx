@@ -2,11 +2,11 @@ import React, { useContext } from 'react';
 import { SocketContext } from '../../context/socketContext';
 import './album-display.scss';
 
-export default function AlbumDispaly({ albums }) {
+export default function AlbumDispaly({ albums, user }) {
 	const socket = useContext(SocketContext);
 
 	function handleSongClick(album) {
-		socket.emit('addSongToQueue', album);
+		socket.emit('addAlbumToQueue', album, user);
 	}
 
 	const hasAlbum = albums[0];

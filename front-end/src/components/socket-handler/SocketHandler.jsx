@@ -32,6 +32,10 @@ function SocketHandler({
 			setMembers(members);
 			setMessages(lobbyMessages);
 		});
+
+		socket.on('updateLobbyQueue', (queue) => {
+			setQueue(queue);
+		});
 	}, [
 		socket,
 		token,
@@ -39,6 +43,7 @@ function SocketHandler({
 		setMembers,
 		setMessages,
 		setUser,
+		setQueue,
 	]);
 
 	return null;

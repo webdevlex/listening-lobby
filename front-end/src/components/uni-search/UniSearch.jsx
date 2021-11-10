@@ -16,8 +16,8 @@ function UniSearch({ user }) {
 				user={user}
 			/>
 			<div className='results'>
-				<TrackDisplay tracks={tracks} />
-				<AlbumDispaly albums={albums} />
+				<TrackDisplay tracks={tracks} user={user} />
+				<AlbumDispaly albums={albums} user={user} />
 			</div>
 		</>
 	);

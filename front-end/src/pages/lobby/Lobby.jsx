@@ -36,6 +36,7 @@ function Lobby() {
 			/>
 			<div className='settings-grid'>
 				<LobbySettings
+					lobbyId={user.lobby_id}
 					centerDisplay={centerDisplay}
 					setCenterDisplay={setCenterDisplay}
 				/>

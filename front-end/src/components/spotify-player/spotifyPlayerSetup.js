@@ -19,36 +19,9 @@ export function setupSpotifyPlayer() {
 			volume: 0.5,
 		});
 
-		player.addListener('ready', ({ device_id }) => {
-			// set current device to new web player
-			axios
-				.put(
-					'https://api.spotify.com/v1/me/player',
-					{
-						device_ids: [device_id],
-					},
-					{
-						headers: {
-							Accept: 'application/json',
-							'content-type': 'application/json',
-							Authorization: 'Bearer ' + token,
-						},
-					}
-				)
-				.then(function (response) {
-					// console.log(response);
-				})
-				.catch(function (error) {
-					console.log(error);
-				});
+		player.addListener('ready', async ({ device_id }) => {
+			await setPlayer(device_id, token);
 		});
-
-		// player.addListener('player_state_changed', (state) => {
-		// 	console.log(state);
-		// 	if (state.position === 0) {
-		// 		console.log('Track ended');
-		// 	}
-		// });
 
 		player.addListener('not_ready', ({ device_id }) => {
 			console.log('Device ID has gone offline', device_id);
@@ -56,4 +29,27 @@ export function setupSpotifyPlayer() {
 
 		player.connect();
 	};
+}
+
+async function setPlayer(device_id, token) {
+	axios
+		.put(
+			'https://api.spotify.com/v1/me/player',
+			{
+				device_ids: [device_id],
+			},
+			{
+				headers: {
+					Accept: 'application/json',
+					'content-type': 'application/json',
+					Authorization: 'Bearer ' + token,
+				},
+			}
+		)
+		.then(function (response) {
+			// console.log(response);
+		})
+		.catch(function (error) {
+			console.log(error);
+		});
 }

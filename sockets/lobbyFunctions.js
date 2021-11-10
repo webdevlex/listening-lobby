@@ -1,31 +1,62 @@
 let lobbies = [];
 
 function generateUser(data, privilege) {
-	const { username, token, refresh_token, music_provider, user_id } =
-		data;
+	const {
+		username,
+		token,
+		refresh_token,
+		music_provider,
+		user_id,
+		playlistId,
+	} = data;
 	return {
 		user_id: user_id,
 		username: username,
 		token: token,
 		refresh_token: refresh_token,
-		device_id: '',
 		music_provider: music_provider,
 		privilege: privilege,
+		playlistId: playlistId,
 	};
 }
 
 function createNewLobby(data) {
-	const { lobby_id } = data;
+	const lobby_id = data.lobby_id;
 	const newUser = generateUser(data, 'admin');
 	const newLobby = {
 		lobby_id: lobby_id,
 		users: [newUser],
 		queue: [],
 		messages: [],
-		players: '',
+		players: createPlayersObject(data),
 	};
 
 	lobbies.push(newLobby);
+}
+
+function createPlayersObject(data) {
+	const { music_provider, token } = data;
+	return music_provider === 'spotify'
+		? {
+				spotify: {
+					token: token,
+					count: 1,
+				},
+				apple: {
+					token: '',
+					count: 0,
+				},
+		  }
+		: {
+				spotify: {
+					token: '',
+					count: 0,
+				},
+				apple: {
+					token: token,
+					count: 1,
+				},
+		  };
 }
 
 function getLobbyIndex(lobby_id) {
@@ -74,10 +105,34 @@ function getLobbyIndex(lobby_id) {
 // }
 
 function joinLobby(data) {
-	const { lobby_id } = data;
+	const lobby_id = data.lobby_id;
 	const lobbyIndex = getLobbyIndex(lobby_id);
 	const newUser = generateUser(data, 'guest');
+	addDesignatedPlayer(lobbyIndex, data);
 	lobbies[lobbyIndex].users.push(newUser);
+}
+
+function addDesignatedPlayer(lobbyIndex, data) {
+	const { music_provider, token } = data;
+	const { spotify, apple } = lobbies[lobbyIndex].players;
+	const bothPlayersUsed = spotify.count > 0 && apple.count > 0;
+	const primaryPlayer = spotify.count > 0 ? 'spotify' : 'apple';
+
+	if (!bothPlayersUsed && primaryPlayer !== music_provider) {
+		if (music_provider === 'spotify') {
+			lobbies[lobbyIndex].players.spotify.count += 1;
+			lobbies[lobbyIndex].players.spotify.token = token;
+		} else {
+			lobbies[lobbyIndex].players.apple.count += 1;
+			lobbies[lobbyIndex].players.apple.token = token;
+		}
+	} else {
+		if (music_provider === 'spotify') {
+			lobbies[lobbyIndex].players.spotify.count += 1;
+		} else {
+			lobbies[lobbyIndex].players.apple.count += 1;
+		}
+	}
 }
 
 function getLobbyById(lobby_id) {
@@ -121,6 +176,11 @@ function addMessageToLobby(lobby_id, message, username) {
 	lobbies[lobbyIndex].messages.push(formattedMessage);
 }
 
+function addSongToLobbyQueue(lobby_id, song) {
+	const lobbyIndex = getLobbyIndex(lobby_id);
+	lobbies[lobbyIndex].queue.push(song);
+}
+
 module.exports = {
 	createNewLobby,
 	lobbyExists,
@@ -130,5 +190,6 @@ module.exports = {
 	getMemberUsernames,
 	addMessageToLobby,
 	getLobbyMessages,
+	addSongToLobbyQueue,
 };
 exports = module.exports;

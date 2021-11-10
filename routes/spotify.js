@@ -9,7 +9,7 @@ const client_secret = config.get('client_secret');
 const redirect_uri = '' || 'http://localhost:8888/spotify/callback';
 const auth_error_url = '' || 'http://localhost:3000';
 const spotify_scope =
-	'user-read-private user-read-email streaming user-read-playback-state user-read-currently-playing';
+	'user-read-private user-read-email streaming user-read-playback-state user-read-currently-playing playlist-modify-public playlist-modify-private';
 
 var generateRandomString = function (length) {
 	var text = '';
@@ -40,7 +40,7 @@ router.get('/login', function (req, res) {
 	res.redirect(urlObj.toString());
 });
 
-router.get('/callback', function (req, res) {
+router.get('/callback', async function (req, res) {
 	var code = req.query.code || null;
 	var state = req.query.state || null;
 	var storedState = req.cookies ? req.cookies[stateKey] : null;
@@ -68,20 +68,18 @@ router.get('/callback', function (req, res) {
 			},
 		};
 
-		axios
-			.post(endPoint, body, config)
-			.then((response) => {
-				const urlObj = new URL('http://localhost:3000/lobby');
-				urlObj.search = new URLSearchParams({
-					token: response.data.access_token,
-					refresh_token: response.data.refresh_token,
-				});
-				res.redirect(urlObj.toString());
-			})
-			.catch((error) => {
-				console.log(error);
-				res.redirect(auth_error_url);
+		try {
+			const response = await axios.post(endPoint, body, config);
+			const urlObj = new URL('http://localhost:3000/lobby');
+			urlObj.search = new URLSearchParams({
+				token: response.data.access_token,
+				refresh_token: response.data.refresh_token,
 			});
+			res.redirect(urlObj.toString());
+		} catch (err) {
+			console.log(err);
+			res.redirect(auth_error_url);
+		}
 	}
 });
 
