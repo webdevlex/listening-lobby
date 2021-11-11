@@ -1,76 +1,77 @@
-import React, { useEffect, useContext, useState } from 'react';
-import { SocketContext } from '../../context/socketContext';
-import { AppleMusicContext } from '../../context/AppleMusicContext';
-import './apple-player.scss';
+import React, { useEffect, useContext, useState } from "react";
+import { SocketContext } from "../../context/socketContext";
+import { AppleMusicContext } from "../../context/AppleMusicContext";
+import "./apple-player.scss";
 
 function ApplePlayer({ lobby_id }) {
-	const socket = useContext(SocketContext);
-	const [musicKit] = useContext(AppleMusicContext);
-	useEffect(() => {
-		console.log(musicKit);
-		// Apple Socket Functions
-		socket.on('playApple', async () => {
-			await play();
-		});
+  const socket = useContext(SocketContext);
+  const [musicKit] = useContext(AppleMusicContext);
+  useEffect(() => {
+    console.log(musicKit);
+    // Apple Socket Functions
+    socket.on("playApple", async () => {
+      await play();
+    });
 
-		// Apple Player Controllers
-		let play = async () => {
-			await musicKit.authorize();
-			await musicKit.play();
-			musicKit.player.volume = 0.05;
-		};
+    // Apple Player Controllers
+    let play = async () => {
+      await musicKit.authorize();
+      await musicKit.play();
+      musicKit.player.volume = 0.05;
+    };
 
-		socket.on('updateAppleQueue', (playerData) => {
-			// {href, id, type}
-			console.log(playerData);
-		});
-	}, [socket, musicKit]);
+    socket.on("updateAppleQueue", (playerData) => {
+      // {href, id, type}
+      setMusicKitQueue(playerData);
+    });
+  }, [socket, musicKit]);
 
-	function playSong() {
-		socket.emit('playSong', lobby_id);
-	}
+  function playSong() {
+    socket.emit("playSong", lobby_id);
+  }
 
-	//All I need passed in an object that has an {href, id, type}
-	async function setMusicKitQueue(item) {
-		await musicKit.authorize();
-		let musicQueue = musicKit.player.queue;
-		if (item.type === 'songs') {
-			musicQueue.append(item);
-		} else if (item.type === 'albums') {
-			let album = await musicKit.api.album(item.id);
-			let tracks = album.relationships.tracks.data;
-			tracks.forEach((song) => {
-				musicQueue.append(song);
-			});
-		}
-	}
+  //All I need passed in an object that has an {href, id, type}
+  async function setMusicKitQueue(item) {
+    await musicKit.authorize();
 
-	// TEMP PLAYER CONTROLS --- FOR TESTING
-	let nextSong = async () => {
-		await musicKit.authorize();
-		await musicKit.skipToNextItem();
-	};
-	let prevSong = async () => {
-		await musicKit.authorize();
-		await musicKit.skipToPreviousItem();
-	};
-	let pauseSong = async () => {
-		await musicKit.authorize();
-		await musicKit.pause();
-	};
+    let musicQueue = musicKit.player.queue;
+    if (item.type === "songs") {
+      musicQueue.append(item);
+    } else if (item.type === "albums") {
+      let album = await musicKit.api.album(item.id);
+      let tracks = album.relationships.tracks.data;
+      tracks.forEach((song) => {
+        musicQueue.append(song);
+      });
+    }
+  }
 
-	// TEMP PLAYER CONTROLS --- FOR TESTING
+  // TEMP PLAYER CONTROLS --- FOR TESTING
+  let nextSong = async () => {
+    await musicKit.authorize();
+    await musicKit.skipToNextItem();
+  };
+  let prevSong = async () => {
+    await musicKit.authorize();
+    await musicKit.skipToPreviousItem();
+  };
+  let pauseSong = async () => {
+    await musicKit.authorize();
+    await musicKit.pause();
+  };
 
-	return (
-		<div className='apple-player'>
-			<div>
-				<button onClick={() => playSong()}>Play</button>
-				<button onClick={() => prevSong()}>Prev</button>
-				<button onClick={() => pauseSong()}>Pause</button>
-				<button onClick={() => nextSong()}>Next</button>
-			</div>
-		</div>
-	);
+  // TEMP PLAYER CONTROLS --- FOR TESTING
+
+  return (
+    <div className='apple-player'>
+      <div>
+        <button onClick={() => playSong()}>Play</button>
+        <button onClick={() => prevSong()}>Prev</button>
+        <button onClick={() => pauseSong()}>Pause</button>
+        <button onClick={() => nextSong()}>Next</button>
+      </div>
+    </div>
+  );
 }
 
 export default ApplePlayer;
