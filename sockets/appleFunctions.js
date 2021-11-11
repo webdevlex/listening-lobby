@@ -2,6 +2,7 @@ const axios = require("axios");
 function formatQuery(query) {
   query = query.replaceAll("&", "and");
   query = query.replaceAll("with", "feat");
+  query = query.replaceAll("’", "");
   return query;
 }
 
@@ -16,6 +17,7 @@ async function appleSearch(query, token) {
   };
   let searchResults;
   query = formatQuery(query);
+  console.log(query);
 
   await axios
     .get(
@@ -49,7 +51,7 @@ async function appleSearchAndFormat(song, token) {
     console.log(song.attributes.isrc + " " + uniId);
   });
   const result = searchResult.songs.data.find(
-    (song) => song.attributes.isrc === uniId
+    (song) => song.attributes.isrc.substring(0, 8) === uniId.substring(0, 8)
   );
 
   if (!result) {
