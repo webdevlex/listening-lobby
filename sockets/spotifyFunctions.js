@@ -35,6 +35,83 @@ function formatSongForSpotify(song) {
 	return song.id;
 }
 
+async function formatAlbumForSpotify(album, token) {
+	const results = await spotifyAlbumSearchById(album, token);
+	let spotifyAlbum = [];
+	let spotifyAlbumDisplay = [];
+
+	results.items.forEach((track) => {
+		spotifyAlbum.push(track.uri);
+		spotifyAlbumDisplay.push({
+			trackName: track.name,
+			artists: track.artists.map(({ name }) => name).join(', '),
+			trackCover: album.albumCover,
+			id: track.id,
+		});
+	});
+
+	return { spotifyAlbum, spotifyAlbumDisplay };
+}
+
+async function spotifyAlbumSearchAndFormat(album, token) {
+	const searchValue = `${album.albumName} ${album.artists}`;
+	const searchLimit = 20;
+	const searchResults = await spotifyAlbumSearchByQuery(
+		searchValue,
+		token,
+		searchLimit
+	);
+	const result = searchResults.albums.items.find(
+		(currentAlbum) => currentAlbum.name === album.albumName
+	);
+	const spotifyAlbum = await spotifyAlbumSearchById(result, token);
+	let allAlbumUris = [];
+	spotifyAlbum.items.forEach((track) => {
+		allAlbumUris.push(track.uri);
+	});
+	return allAlbumUris;
+}
+
+async function spotifyAlbumSearchById(album, token) {
+	const endPoint = `	https://api.spotify.com/v1/albums/${album.id}/tracks`;
+	const config = {
+		headers: {
+			Accept: 'application/json',
+			'content-type': 'application/json',
+			Authorization: 'Bearer ' + token,
+		},
+	};
+	try {
+		const res = await axios.get(endPoint, config);
+		return res.data;
+	} catch (err) {
+		// console.log(err);
+	}
+}
+
+async function spotifyAlbumSearchByQuery(searchValue, token) {
+	const endPoint = '	https://api.spotify.com/v1/search';
+	const config = {
+		headers: {
+			Accept: 'application/json',
+			'content-type': 'application/json',
+			Authorization: 'Bearer ' + token,
+		},
+		params: {
+			q: searchValue,
+			type: 'album',
+			limit: 20,
+		},
+	};
+
+	try {
+		const res = await axios.get(endPoint, config);
+		return res.data;
+	} catch (err) {
+		console.log(err.response.status);
+	}
+}
+
 async function spotifySearch(searchValue, token) {
 	const endPoint = '	https://api.spotify.com/v1/search';
 	const config = {
@@ -46,7 +123,7 @@ async function spotifySearch(searchValue, token) {
 		params: {
 			q: searchValue,
 			type: 'album,track',
-			limit: '5',
+			limit: 5,
 		},
 	};
 
@@ -126,6 +203,27 @@ async function addSongToPlaylist(songId, user) {
 	}
 }
 
+async function addAlbumToPlaylist(uriArray, user) {
+	const { token, playlistId } = user;
+	const endPoint = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
+	const body = {
+		uris: uriArray,
+	};
+	const config = {
+		headers: {
+			Accept: 'application/json',
+			'content-type': 'application/json',
+			Authorization: 'Bearer ' + token,
+		},
+	};
+
+	try {
+		await axios.post(endPoint, body, config);
+	} catch (err) {
+		console.log(err);
+	}
+}
+
 //TODO when first song in queue is added
 async function setPlaybackToNewPlaylist(device_id, uri, token) {
 	const endPoint = 'https://api.spotify.com/v1/me/player/play';
@@ -159,5 +257,8 @@ module.exports = {
 	addSongToPlaylist,
 	formatSongForSpotify,
 	spotfiySearchAndFormat,
+	formatAlbumForSpotify,
+	addAlbumToPlaylist,
+	spotifyAlbumSearchAndFormat,
 };
 exports = module.exports;

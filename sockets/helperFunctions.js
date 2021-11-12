@@ -1,3 +1,18 @@
+const appleFunctions = require('./appleFunctions');
+const spotifyFunctions = require('./spotifyFunctions');
+const {
+	appleSearchAndFormat,
+	formatSongForApple,
+	formatAlbumForApple,
+	appleAlbumSearchAndFormat,
+} = appleFunctions;
+const {
+	formatSongForSpotify,
+	formatAlbumForSpotify,
+	spotfiySearchAndFormat,
+	spotifyAlbumSearchAndFormat,
+} = spotifyFunctions;
+
 function formatSearchResults(searchResults, music_provider) {
 	let necessaryTrackInfo = [];
 	let necessaryAlbumInfo = [];
@@ -47,6 +62,8 @@ function formatSearchResults(searchResults, music_provider) {
 			const albums = searchResults.albums.data;
 			necessaryAlbumInfo = albums.map((album) => {
 				return {
+					href: album.href,
+					type: album.type,
 					albumName: album.attributes.name,
 					artists: album.attributes.artistName,
 					albumCover: album.attributes.artwork.url.replace(
@@ -63,12 +80,82 @@ function formatSearchResults(searchResults, music_provider) {
 	return { tracks: necessaryTrackInfo, albums: necessaryAlbumInfo };
 }
 
-function formatSongForApple({ href, type, id }) {
-	return { href, type, id };
+async function performDesignatedSongSearches(players, user, song) {
+	const applePlayerCount = players.apple.count;
+	const spotifyPlayerCount = players.spotify.count;
+
+	const appleToken = players.apple.token;
+	const spotifyToken = players.spotify.token;
+
+	let spotifySong;
+	let appleSong;
+
+	if (applePlayerCount > 0 && spotifyPlayerCount > 0) {
+		if (user.music_provider === 'spotify') {
+			spotifySong = formatSongForSpotify(song);
+			appleSong = await appleSearchAndFormat(song, appleToken);
+		} else {
+			spotifySong = await spotfiySearchAndFormat(song, spotifyToken);
+			appleSong = formatSongForApple(song);
+		}
+	} else if (spotifyPlayerCount > 0) {
+		spotifySong = formatSongForSpotify(song);
+	} else {
+		appleSong = formatSongForApple(song);
+	}
+
+	return { spotifySong, appleSong };
+}
+
+async function performDesignatedAlbumSearches(players, user, album) {
+	const applePlayerCount = players.apple.count;
+	const spotifyPlayerCount = players.spotify.count;
+
+	const appleToken = players.apple.token;
+	const spotifyToken = players.spotify.token;
+
+	let spotifyAlbum;
+	let appleAlbum;
+	let allTracksDisplay;
+
+	if (applePlayerCount > 0 && spotifyPlayerCount > 0) {
+		if (user.music_provider === 'spotify') {
+			const results = await formatAlbumForSpotify(
+				album,
+				spotifyToken
+			);
+			spotifyAlbum = results.spotifyAlbum;
+			allTracksDisplay = results.spotifyAlbumDisplay;
+			appleAlbum = await appleAlbumSearchAndFormat(album, appleToken);
+		} else {
+			const results = await formatAlbumForApple(album, appleToken);
+			appleAlbum = results.appleAlbum;
+			allTracksDisplay = results.appleAlbumDisplay;
+			spotifyAlbum = await spotifyAlbumSearchAndFormat(
+				album,
+				spotifyToken
+			);
+		}
+	} else if (spotifyPlayerCount > 0) {
+		const results = await formatAlbumForSpotify(album, spotifyToken);
+		spotifyAlbum = results.spotifyAlbum;
+		allTracksDisplay = results.spotifyAlbumDisplay;
+	} else {
+		const results = await formatAlbumForApple(album, appleToken);
+		appleAlbum = results.appleAlbum;
+		allTracksDisplay = results.appleAlbumDisplay;
+	}
+
+	return {
+		spotifyAlbum,
+		appleAlbum,
+		allTracksDisplay,
+	};
 }
 
 module.exports = {
 	formatSearchResults,
-	formatSongForApple,
+	performDesignatedSongSearches,
+	performDesignatedAlbumSearches,
 };
 exports = module.exports;

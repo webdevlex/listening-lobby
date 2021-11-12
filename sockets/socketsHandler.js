@@ -12,17 +12,21 @@ const {
 	getLobbyMessages,
 	getLobbyById,
 	addSongToLobbyQueue,
+	addMultipleSongsToLobbyQueue,
 } = lobbyFunctions;
 const {
 	playSong,
 	spotifySearch,
 	setupSpotifyUsersPlaylist,
 	addSongToPlaylist,
-	formatSongForSpotify,
-	spotfiySearchAndFormat,
+	addAlbumToPlaylist,
 } = spotifyFunctions;
-const { appleSearch, appleSearchAndFormat } = appleFunctions;
-const { formatSearchResults, formatSongForApple } = helperFunctions;
+const { appleSearch } = appleFunctions;
+const {
+	formatSearchResults,
+	performDesignatedSongSearches,
+	performDesignatedAlbumSearches,
+} = helperFunctions;
 
 function socketsHandler(io) {
 	io.sockets.on('connection', function (socket) {
@@ -101,42 +105,14 @@ function socketsHandler(io) {
 		);
 
 		// Handle adding song to queue
-		// TODO Clean this
 		socket.on('addSongToQueue', async (song, user) => {
-			const { lobby_id, music_provider } = user;
-			const lobby = getLobbyById(lobby_id);
-			const players = lobby.players;
-
-			const applePlayerCount = players.apple.count;
-			const spotifyPlayerCount = players.spotify.count;
-
-			const appleToken = players.apple.token;
-			const spotifyToken = players.spotify.token;
-
-			let spotifySong;
-			let appleSong;
-
-			if (applePlayerCount > 0 && spotifyPlayerCount > 0) {
-				if (music_provider === 'spotify') {
-					spotifySong = formatSongForSpotify(song);
-					appleSong = await appleSearchAndFormat(song, appleToken);
-				} else {
-					spotifySong = await spotfiySearchAndFormat(
-						song,
-						spotifyToken
-					);
-					appleSong = formatSongForApple(song);
-				}
-			} else if (spotifyPlayerCount > 0) {
-				spotifySong = formatSongForSpotify(song);
-			} else {
-				appleSong = formatSongForApple(song);
-			}
+			const lobby_id = user.lobby_id;
+			const { players, users, queue } = getLobbyById(lobby_id);
+			const { spotifySong, appleSong } =
+				await performDesignatedSongSearches(players, user, song);
 
 			addSongToLobbyQueue(lobby_id, song);
-			const { users, queue: queueDisplay } = getLobbyById(lobby_id);
-
-			io.to(lobby_id).emit('updateLobbyQueue', queueDisplay);
+			io.to(lobby_id).emit('updateLobbyQueue', queue);
 
 			users.forEach((user) => {
 				if (user.music_provider === 'spotify') {
@@ -148,8 +124,25 @@ function socketsHandler(io) {
 		});
 
 		// Handle adding album to queue
-		socket.on('addAlbumToQueue', (album, user) => {
-			console.log('album attempted to be added');
+		socket.on('addAlbumToQueue', async (album, user) => {
+			const lobby_id = user.lobby_id;
+			const { players, users, queue } = getLobbyById(lobby_id);
+
+			const { spotifyAlbum, appleAlbum, allTracksDisplay } =
+				await performDesignatedAlbumSearches(players, user, album);
+
+			allTracksDisplay.forEach((track) =>
+				addSongToLobbyQueue(lobby_id, track)
+			);
+			io.to(lobby_id).emit('updateLobbyQueue', queue);
+
+			users.forEach((user) => {
+				if (user.music_provider === 'spotify') {
+					addAlbumToPlaylist(spotifyAlbum, user);
+				} else {
+					io.to(user.user_id).emit('updateAppleQueue', appleAlbum);
+				}
+			});
 		});
 
 		// Handle when someone clicks play

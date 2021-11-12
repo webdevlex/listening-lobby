@@ -48,8 +48,79 @@ async function appleSearchAndFormat(song, token) {
 	return { href, type, id };
 }
 
+async function appleAlbumSearchAndFormat(album, token) {
+	const searchRestuls = await appleAlbumSearch(album, token);
+	const result = searchRestuls.find(
+		({ attributes }) => attributes.name === album.albumName
+	);
+	return { id: result.id, type: result.type, href: result.href };
+}
+
+async function appleAlbumSearch(album, token) {
+	const endPoint = `https://api.music.apple.com/v1/catalog/us/search?term=${album.albumName}&limit=10&types=albums`;
+	const config = {
+		headers: {
+			Authorization: 'Bearer ' + token,
+		},
+	};
+
+	try {
+		const res = await axios.get(endPoint, config);
+		return res.data.results.albums.data;
+	} catch (err) {
+		console.log(err);
+	}
+}
+
+function formatSongForApple({ href, type, id }) {
+	return { href, type, id };
+}
+
+async function formatAlbumForApple(album, token) {
+	const tracks = await getAlbumTracks(album, token);
+
+	let appleAlbum = {
+		id: album.id,
+		type: album.type,
+		href: album.href,
+	};
+	let appleAlbumDisplay = [];
+
+	tracks.forEach((track) => {
+		appleAlbumDisplay.push({
+			trackName: track.attributes.name,
+			artists: track.artistName,
+			trackCover: album.albumCover,
+			id: track.id,
+			type: track.type,
+			href: track.href,
+		});
+	});
+
+	return { appleAlbum, appleAlbumDisplay };
+}
+
+async function getAlbumTracks(album, token) {
+	const endPoint = `https://api.music.apple.com/v1/catalog/us/albums/${album.id}/tracks`;
+	const config = {
+		headers: {
+			Authorization: 'Bearer ' + token,
+		},
+	};
+
+	try {
+		const res = await axios.get(endPoint, config);
+		return res.data.data;
+	} catch (err) {
+		console.log(err);
+	}
+}
+
 module.exports = {
 	appleSearch,
 	appleSearchAndFormat,
+	formatSongForApple,
+	formatAlbumForApple,
+	appleAlbumSearchAndFormat,
 };
 exports = module.exports;
