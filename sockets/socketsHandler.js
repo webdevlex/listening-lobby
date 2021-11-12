@@ -12,7 +12,6 @@ const {
 	getLobbyMessages,
 	getLobbyById,
 	addSongToLobbyQueue,
-	addMultipleSongsToLobbyQueue,
 } = lobbyFunctions;
 const {
 	playSong,
