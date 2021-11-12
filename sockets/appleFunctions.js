@@ -1,8 +1,9 @@
 const axios = require('axios');
+
 function formatQuery(query) {
-	query = query.replaceAll('&', 'and');
-	query = query.replaceAll('with', 'feat');
-	query = query.replaceAll('’', '');
+	query = query.replace('/&/g', 'and');
+	query = query.replace('/with/g', 'feat');
+	query = query.replace('/’/g', '');
 	return query;
 }
 
@@ -17,7 +18,6 @@ async function appleSearch(query, token) {
 	};
 	let searchResults;
 	query = formatQuery(query);
-	console.log(query);
 
 	await axios
 		.get(

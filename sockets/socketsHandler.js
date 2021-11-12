@@ -74,11 +74,11 @@ function socketsHandler(io) {
 		});
 
 		// Handle Apple search request
-		socket.on('appleSearch', async (song, lobby_id) => {
-			const user = getUserById(lobby_id, socket.id);
-			let searchResults = await appleSearch(song, user.token);
-			io.to(socket.id).emit('appleSearchResults', searchResults);
-		});
+		// socket.on('appleSearch', async (song, lobby_id) => {
+		// 	const user = getUserById(lobby_id, socket.id);
+		// 	let searchResults = await appleSearch(song, user.token);
+		// 	io.to(socket.id).emit('appleSearchResults', searchResults);
+		// });
 
 		// Handle Spotify and apple search request
 		socket.on(
