@@ -12,7 +12,7 @@ function MessagesForm({ user }) {
 
 	function sendMessage(message) {
 		setValue('message', '');
-		socket.emit('message', {
+		socket.emit('lobbyMessage', {
 			lobby_id: user.lobby_id,
 			message: message,
 		});

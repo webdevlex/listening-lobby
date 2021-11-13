@@ -6,7 +6,7 @@ export default function AlbumDispaly({ albums, user }) {
 	const socket = useContext(SocketContext);
 
 	function handleSongClick(album) {
-		socket.emit('addAlbumToQueue', album, user);
+		socket.emit('addAlbumToQueue', { album, user });
 	}
 
 	const hasAlbum = albums[0];
