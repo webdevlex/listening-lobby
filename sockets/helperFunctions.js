@@ -148,10 +148,14 @@ async function performDesignatedAlbumSearches(players, user, album) {
     allTracksDisplay,
   };
 }
+function replaceAll(target, search, replacement) {
+  return target.replace(new RegExp(search, "g"), replacement);
+}
+
 function formatSearhQueryForApple(query) {
-  query = query.replaceAll("&", "and");
-  query = query.replaceAll("with", "feat");
-  query = query.replaceAll("’", "");
+  query = replaceAll(query, "&", "and");
+  query = replaceAll(query, "with", "feat");
+  query = replaceAll(query, "’", "");
   return query;
 }
 
