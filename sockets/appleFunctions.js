@@ -1,5 +1,5 @@
 const axios = require("axios");
-let searchResults = {
+let defaultSearchResults = {
   songs: {
     data: [],
   },
@@ -17,13 +17,14 @@ async function appleSearch(searchName, token) {
   };
   try {
     const res = await axios.get(endPoint, config);
-    res.data.meta.results.order.length > 0
-      ? (searchResults = res.data.results)
-      : searchResults;
-    return searchResults;
+    defaultSearchResults =
+      res.data.meta.results.order.length > 0
+        ? res.data.results
+        : defaultSearchResults;
+    return defaultSearchResults;
   } catch (err) {
-    console.log(err.response.status + " " + err.response.statusText);
-    return searchResults;
+    console.log(err.response.status, err.response.statusText);
+    return defaultSearchResults;
   }
 }
 
@@ -33,7 +34,7 @@ async function appleSearchAndFormat(song, token) {
   const result = searchResult.songs.data.find(
     (song) => song.attributes.isrc.substring(0, 8) === uniId.substring(0, 8)
   );
-  result === undefined ? (result = { href: "", type: "", id: "" }) : result;
+  result = result === undefined ? { href: "", type: "", id: "" } : result;
   return { href: result.href, type: result.type, id: result.id };
 }
 
@@ -45,7 +46,7 @@ async function appleAlbumSearchAndFormat(album, token) {
       attributes.name === album.albumName ||
       attributes.releaseDate === album.releaseDate
   );
-  result === undefined ? (result = { href: "", type: "", id: "" }) : result;
+  result = result === undefined ? { href: "", type: "", id: "" } : result;
   return { href: result.href, type: result.type, id: result.id };
 }
 
@@ -61,7 +62,7 @@ async function appleAlbumSearch(albumName, token) {
     const res = await axios.get(endPoint, config);
     return res.data.results.albums.data;
   } catch (err) {
-    console.log(err.response.status + " " + err.response.statusText);
+    console.log(err.response.status, err.response.statusText);
     return [];
   }
 }
@@ -100,7 +101,6 @@ async function getAlbumTracks(album, token) {
       Authorization: "Bearer " + token,
     },
   };
-
   try {
     const res = await axios.get(endPoint, config);
     return res.data.data;
