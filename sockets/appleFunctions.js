@@ -83,7 +83,7 @@ async function formatAlbumForApple(album, token) {
   tracks.forEach((track) => {
     appleAlbumDisplay.push({
       trackName: track.attributes.name,
-      artists: track.artistName,
+      artists: track.attributes.artistName,
       trackCover: album.albumCover,
       id: track.id,
       type: track.type,
