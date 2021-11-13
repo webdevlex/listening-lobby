@@ -48,8 +48,8 @@ function formatSearchResults(searchResults, music_provider) {
         return {
           href: track.href,
           type: track.type,
-          trackName: track.attributes.name,
-          artists: track.attributes.artistName,
+          trackName: formatSearhQueryForApple(track.attributes.name),
+          artists: formatSearhQueryForApple(track.attributes.artistName),
           trackCover: track.attributes.artwork.url.replace(
             "{w}x{h}",
             "640x640"
@@ -65,8 +65,8 @@ function formatSearchResults(searchResults, music_provider) {
         return {
           href: album.href,
           type: album.type,
-          albumName: album.attributes.name,
-          artists: album.attributes.artistName,
+          albumName: formatSearhQueryForApple(album.attributes.name),
+          artists: formatSearhQueryForApple(album.attributes.artistName),
           albumCover: album.attributes.artwork.url.replace(
             "{w}x{h}",
             "640x640"
