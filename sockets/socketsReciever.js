@@ -26,6 +26,7 @@ const {
 	formatSearchResults,
 	performDesignatedSongSearches,
 	performDesignatedAlbumSearches,
+	formatSearhQueryForApple,
 } = helperFunctions;
 
 function socketsReciever(io) {
@@ -60,6 +61,7 @@ function socketsReciever(io) {
 				if (music_provider === 'spotify') {
 					searchResults = await spotifySearch(searchValue, token);
 				} else {
+					searchValue = formatSearhQueryForApple(searchValue);
 					searchResults = await appleSearch(searchValue, token);
 				}
 
