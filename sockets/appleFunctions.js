@@ -42,6 +42,9 @@ async function appleSearch(query, token) {
 			}
 		})
 		.catch((error) => {
+			console.log(
+				error.response.status + ' ' + error.response.statusText
+			);
 			searchResults = defaultValue;
 		});
 	return searchResults;
@@ -53,10 +56,12 @@ async function appleSearchAndFormat(song, token) {
 		`${trackName} ${artists}`,
 		token
 	);
-	//Temp loop to check each isrc vs uniId
-	searchResult.songs.data.forEach((song) => {
-		console.log(song.attributes.isrc + ' ' + uniId);
-	});
+
+	// //Temp loop to check each isrc vs uniId
+	// searchResult.songs.data.forEach((song) => {
+	//   console.log(song.attributes.isrc + " " + uniId);
+	// });
+
 	const result = searchResult.songs.data.find(
 		(song) =>
 			song.attributes.isrc.substring(0, 8) === uniId.substring(0, 8)
@@ -64,23 +69,33 @@ async function appleSearchAndFormat(song, token) {
 
 	if (!result) {
 		//Temp catch error
-		console.log('error');
+		console.log('Song not found');
 		return { href: '', type: '', id: '' };
 	}
 	const { href, type, id } = result;
 	return { href, type, id };
 }
 
+//Searching from Spotify
 async function appleAlbumSearchAndFormat(album, token) {
-	const searchRestuls = await appleAlbumSearch(album, token);
-	const result = searchRestuls.find(
-		({ attributes }) => attributes.name === album.albumName
+	const searchResults = await appleAlbumSearch(album, token);
+	const result = searchResults.find(
+		({ attributes }) =>
+			attributes.name === album.albumName ||
+			attributes.releaseDate === album.releaseDate
 	);
+	if (!result) {
+		//Temp catch error
+		console.log('Album not found');
+		return { href: '', type: '', id: '' };
+	}
 	return { id: result.id, type: result.type, href: result.href };
 }
 
 async function appleAlbumSearch(album, token) {
-	const endPoint = `https://api.music.apple.com/v1/catalog/us/search?term=${album.albumName}&limit=10&types=albums`;
+	const albumName = formatQuery(album.albumName);
+
+	const endPoint = `https://api.music.apple.com/v1/catalog/us/search?term=${albumName}&limit=10&types=albums`;
 	const config = {
 		headers: {
 			Authorization: 'Bearer ' + token,
@@ -91,7 +106,8 @@ async function appleAlbumSearch(album, token) {
 		const res = await axios.get(endPoint, config);
 		return res.data.results.albums.data;
 	} catch (err) {
-		console.log(err);
+		console.log(err.response.status + ' ' + err.response.statusText);
+		return [];
 	}
 }
 
@@ -101,7 +117,6 @@ function formatSongForApple({ href, type, id }) {
 
 async function formatAlbumForApple(album, token) {
 	const tracks = await getAlbumTracks(album, token);
-
 	let appleAlbum = {
 		id: album.id,
 		type: album.type,
