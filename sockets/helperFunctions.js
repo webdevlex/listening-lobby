@@ -148,10 +148,17 @@ async function performDesignatedAlbumSearches(players, user, album) {
     allTracksDisplay,
   };
 }
+function formatSearhQueryForApple(query) {
+  query = query.replaceAll("&", "and");
+  query = query.replaceAll("with", "feat");
+  query = query.replaceAll("’", "");
+  return query;
+}
 
 module.exports = {
   formatSearchResults,
   performDesignatedSongSearches,
   performDesignatedAlbumSearches,
+  formatSearhQueryForApple,
 };
 exports = module.exports;
