@@ -1,9 +1,13 @@
 const axios = require('axios');
 
+function replaceAll(target, search, replacement) {
+	return target.replace(new RegExp(search, 'g'), replacement);
+}
+
 function formatQuery(query) {
-	query = query.replace('/&/g', 'and');
-	query = query.replace('/with/g', 'feat');
-	query = query.replace('/’/g', '');
+	query = replaceAll(query, '&', 'and');
+	query = replaceAll(query, 'with', 'feat');
+	query = replaceAll(query, '’', '');
 	return query;
 }
 
