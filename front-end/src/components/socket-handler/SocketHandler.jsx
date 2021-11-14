@@ -14,7 +14,7 @@ function SocketHandler({
 
 	useEffect(() => {
 		const localStorageData = JSON.parse(localStorage.getItem('user'));
-		setUser(localStorageData);
+		setUser({ ...localStorageData, token, refresh_token });
 
 		socket.emit('joinLobby', {
 			lobby_id: localStorageData.lobby_id,
@@ -28,7 +28,7 @@ function SocketHandler({
 			setMessages(lobbyMessages);
 		});
 
-		socket.on('setLobbyInfo', ({ members, lobbyMessages }) => {
+		socket.on('setLobbyInfo', (members, lobbyMessages) => {
 			setMembers(members);
 			setMessages(lobbyMessages);
 		});

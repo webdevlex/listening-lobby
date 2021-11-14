@@ -3,8 +3,7 @@ const spotifyFunctions = require('./spotifyFunctions');
 const helperFunctions = require('./helperFunctions');
 const appleFunctions = require('./appleFunctions');
 const {
-	setupSpotifyUsersPlaylist,
-	spotifySearch,
+	createTempSpotifyPlaylist,
 	playSong,
 	addSongToPlaylist,
 	addAlbumToPlaylist,
@@ -15,17 +14,15 @@ const {
 	lobbyExists,
 	getMemberUsernames,
 	getLobbyMessages,
-	getUserById,
 	addMessageToLobby,
 	getLobbyById,
 	addSongToLobbyQueue,
 } = lobbyFunctions;
-const { appleSearch } = appleFunctions;
 const {
 	performDesignatedSongSearches,
 	performDesignatedAlbumSearches,
-	formatSearhQueryForApple,
 	formatSearchResults,
+	uniSearch,
 } = helperFunctions;
 
 // Handle when someone creates or joins lobby
@@ -34,24 +31,23 @@ async function handleJoinLobby(io, socket, data) {
 	data.user_id = socket.id;
 	socket.join(lobby_id);
 
+	// Create temp spotify playlist on users account and set playlist id
 	if (music_provider === 'spotify') {
-		const playlistId = await setupSpotifyUsersPlaylist(token);
-		data.playlistId = playlistId;
+		data.playlistId = await createTempSpotifyPlaylist(token);
 	}
 
+	// Check if lobby exists and handle accordingly
 	if (!lobbyExists(lobby_id)) {
 		createNewLobby(data);
-		io.to(lobby_id).emit('setLobbyInfo', {
-			members: [username],
-			lobbyMessages: [],
-		});
+		const members = [username];
+		const messages = [];
+		io.to(lobby_id).emit('setLobbyInfo', members, messages);
 	} else {
 		joinLobby(data);
-		// TODO also send queue to designated player and ui queue
-		io.to(lobby_id).emit('setLobbyInfo', {
-			members: getMemberUsernames(lobby_id),
-			lobbyMessages: getLobbyMessages(lobby_id),
-		});
+		const members = getMemberUsernames(lobby_id);
+		const messages = getLobbyMessages(lobby_id);
+		// TODO send queue and ui queue to designated player
+		io.to(lobby_id).emit('setLobbyInfo', members, messages);
 	}
 }
 
@@ -60,33 +56,19 @@ function handleDisconnect(io, socket) {
 	console.log('----- disconnected -----');
 }
 
-// Handle when someone send a message in their lobby
+// Handle when someone sends a lobby message
 function handleLobbyMessage(io, socket, data) {
-	const { lobby_id, message } = data;
-	const user = getUserById(lobby_id, socket.id);
-	addMessageToLobby(lobby_id, message, user.username);
-	io.to(lobby_id).emit('lobbyMessage', getLobbyMessages(lobby_id));
+	// Add message to lobby and update everyones ui
+	const messages = addMessageToLobby(data);
+	io.to(data.user.lobby_id).emit('lobbyMessage', messages);
 }
 
 // Handle Spotify and apple search request
 async function handleUniSearch(io, socket, data) {
-	const token = data.token;
-	const music_provider = data.user.music_provider;
-	let searchValue = data.searchValue;
-	let searchResults;
-
-	if (music_provider === 'spotify') {
-		searchResults = await spotifySearch(searchValue, token);
-	} else {
-		searchValue = formatSearhQueryForApple(searchValue);
-		searchResults = await appleSearch(searchValue, token);
-	}
-
-	const formattedSearchResults = formatSearchResults(
-		searchResults,
-		music_provider
-	);
-
+	// Perform initial search
+	let searchResults = await uniSearch(data);
+	// Format results for front-end
+	const formattedSearchResults = formatSearchResults(searchResults, data);
 	io.to(socket.id).emit('uniSearchResults', formattedSearchResults);
 }
 
@@ -95,8 +77,11 @@ async function handleAddSongToQueue(io, socket, data) {
 	const { song, user } = data;
 	const lobby_id = user.lobby_id;
 	const { players, users, queue } = getLobbyById(lobby_id);
-	const { spotifySong, appleSong } =
-		await performDesignatedSongSearches(players, user, song);
+	const { spotifySong, appleSong } = await performDesignatedSongSearches(
+		players,
+		user,
+		song
+	);
 
 	addSongToLobbyQueue(lobby_id, song);
 	io.to(lobby_id).emit('updateLobbyQueue', queue);
@@ -119,9 +104,7 @@ async function handleAddAlbumToQueue(io, socket, data) {
 	const { spotifyAlbum, appleAlbum, allTracksDisplay } =
 		await performDesignatedAlbumSearches(players, user, album);
 
-	allTracksDisplay.forEach((track) =>
-		addSongToLobbyQueue(lobby_id, track)
-	);
+	allTracksDisplay.forEach((track) => addSongToLobbyQueue(lobby_id, track));
 	io.to(lobby_id).emit('updateLobbyQueue', queue);
 
 	users.forEach((user) => {

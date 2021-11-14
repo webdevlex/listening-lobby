@@ -39,6 +39,10 @@ function socketsReciever(io) {
 		socket.on('playSong', (data) => {
 			socketHandler.handlePlaySong(io, socket, data);
 		});
+
+		// TODO Handle when a user hits next song
+
+		// TODO Handle when a user likes a song
 	});
 }
 

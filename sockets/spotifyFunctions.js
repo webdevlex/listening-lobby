@@ -135,7 +135,7 @@ async function spotifySearch(searchValue, token) {
 	}
 }
 
-async function setupSpotifyUsersPlaylist(token) {
+async function createTempSpotifyPlaylist(token) {
 	const user = await getUserData(token);
 	const uri = await createPlaylist(token, user.data.id);
 	return uri;
@@ -253,7 +253,7 @@ async function setPlaybackToNewPlaylist(device_id, uri, token) {
 module.exports = {
 	playSong,
 	spotifySearch,
-	setupSpotifyUsersPlaylist,
+	createTempSpotifyPlaylist,
 	addSongToPlaylist,
 	formatSongForSpotify,
 	spotfiySearchAndFormat,

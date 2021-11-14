@@ -129,10 +129,11 @@ function formatMessage(username, message) {
 	};
 }
 
-function addMessageToLobby(lobby_id, message, username) {
-	const lobbyIndex = getLobbyIndex(lobby_id);
-	const formattedMessage = formatMessage(username, message);
+function addMessageToLobby({ user, message }) {
+	const lobbyIndex = getLobbyIndex(user.lobby_id);
+	const formattedMessage = formatMessage(user.username, message);
 	lobbies[lobbyIndex].messages.push(formattedMessage);
+	return lobbies[lobbyIndex].messages;
 }
 
 function addSongToLobbyQueue(lobby_id, song) {

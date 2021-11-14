@@ -5,8 +5,6 @@ import { SocketContext } from '../../context/socketContext';
 function UniSearchForm({ setTracks, setAlbums, user }) {
 	const { register, handleSubmit, setValue } = useForm();
 	const socket = useContext(SocketContext);
-	const params = new URLSearchParams(window.location.search);
-	const token = params.get('token');
 	// const refresh_token = params.get('refresh_token');
 
 	useEffect(() => {
@@ -18,7 +16,7 @@ function UniSearchForm({ setTracks, setAlbums, user }) {
 
 	const onSubmit = ({ search: searchValue }) => {
 		setValue('search', '');
-		socket.emit('uniSearch', { searchValue, token, user });
+		socket.emit('uniSearch', { searchValue, user });
 	};
 
 	return (

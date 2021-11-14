@@ -5,19 +5,21 @@ const {
 	formatSongForApple,
 	formatAlbumForApple,
 	appleAlbumSearchAndFormat,
+	appleSearch,
 } = appleFunctions;
 const {
 	formatSongForSpotify,
 	formatAlbumForSpotify,
 	spotfiySearchAndFormat,
 	spotifyAlbumSearchAndFormat,
+	spotifySearch,
 } = spotifyFunctions;
 
-function formatSearchResults(searchResults, music_provider) {
+function formatSearchResults(searchResults, { user }) {
 	let necessaryTrackInfo = [];
 	let necessaryAlbumInfo = [];
 
-	if (music_provider === 'spotify') {
+	if (user.music_provider === 'spotify') {
 		const albums = searchResults.albums.items;
 		const tracks = searchResults.tracks.items;
 
@@ -49,9 +51,7 @@ function formatSearchResults(searchResults, music_provider) {
 					href: track.href,
 					type: track.type,
 					trackName: formatSearhQueryForApple(track.attributes.name),
-					artists: formatSearhQueryForApple(
-						track.attributes.artistName
-					),
+					artists: formatSearhQueryForApple(track.attributes.artistName),
 					trackCover: track.attributes.artwork.url.replace(
 						'{w}x{h}',
 						'640x640'
@@ -68,9 +68,7 @@ function formatSearchResults(searchResults, music_provider) {
 					href: album.href,
 					type: album.type,
 					albumName: formatSearhQueryForApple(album.attributes.name),
-					artists: formatSearhQueryForApple(
-						album.attributes.artistName
-					),
+					artists: formatSearhQueryForApple(album.attributes.artistName),
 					albumCover: album.attributes.artwork.url.replace(
 						'{w}x{h}',
 						'640x640'
@@ -84,6 +82,16 @@ function formatSearchResults(searchResults, music_provider) {
 	}
 
 	return { tracks: necessaryTrackInfo, albums: necessaryAlbumInfo };
+}
+
+async function uniSearch({ searchValue, user }) {
+	const { music_provider, token } = user;
+	if (music_provider === 'spotify') {
+		return await spotifySearch(searchValue, token);
+	} else {
+		searchValue = formatSearhQueryForApple(searchValue);
+		return await appleSearch(searchValue, token);
+	}
 }
 
 async function performDesignatedSongSearches(players, user, song) {
@@ -126,10 +134,7 @@ async function performDesignatedAlbumSearches(players, user, album) {
 
 	if (applePlayerCount > 0 && spotifyPlayerCount > 0) {
 		if (user.music_provider === 'spotify') {
-			const results = await formatAlbumForSpotify(
-				album,
-				spotifyToken
-			);
+			const results = await formatAlbumForSpotify(album, spotifyToken);
 			spotifyAlbum = results.spotifyAlbum;
 			allTracksDisplay = results.spotifyAlbumDisplay;
 			appleAlbum = await appleAlbumSearchAndFormat(album, appleToken);
@@ -138,10 +143,7 @@ async function performDesignatedAlbumSearches(players, user, album) {
 			appleAlbum = results.appleAlbum;
 			allTracksDisplay = results.appleAlbumDisplay;
 
-			spotifyAlbum = await spotifyAlbumSearchAndFormat(
-				album,
-				spotifyToken
-			);
+			spotifyAlbum = await spotifyAlbumSearchAndFormat(album, spotifyToken);
 		}
 	} else if (spotifyPlayerCount > 0) {
 		const results = await formatAlbumForSpotify(album, spotifyToken);
@@ -175,5 +177,6 @@ module.exports = {
 	performDesignatedSongSearches,
 	performDesignatedAlbumSearches,
 	formatSearhQueryForApple,
+	uniSearch,
 };
 exports = module.exports;

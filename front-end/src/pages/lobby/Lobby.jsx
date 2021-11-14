@@ -26,8 +26,6 @@ function Lobby() {
 
 	return (
 		<div className='lobby'>
-			{/* <h4>Lobby Id</h4>
-			<p>{user.lobby_id}</p> */}
 			<SocketHandler
 				setUser={setUser}
 				setMembers={setMembers}
