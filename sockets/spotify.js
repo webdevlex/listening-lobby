@@ -1,41 +1,35 @@
 const axios = require('axios');
 
-function playSong(token) {
-	axios
-		.put(
-			'https://api.spotify.com/v1/me/player/play',
-			{},
-			{
-				headers: {
-					Accept: 'application/json',
-					'content-type': 'application/json',
-					Authorization: 'Bearer ' + token,
-				},
-			}
-		)
-		.then((response) => {
-			// console.log('Player Started!');
-		})
-		.catch((error) => {
-			// console.log('Player start failed...');
-		});
+async function playSong(token) {
+	const endPoint = 'https://api.spotify.com/v1/me/player/play';
+	const config = {
+		headers: {
+			Accept: 'application/json',
+			'content-type': 'application/json',
+			Authorization: 'Bearer ' + token,
+		},
+	};
+
+	try {
+		await axios.put(endPoint, {}, config);
+	} catch (err) {}
 }
 
-async function spotfiySearchAndFormat(song, spotifyToken) {
+async function searchAndFormat(song, spotifyToken) {
 	const { trackName, artists, uniId } = song;
 	const searchValue = `${trackName} ${artists}`;
-	const searchResult = await spotifySearch(searchValue, spotifyToken);
+	const searchResult = await search(searchValue, spotifyToken);
 	const result = searchResult.tracks.items.find(
 		(song) => song.external_ids.isrc === uniId
 	);
 	return result.id;
 }
 
-function formatSongForSpotify(song) {
+function formatSong(song) {
 	return song.id;
 }
 
-async function formatAlbumForSpotify(album, token) {
+async function formatAlbum(album, token) {
 	const results = await spotifyAlbumSearchById(album, token);
 	let spotifyAlbum = [];
 	let spotifyAlbumDisplay = [];
@@ -53,7 +47,7 @@ async function formatAlbumForSpotify(album, token) {
 	return { spotifyAlbum, spotifyAlbumDisplay };
 }
 
-async function spotifyAlbumSearchAndFormat(album, token) {
+async function albumSearchAndFormat(album, token) {
 	const searchValue = `${album.albumName} ${album.artists}`;
 	const searchLimit = 20;
 	const searchResults = await spotifyAlbumSearchByQuery(
@@ -112,7 +106,7 @@ async function spotifyAlbumSearchByQuery(searchValue, token) {
 	}
 }
 
-async function spotifySearch(searchValue, token) {
+async function search(searchValue, token) {
 	const endPoint = '	https://api.spotify.com/v1/search';
 	const config = {
 		headers: {
@@ -135,7 +129,7 @@ async function spotifySearch(searchValue, token) {
 	}
 }
 
-async function createTempSpotifyPlaylist(token) {
+async function createTempPlaylist(token) {
 	const user = await getUserData(token);
 	const uri = await createPlaylist(token, user.data.id);
 	return uri;
@@ -252,13 +246,13 @@ async function setPlaybackToNewPlaylist(device_id, uri, token) {
 
 module.exports = {
 	playSong,
-	spotifySearch,
-	createTempSpotifyPlaylist,
+	search,
+	createTempPlaylist,
 	addSongToPlaylist,
-	formatSongForSpotify,
-	spotfiySearchAndFormat,
-	formatAlbumForSpotify,
+	formatSong,
+	searchAndFormat,
+	formatAlbum,
 	addAlbumToPlaylist,
-	spotifyAlbumSearchAndFormat,
+	albumSearchAndFormat,
 };
 exports = module.exports;

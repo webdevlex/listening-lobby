@@ -3,8 +3,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const http = require('http');
 const socketio = require('socket.io');
-const socketsReciever = require('./sockets/socketsReciever');
-const { response } = require('express');
+const reciever = require('./sockets/reciever');
 
 const frontEndUrl = '' || 'http://localhost:3000';
 
@@ -20,7 +19,7 @@ const ioCors = {
 	cors: { origin: frontEndUrl, methods: ['GET', 'POST'] },
 };
 const io = socketio(server, ioCors);
-socketsReciever(io);
+reciever(io);
 
 const PORT = process.env.PORT || 8888;
 server.listen(PORT, () => console.log(`Listening on ${PORT}`));
