@@ -63,11 +63,14 @@ async function handleAddSongToQueue(io, socket, data) {
   // Get lobby data
   const lobbyRef = lobby.getLobbyById(data.user.lobby_id);
   // Perform the necessary searches and return an object containing display for ui and data for each player
-  const searchResults = await helpers.uniSongSearch(lobbyRef.players, data);
+  const songDataForPlayers = await helpers.getSongDataForPlayers(
+    lobbyRef.players,
+    data
+  );
 
   // Send ui and players the data
   sendSongToUi(io, data, lobbyRef);
-  sendSongToPlayers(io, lobbyRef, searchResults);
+  sendSongToPlayers(io, lobbyRef, songDataForPlayers);
 }
 
 // Display song on members ui

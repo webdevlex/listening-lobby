@@ -9,6 +9,32 @@ function formatMessage(username, message) {
   };
 }
 
+// Format apple search queries to allow cross platform queue adds
+function appleFormatSearchQuery(query) {
+  query = replaceAll(query, "&", "and");
+  query = replaceAll(query, "with", "feat");
+  query = replaceAll(query, "’", "");
+  return query;
+}
+
+// Replace substring in string
+// params: entire string, item to replace, replacement
+function replaceAll(target, search, replacement) {
+  return target.replace(new RegExp(search, "g"), replacement);
+}
+
+async function uniSearch({ searchValue, user }) {
+  const token = user.token;
+  // If the user is using spotify player perform spotify search
+  if (user.music_provider === "spotify") {
+    return await spotify.search(searchValue, token);
+    // If the user is using apple player perform spotify search
+  } else {
+    searchValue = appleFormatSearchQuery(searchValue);
+    return await apple.search(searchValue, token);
+  }
+}
+
 function formatSearchResults(searchResults, { user }) {
   let necessaryTrackInfo = [];
   let necessaryAlbumInfo = [];
@@ -78,41 +104,46 @@ function formatSearchResults(searchResults, { user }) {
   return { tracks: necessaryTrackInfo, albums: necessaryAlbumInfo };
 }
 
-async function uniSearch({ searchValue, user }) {
-  const { music_provider, token } = user;
-  if (music_provider === "spotify") {
-    return await spotify.search(searchValue, token);
-  } else {
-    searchValue = appleFormatSearchQuery(searchValue);
-    return await apple.search(searchValue, token);
-  }
-}
-
-async function uniSongSearch(players, { song, user }) {
+// Retrieves necessary data for the active players in lobby
+async function getSongDataForPlayers(players, { songData, user }) {
+  // Players in lobby
   const applePlayerCount = players.apple.count;
   const spotifyPlayerCount = players.spotify.count;
 
+  // Tokens that will be used if a search is required
   const appleToken = players.apple.token;
   const spotifyToken = players.spotify.token;
 
-  let spotifySong;
-  let appleSong;
+  // The data that will be returned to the player the players
+  let dataForSpotifyPlayer;
+  let dataForApplePlayer;
 
+  // If both spotify and apple players are being used
   if (applePlayerCount > 0 && spotifyPlayerCount > 0) {
+    // If the user that made the request is using spotify
     if (user.music_provider === "spotify") {
-      spotifySong = spotify.formatSong(song);
-      appleSong = await apple.songSearchAndFormat(song, appleToken);
+      dataForSpotifyPlayer = spotify.formatSongData(songData);
+      dataForApplePlayer = await apple.getAndFormatSongData(
+        songData,
+        appleToken
+      );
+      // If the user that made the request is using apple
     } else {
-      spotifySong = await spotify.searchAndFormat(song, spotifyToken);
-      appleSong = apple.formatSong(song);
+      dataForSpotifyPlayer = await spotify.getAndFormatSongData(
+        songData,
+        spotifyToken
+      );
+      dataForApplePlayer = apple.formatSongData(songData);
     }
+    // If only spotify players are being used
   } else if (spotifyPlayerCount > 0) {
-    spotifySong = spotify.formatSong(song);
+    dataForSpotifyPlayer = spotify.formatSongData(songData);
+    // If only apple players are being used
   } else {
-    appleSong = apple.formatSong(song);
+    dataForApplePlayer = apple.formatSongData(songData);
   }
 
-  return { spotifySong, appleSong };
+  return { dataForSpotifyPlayer, dataForApplePlayer };
 }
 
 async function uniAlbumSearch(players, { album, user }) {
@@ -156,22 +187,10 @@ async function uniAlbumSearch(players, { album, user }) {
   };
 }
 
-function appleFormatSearchQuery(query) {
-  query = replaceAll(query, "&", "and");
-  query = replaceAll(query, "with", "feat");
-  query = replaceAll(query, "’", "");
-  return query;
-}
-
-function replaceAll(target, search, replacement) {
-  return target.replace(new RegExp(search, "g"), replacement);
-}
-
 module.exports = {
   formatSearchResults,
-  uniSongSearch,
+  getSongDataForPlayers,
   uniAlbumSearch,
   formatMessage,
   uniSearch,
 };
-exports = module.exports;
