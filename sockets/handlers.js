@@ -41,7 +41,7 @@ function handleDisconnect(io, socket) {
 function handleLobbyMessage(io, socket, data) {
 	// Add message to lobby
 	const messages = lobby.addMessageToLobby(data);
-	// Send all messages to members
+	// Send all messages to members in lobby
 	io.to(data.user.lobby_id).emit('lobbyMessage', messages);
 }
 
@@ -61,10 +61,10 @@ async function handleUniSearch(io, socket, data) {
 async function handleAddSongToQueue(io, socket, data) {
 	// Get lobby data
 	const lobbyRef = lobby.getLobbyById(data.user.lobby_id);
-	// Perform the necessary searches and return results for each designated player
+	// Perform the necessary searches and return an object containing display for ui and data for each player
 	const searchResults = await helpers.uniSongSearch(lobbyRef.players, data);
 
-	// Send ui and players the results
+	// Send ui and players the data
 	sendSongToUi(io, data, lobbyRef);
 	sendSongToPlayers(io, lobbyRef, searchResults);
 }
@@ -91,10 +91,10 @@ function sendSongToPlayers(io, lobbyRef, { spotifySong, appleSong }) {
 async function handleAddAlbumToQueue(io, socket, data) {
 	// Get lobby data
 	const lobbyRef = lobby.getLobbyById(data.user.lobby_id);
-	// Perform the necessary searches and return results for ui and each designated player
+	// Perform the necessary searches and return an object containing display for ui and song data for each player
 	const searchResults = await helpers.uniAlbumSearch(lobbyRef.players, data);
 
-	// Send ui and players the results
+	// Send ui and players the data
 	sendAlbumToUi(io, searchResults, lobbyRef);
 	sendAlbumToPlayers(io, lobbyRef, searchResults);
 }
