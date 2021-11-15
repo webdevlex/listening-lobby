@@ -8,21 +8,25 @@ async function handleJoinLobby(io, socket, data) {
 	data.user_id = socket.id;
 	socket.join(lobby_id);
 
-	// Create temp spotify playlist on users account and set playlist id
+	// Set playlist id to new temp spotify playlist created on users account
 	if (music_provider === 'spotify') {
 		data.playlistId = await spotify.createTempPlaylist(token);
 	}
 
 	// Check if lobby exists and handle accordingly
 	if (!lobby.lobbyExists(lobby_id)) {
+		// Create and join lobby
 		lobby.createNewLobby(data);
 		const members = [username];
 		const messages = [];
+		// Send new lobby data back to members
 		io.to(lobby_id).emit('setLobbyInfo', members, messages);
 	} else {
+		// Join existing lobby
 		lobby.joinLobby(data);
 		const members = lobby.getMemberUsernames(lobby_id);
 		const messages = lobby.getLobbyMessages(lobby_id);
+		// Send new lobby data back to members
 		// TODO send queue and ui queue to designated player
 		io.to(lobby_id).emit('setLobbyInfo', members, messages);
 	}
@@ -35,61 +39,78 @@ function handleDisconnect(io, socket) {
 
 // ----- Handle when someone sends a lobby message -----
 function handleLobbyMessage(io, socket, data) {
-	// Add message to lobby and update every members ui
+	// Add message to lobby
 	const messages = lobby.addMessageToLobby(data);
+	// Send all messages to members
 	io.to(data.user.lobby_id).emit('lobbyMessage', messages);
 }
 
 // ----- Handle Spotify and apple search request -----
 async function handleUniSearch(io, socket, data) {
-	// Perform initial search for designated music provider
+	// Perform search on users music provider
 	let searchResults = await helpers.uniSearch(data);
 
 	// Format search results for front-end
-	const formattedSearchResults = helpers.formatSearchResults(
-		searchResults,
-		data
-	);
+	const formattedResults = helpers.formatSearchResults(searchResults, data);
 
 	// Send results back to user who performed search
-	io.to(socket.id).emit('uniSearchResults', formattedSearchResults);
+	io.to(socket.id).emit('uniSearchResults', formattedResults);
 }
 
 // ----- Handle adding song to queue -----
 async function handleAddSongToQueue(io, socket, data) {
-	const { song, user } = data;
-	const lobby_id = user.lobby_id;
-	const { players, users, queue } = lobby.getLobbyById(lobby_id);
-	const { spotifySong, appleSong } =
-		await helpers.performDesignatedSongSearches(players, user, song);
+	// Get lobby data
+	const lobbyRef = lobby.getLobbyById(data.user.lobby_id);
+	// Perform the necessary searches and return results for each designated player
+	const searchResults = await helpers.uniSongSearch(lobbyRef.players, data);
 
-	lobby.addSongToLobbyQueue(lobby_id, song);
+	// Send ui and players the results
+	sendSongToUi(io, data, lobbyRef);
+	sendSongToPlayers(io, lobbyRef, searchResults);
+}
+
+// Display song on members ui
+function sendSongToUi(io, data, { lobby_id, queue }) {
+	lobby.addSongToLobby(lobby_id, data.song);
 	io.to(lobby_id).emit('updateLobbyQueue', queue);
+}
 
-	users.forEach((user) => {
-		if (user.music_provider === 'spotify') {
-			spotify.addSongToPlaylist(spotifySong, user);
+// Add song to members players
+function sendSongToPlayers(io, lobbyRef, { spotifySong, appleSong }) {
+	// for each member add song to their playlist
+	lobbyRef.users.forEach((member) => {
+		if (member.music_provider === 'spotify') {
+			spotify.addSongToPlaylist(spotifySong, member);
 		} else {
-			io.to(user.user_id).emit('updateAppleQueue', appleSong);
+			io.to(member.user_id).emit('updateAppleQueue', appleSong);
 		}
 	});
 }
 
 // ----- Handle adding album to queue -----
 async function handleAddAlbumToQueue(io, socket, data) {
-	const { album, user } = data;
-	const lobby_id = user.lobby_id;
-	const { players, users, queue } = lobby.getLobbyById(lobby_id);
+	// Get lobby data
+	const lobbyRef = lobby.getLobbyById(data.user.lobby_id);
+	// Perform the necessary searches and return results for ui and each designated player
+	const searchResults = await helpers.uniAlbumSearch(lobbyRef.players, data);
 
-	const { spotifyAlbum, appleAlbum, allTracksDisplay } =
-		await helpers.performDesignatedAlbumSearches(players, user, album);
+	// Send ui and players the results
+	sendAlbumToUi(io, searchResults, lobbyRef);
+	sendAlbumToPlayers(io, lobbyRef, searchResults);
+}
 
-	allTracksDisplay.forEach((track) =>
-		lobby.addSongToLobbyQueue(lobby_id, track)
+// Display each song in album on members ui
+function sendAlbumToUi(io, searchResults, { lobby_id, queue }) {
+	searchResults.allTracksDisplay.forEach((track) =>
+		lobby.addSongToLobby(lobby_id, track)
 	);
 	io.to(lobby_id).emit('updateLobbyQueue', queue);
+}
 
-	users.forEach((user) => {
+// Add songs in album to members players
+function sendAlbumToPlayers(io, lobbyRef, { spotifyAlbum, appleAlbum }) {
+	// For all members in lobby add album songs to their playlist
+	lobbyRef.users.forEach((user) => {
 		if (user.music_provider === 'spotify') {
 			spotify.addAlbumToPlaylist(spotifyAlbum, user);
 		} else {
@@ -100,8 +121,15 @@ async function handleAddAlbumToQueue(io, socket, data) {
 
 // ----- Handle when someone clicks play -----
 function handlePlaySong(io, socket, data) {
-	const lobby_id = data.lobby_id;
-	const members = lobby.getLobbyById(lobby_id).users;
+	// Get all members in lobby
+	const members = lobby.getLobbyById(data.lobby_id).users;
+	// Begin playing song for all members
+	startSongForMembers(io, members);
+}
+
+// Begin playing the song for all members
+function startSongForMembers(io, members) {
+	// For each member play song on their player
 	members.forEach(async ({ music_provider, token, user_id }) => {
 		if (music_provider === 'spotify') {
 			await spotify.playSong(token);

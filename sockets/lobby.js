@@ -136,7 +136,7 @@ function addMessageToLobby({ user, message }) {
 	return lobbies[lobbyIndex].messages;
 }
 
-function addSongToLobbyQueue(lobby_id, song) {
+function addSongToLobby(lobby_id, song) {
 	const lobbyIndex = getLobbyIndex(lobby_id);
 	lobbies[lobbyIndex].queue.push(song);
 }
@@ -150,6 +150,6 @@ module.exports = {
 	getMemberUsernames,
 	addMessageToLobby,
 	getLobbyMessages,
-	addSongToLobbyQueue,
+	addSongToLobby,
 };
 exports = module.exports;

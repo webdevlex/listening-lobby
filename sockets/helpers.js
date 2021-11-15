@@ -80,7 +80,7 @@ async function uniSearch({ searchValue, user }) {
 	}
 }
 
-async function performDesignatedSongSearches(players, user, song) {
+async function uniSongSearch(players, { song, user }) {
 	const applePlayerCount = players.apple.count;
 	const spotifyPlayerCount = players.spotify.count;
 
@@ -107,7 +107,7 @@ async function performDesignatedSongSearches(players, user, song) {
 	return { spotifySong, appleSong };
 }
 
-async function performDesignatedAlbumSearches(players, user, album) {
+async function uniAlbumSearch(players, { album, user }) {
 	const applePlayerCount = players.apple.count;
 	const spotifyPlayerCount = players.spotify.count;
 
@@ -161,8 +161,8 @@ function replaceAll(target, search, replacement) {
 
 module.exports = {
 	formatSearchResults,
-	performDesignatedSongSearches,
-	performDesignatedAlbumSearches,
+	uniSongSearch,
+	uniAlbumSearch,
 	uniSearch,
 };
 exports = module.exports;
