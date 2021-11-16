@@ -39,6 +39,7 @@ function handleDisconnect(io, socket) {
 
 // ---------- Handle when someone sends a lobby message ----------
 function handleLobbyMessage(io, socket, { user, message }) {
+	// Format message for front end
 	const formattedMessage = helpers.formatMessage(user.username, message);
 	// Add message to lobby
 	const messages = lobby.addMessageToLobby(formattedMessage, data);
@@ -50,10 +51,8 @@ function handleLobbyMessage(io, socket, { user, message }) {
 async function handleUniSearch(io, socket, data) {
 	// Perform search on users music provider
 	let searchResults = await helpers.uniSearch(data);
-
 	// Format search results for front-end
 	const formattedResults = helpers.formatUniSearchResults(searchResults, data);
-
 	// Send results back to user who performed search
 	io.to(socket.id).emit('uniSearchResults', formattedResults);
 }
@@ -101,7 +100,6 @@ async function handleAddAlbumToQueue(io, socket, data) {
 	const lobbyRef = lobby.getLobbyById(data.user.lobby_id);
 	// Perform the necessary searches and return an object containing display for ui and song data for each player
 	const albumData = await helpers.uniAlbumSearch(lobbyRef.players, data);
-
 	// Send ui and players the data
 	sendAlbumToUi(io, albumData, lobbyRef);
 	sendAlbumToPlayers(io, lobbyRef, albumData);
