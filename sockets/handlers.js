@@ -8,7 +8,7 @@ async function handleJoinLobby(io, socket, data) {
 	data.user_id = socket.id;
 	socket.join(lobby_id);
 
-	// Set playlist id to new temp spotify playlist created on users account
+	// Set playlist id to new spotify playlist created on users account
 	if (music_provider === 'spotify') {
 		data.playlistId = await spotify.createTempPlaylist(token);
 	}
@@ -32,9 +32,32 @@ async function handleJoinLobby(io, socket, data) {
 	}
 }
 
-// ---------- TODO: make sure used players gets updated on leave ----------
-function handleDisconnect(io, socket) {
-	console.log('----- disconnected -----');
+// ---------- Handle when someone leaves the lobby ----------
+async function handleDisconnect(io, socket) {
+	console.log('----- disconnection -----');
+	// Get lobby data
+	const lobbyRef = lobby.getLobbyByUserId(socket.id);
+	// Get user that left data
+	const user = lobbyRef.users.find((user) => user.user_id === socket.id);
+
+	// If the member who left was using spotify delete the temp playlist they were using from their account
+	if (user.music_provider === 'spotify') {
+		await spotify.deletePlaylist(user.token, user.playlistId);
+	}
+
+	// Remove the member who left from the lobby
+	const i = lobby.leaveLobby(lobbyRef, socket.id);
+
+	// If there is no more users left in the lobby delete the entire lobby
+	if (lobbyRef.users.length === 0) {
+		lobby.deleteLobbyByIndex(i);
+	}
+	// If there is still users in the lobby just remove the person who left and update everyones ui
+	else {
+		const members = lobby.getMemberUsernames(lobbyRef.lobby_id);
+		const messages = lobby.getLobbyMessages(lobbyRef.lobby_id);
+		io.to(lobbyRef.lobby_id).emit('setLobbyInfo', members, messages);
+	}
 }
 
 // ---------- Handle when someone sends a lobby message ----------
@@ -42,9 +65,9 @@ function handleLobbyMessage(io, socket, { user, message }) {
 	// Format message for front end
 	const formattedMessage = helpers.formatMessage(user.username, message);
 	// Add message to lobby
-	const messages = lobby.addMessageToLobby(formattedMessage, data);
+	const messages = lobby.addMessageToLobby(formattedMessage, user.lobby_id);
 	// Send all messages to members in lobby
-	io.to(data.user.lobby_id).emit('lobbyMessage', messages);
+	io.to(user.lobby_id).emit('lobbyMessage', messages);
 }
 
 // ---------- Handle Spotify and apple search request ----------

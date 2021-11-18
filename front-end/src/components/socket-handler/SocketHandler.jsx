@@ -1,16 +1,11 @@
 import React, { useContext, useEffect } from 'react';
-import { SocketContext } from '../../context/socketContext';
+import { SocketContext } from '../../context/SocketContext';
 
-function SocketHandler({
-	setUser,
-	setMembers,
-	setMessages,
-	setQueue,
-}) {
+function SocketHandler({ setUser, setMembers, setMessages, setQueue }) {
 	const params = new URLSearchParams(window.location.search);
 	const token = params.get('token');
 	const refresh_token = params.get('refresh_token');
-	const socket = useContext(SocketContext);
+	const [socket] = useContext(SocketContext);
 
 	useEffect(() => {
 		const localStorageData = JSON.parse(localStorage.getItem('user'));

@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
-import { SocketContext } from '../../context/socketContext';
+import { SocketContext } from '../../context/SocketContext';
 import './track-display.scss';
 
 export default function TrackDisplay({ tracks, user }) {
-	const socket = useContext(SocketContext);
+	const [socket] = useContext(SocketContext);
 
 	function handleSongClick(songData) {
 		socket.emit('addSongToQueue', { songData, user });

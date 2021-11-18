@@ -11,8 +11,8 @@ function socketsReciever(io) {
 		});
 
 		// TODO: make sure used players gets updated on leave
-		socket.on('disconnect', () => {
-			handlers.handleDisconnect(io, socket);
+		socket.on('disconnect', async () => {
+			await handlers.handleDisconnect(io, socket);
 		});
 
 		// Handle when a user sends a message in their lobby

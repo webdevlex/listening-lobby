@@ -1,10 +1,10 @@
 import React, { useEffect, useContext } from 'react';
 import { useForm } from 'react-hook-form';
-import { SocketContext } from '../../context/socketContext';
+import { SocketContext } from '../../context/SocketContext';
 
 function UniSearchForm({ setTracks, setAlbums, user }) {
 	const { register, handleSubmit, setValue } = useForm();
-	const socket = useContext(SocketContext);
+	const [socket] = useContext(SocketContext);
 	// const refresh_token = params.get('refresh_token');
 
 	useEffect(() => {

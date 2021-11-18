@@ -1,10 +1,10 @@
-import React, { useEffect, useContext, useState } from 'react';
-import { SocketContext } from '../../context/socketContext';
+import React, { useEffect, useContext } from 'react';
+import { SocketContext } from '../../context/SocketContext';
 import { AppleMusicContext } from '../../context/AppleMusicContext';
 import './apple-player.scss';
 
 function ApplePlayer({ lobby_id }) {
-	const socket = useContext(SocketContext);
+	const [socket] = useContext(SocketContext);
 	const [musicKit] = useContext(AppleMusicContext);
 	useEffect(() => {
 		console.log(musicKit);

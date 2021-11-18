@@ -59,12 +59,27 @@ function lobbyExists(lobby_id) {
 	return getLobbyById(lobby_id);
 }
 
+function deleteLobbyByIndex(i) {
+	lobbies.splice(i, 1);
+	console.log(lobbies);
+}
+
 // join new user into lobby
 function joinLobby(data) {
 	const newUser = generateUser(data, 'guest');
 	const i = getLobbyIndex(data.lobby_id);
 	addDesignatedPlayer(i, data);
 	lobbies[i].users.push(newUser);
+}
+
+// remove user from lobby when they disconnect
+function leaveLobby(lobby, userId) {
+	const j = lobby.users.findIndex((user) => user.user_id === userId);
+	const i = getLobbyIndex(lobby.lobby_id);
+	const user = lobbies[i].users[j];
+	removeDesignatedPlayer(i, user);
+	lobbies[i].users.splice(j, 1);
+	return i;
 }
 
 // Get index of passed lobby within lobbies array
@@ -76,6 +91,15 @@ function getLobbyIndex(lobby_id) {
 function getLobbyById(lobby_id) {
 	const lobby = lobbies.find((lobby) => lobby.lobby_id == lobby_id);
 	return lobby;
+}
+
+// Get lobby id by iterating through every lobby and every user, time: O(n), n = # of ALL users
+function getLobbyByUserId(id) {
+	return lobbies.find((lobby) => containsUserMatch(lobby.users, id));
+}
+
+function containsUserMatch(users, id) {
+	return users.some((user) => user.user_id === id);
 }
 
 // Find the users data by first finding the lobby by id then the user by id
@@ -94,8 +118,8 @@ function getLobbyMessages(lobby_id) {
 }
 
 // Adds a message to the lobby by first finding the lobbies index then inserting the new message to the lobby
-function addMessageToLobby(message, { user }) {
-	const i = getLobbyIndex(user.lobby_id);
+function addMessageToLobby(message, lobbyId) {
+	const i = getLobbyIndex(lobbyId);
 	lobbies[i].messages.push(message);
 	return lobbies[i].messages;
 }
@@ -106,7 +130,7 @@ function addSongToLobby(lobby_id, songData) {
 	lobbies[i].queue.push(songData);
 }
 
-// Adds designed player to the lobby
+// Adds designated player to the lobby
 function addDesignatedPlayer(lobbyIndex, { music_provider, token }) {
 	// Get info on players in lobby
 	const { spotify, apple } = lobbies[lobbyIndex].players;
@@ -133,6 +157,35 @@ function addDesignatedPlayer(lobbyIndex, { music_provider, token }) {
 	}
 }
 
+// Remove designated player from the lobby
+function removeDesignatedPlayer(lobbyIndex, { music_provider }) {
+	// Get info on players in lobby
+	const { spotify, apple } = lobbies[lobbyIndex].players;
+
+	// If the member who left was using spotify and there is still other members
+	// using spotify just reduce count and keep token for searches
+	if (music_provider === 'spotify' && spotify.count > 1) {
+		lobbies[lobbyIndex].players.spotify.count -= 1;
+	}
+	// If the member who left was the last member using spotify
+	// reduce count and remove token
+	else if (music_provider === 'spotify') {
+		lobbies[lobbyIndex].players.spotify.count -= 1;
+		lobbies[lobbyIndex].players.spotify.token = '';
+	}
+	// If the member who left was using apple and there is still other members
+	// using apple just reduce count and keep token for searches
+	else if (apple.count > 1) {
+		lobbies[lobbyIndex].players.apple.count -= 1;
+	}
+	// If the member who left was the last member using apple
+	// reduce count and remove token
+	else {
+		lobbies[lobbyIndex].players.apple.count -= 1;
+		lobbies[lobbyIndex].players.apple.token = '';
+	}
+}
+
 module.exports = {
 	generateLobby,
 	lobbyExists,
@@ -143,4 +196,7 @@ module.exports = {
 	addMessageToLobby,
 	getLobbyMessages,
 	addSongToLobby,
+	getLobbyByUserId,
+	leaveLobby,
+	deleteLobbyByIndex,
 };

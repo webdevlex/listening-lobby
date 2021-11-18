@@ -1,13 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import DesignatedPlayer from '../../components/designated-player/DesignatedPlayer';
 import LobbyMembers from '../../components/lobby-members/LobbyMembers';
 import LobbyMessages from '../../components/lobby-messages/LobbyMessages';
 import LobbySettings from '../../components/lobby-settings/LobbySettings';
 import LobbyCenter from '../../components/lobby-center/LobbyCenter';
 import SocketHandler from '../../components/socket-handler/SocketHandler';
+import socketio from 'socket.io-client';
+import { SocketContext } from '../../context/SocketContext';
+
 import './lobby.scss';
 
 function Lobby() {
+	// Test
+	const [socket, setSocket] = useContext(SocketContext);
+	useEffect(() => {
+		const url = '' || 'http://localhost:8888';
+		setSocket(socketio.connect(url));
+	}, []);
+
 	// Local storage data
 	const { username, music_provider, lobby_id } = JSON.parse(
 		localStorage.getItem('user')
@@ -24,7 +34,7 @@ function Lobby() {
 	});
 	const [centerDisplay, setCenterDisplay] = useState('player');
 
-	return (
+	return socket ? (
 		<div className='lobby'>
 			<SocketHandler
 				setUser={setUser}
@@ -46,11 +56,7 @@ function Lobby() {
 				<LobbyMessages messages={messages} user={user} />
 			</div>
 			<div className='center-grid'>
-				<LobbyCenter
-					centerDisplay={centerDisplay}
-					queue={queue}
-					user={user}
-				/>
+				<LobbyCenter centerDisplay={centerDisplay} queue={queue} user={user} />
 			</div>
 			<div className='player-grid'>
 				<DesignatedPlayer
@@ -59,7 +65,7 @@ function Lobby() {
 				/>
 			</div>
 		</div>
-	);
+	) : null;
 }
 
 export default Lobby;

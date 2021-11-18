@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
-import { SocketContext } from '../../context/socketContext';
+import { SocketContext } from '../../context/SocketContext';
 import { useForm } from 'react-hook-form';
 
 function MessagesForm({ user }) {
-	const socket = useContext(SocketContext);
+	const [socket] = useContext(SocketContext);
 	const { register, handleSubmit, setValue } = useForm();
 
 	const onSubmit = ({ message }) => {

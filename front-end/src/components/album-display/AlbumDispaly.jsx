@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
-import { SocketContext } from '../../context/socketContext';
+import { SocketContext } from '../../context/SocketContext';
 import './album-display.scss';
 
 export default function AlbumDispaly({ albums, user }) {
-	const socket = useContext(SocketContext);
+	const [socket] = useContext(SocketContext);
 
 	function handleSongClick(album) {
 		socket.emit('addAlbumToQueue', { album, user });

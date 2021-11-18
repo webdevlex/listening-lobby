@@ -188,6 +188,17 @@ async function createPlaylist(token, id) {
 	}
 }
 
+// Creates a temp playlist on users account and returns the playlist uri
+async function deletePlaylist(token, id) {
+	const endPoint = `https://api.spotify.com/v1/playlists/${id}/followers`;
+
+	try {
+		await axios.delete(endPoint, defaultHeader(token));
+	} catch (err) {
+		// TODO
+	}
+}
+
 // Adds a song by id to the users temp playlist
 async function addSongToPlaylist(songId, user) {
 	const { token, playlistId } = user;
@@ -257,4 +268,5 @@ module.exports = {
 	formatAlbum,
 	addAlbumToPlaylist,
 	albumSearchAndFormat,
+	deletePlaylist,
 };

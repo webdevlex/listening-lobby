@@ -1,9 +1,9 @@
 import React, { useEffect, useContext } from 'react';
 import { setupSpotifyPlayer } from './spotifyPlayerSetup';
-import { SocketContext } from '../../context/socketContext';
+import { SocketContext } from '../../context/SocketContext';
 
 function SpotifyPlayer({ lobby_id }) {
-	const socket = useContext(SocketContext);
+	const [socket] = useContext(SocketContext);
 
 	useEffect(() => {
 		setupSpotifyPlayer();
