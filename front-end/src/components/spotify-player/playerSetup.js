@@ -25,6 +25,17 @@ export function setupPlayer(socket, setSpotifyPlayer, lobby_id) {
 			setupSocketRecievers(socket, player, lobby_id);
 		});
 
+		player.addListener('player_state_changed', (state) => {
+			if (
+				state.paused &&
+				state.position === 0 &&
+				state.restrictions.disallow_resuming_reasons &&
+				state.restrictions.disallow_resuming_reasons[0] === 'not_paused'
+			) {
+				console.log('song ended');
+			}
+		});
+
 		player.connect();
 	};
 }

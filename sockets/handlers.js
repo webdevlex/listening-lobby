@@ -196,7 +196,7 @@ module.exports = {
 	handleUniSearch,
 	handleAddSongToQueue,
 	handleAddAlbumToQueue,
-	handleSkip,
+	// handleSkip,
 	handleSetDeviceId,
 	handlePlayerData,
 	handleTogglePlay,

@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const config = require('config');
-const request = require('request');
 
 const stateKey = 'spotify_auth_state';
 const client_id = config.get('client_id');
