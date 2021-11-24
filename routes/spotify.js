@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const config = require('config');
+const request = require('request');
 
 const stateKey = 'spotify_auth_state';
 const client_id = config.get('client_id');
@@ -17,9 +18,7 @@ var generateRandomString = function (length) {
 		'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
 	for (var i = 0; i < length; i++) {
-		text += possible.charAt(
-			Math.floor(Math.random() * possible.length)
-		);
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
 	}
 	return text;
 };
@@ -62,9 +61,7 @@ router.get('/callback', async function (req, res) {
 				'content-type': 'application/x-www-form-urlencoded',
 				Authorization:
 					'Basic ' +
-					Buffer.from(client_id + ':' + client_secret).toString(
-						'base64'
-					),
+					Buffer.from(client_id + ':' + client_secret).toString('base64'),
 			},
 		};
 
@@ -112,5 +109,30 @@ router.get('/callback', async function (req, res) {
 // 		}
 // 	});
 // });
+
+router.get('/temp_token', async function (req, res) {
+	const endPoint = 'https://accounts.spotify.com/api/token';
+
+	const body = new URLSearchParams({
+		grant_type: 'client_credentials',
+	});
+
+	const config = {
+		headers: {
+			'content-type': 'application/x-www-form-urlencoded',
+			Authorization:
+				'Basic ' +
+				Buffer.from(client_id + ':' + client_secret).toString('base64'),
+		},
+	};
+
+	try {
+		const response = await axios.post(endPoint, body, config);
+		const token = response.data.access_token;
+		res.send(token);
+	} catch (err) {
+		console.log(err);
+	}
+});
 
 module.exports = router;

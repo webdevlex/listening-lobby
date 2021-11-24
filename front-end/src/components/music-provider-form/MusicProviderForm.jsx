@@ -12,9 +12,7 @@ function MusicProviderForm({ handleSubmit, register, errors }) {
 			'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
 		for (var i = 0; i < length; i++) {
-			text += possible.charAt(
-				Math.floor(Math.random() * possible.length)
-			);
+			text += possible.charAt(Math.floor(Math.random() * possible.length));
 		}
 		return text;
 	};
@@ -38,6 +36,7 @@ function MusicProviderForm({ handleSubmit, register, errors }) {
 	}
 
 	function redirectToApple() {
+		console.log('displaying');
 		setDisplayAppleLogin(true);
 	}
 
@@ -48,9 +47,7 @@ function MusicProviderForm({ handleSubmit, register, errors }) {
 	return (
 		<>
 			{displayAppleLogin ? <AppleLogin /> : null}
-			<form
-				className='music-provider-form'
-				onSubmit={handleSubmit(onSubmit)}>
+			<form className='music-provider-form' onSubmit={handleSubmit(onSubmit)}>
 				<div className='inputs'>
 					{/* Hidden input for music provider, value set by MusicProviderButtons component via the setValue function */}
 					<input

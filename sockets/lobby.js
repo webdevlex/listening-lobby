@@ -2,13 +2,13 @@
 let lobbies = [];
 
 // Generates a new lobby and admin
-function generateLobby(data) {
+function generateLobby(data, tempToken) {
 	const newLobby = {
 		lobby_id: data.lobby_id,
 		users: [generateUser(data, 'admin')],
 		queue: [],
 		messages: [],
-		players: generatePlayersTracker(data),
+		tokens: generateTokens(data, tempToken),
 	};
 
 	lobbies.push(newLobby);
@@ -23,34 +23,25 @@ function generateUser(data, privilege) {
 		refresh_token: data.refresh_token,
 		music_provider: data.music_provider,
 		user_id: data.user_id,
-		playlistId: data.playlistId,
 	};
 }
 
+function getMostRecentlyJoined({ lobby_id, memberId }) {
+	const lobby = getLobbyById(lobby_id);
+	const i = lobby.users.findIndex((user) => user.user_id === memberId);
+	return lobby.users[i];
+}
+
 // Creates object that keeps track of players in the lobby
-function generatePlayersTracker({ music_provider, token }) {
-	// Create players object with one spotify player
+function generateTokens({ music_provider, token }, tempToken) {
 	return music_provider === 'spotify'
 		? {
-				spotify: {
-					token: token,
-					count: 1,
-				},
-				apple: {
-					token: '',
-					count: 0,
-				},
+				spotify: token,
+				apple: tempToken,
 		  }
-		: // Create players object with one apple player
-		  {
-				spotify: {
-					token: '',
-					count: 0,
-				},
-				apple: {
-					token: token,
-					count: 1,
-				},
+		: {
+				spotify: tempToken,
+				apple: token,
 		  };
 }
 
@@ -61,14 +52,12 @@ function lobbyExists(lobby_id) {
 
 function deleteLobbyByIndex(i) {
 	lobbies.splice(i, 1);
-	console.log(lobbies);
 }
 
 // join new user into lobby
 function joinLobby(data) {
 	const newUser = generateUser(data, 'guest');
 	const i = getLobbyIndex(data.lobby_id);
-	addDesignatedPlayer(i, data);
 	lobbies[i].users.push(newUser);
 }
 
@@ -76,10 +65,19 @@ function joinLobby(data) {
 function leaveLobby(lobby, userId) {
 	const j = lobby.users.findIndex((user) => user.user_id === userId);
 	const i = getLobbyIndex(lobby.lobby_id);
-	const user = lobbies[i].users[j];
-	removeDesignatedPlayer(i, user);
 	lobbies[i].users.splice(j, 1);
 	return i;
+}
+
+// Get index of member in lobby
+function getMemberIndex(members, memberId) {
+	return members.findIndex((member) => member.user_id == memberId);
+}
+
+function getAdminData({ lobby_id }) {
+	return getLobbyById(lobby_id).users.find(
+		(user) => user.privilege === 'admin'
+	);
 }
 
 // Get index of passed lobby within lobbies array
@@ -117,6 +115,32 @@ function getLobbyMessages(lobby_id) {
 	return getLobbyById(lobby_id).messages;
 }
 
+// Sets players status to true
+function setStatusToPlaying(lobbyId) {
+	const i = getLobbyIndex(lobbyId);
+	lobbies[i].players.playing = true;
+}
+
+// Sets players status to false
+function setStatusToPaused(lobbyId) {
+	const i = getLobbyIndex(lobbyId);
+	lobbies[i].players.playing = false;
+}
+
+function setDeviceId(memberId, { lobby_id, device_id }) {
+	const i = getLobbyIndex(lobby_id);
+	const lobby = lobbies[i];
+	const j = getMemberIndex(lobby.users, memberId);
+	lobbies[i].users[j].deviceId = device_id;
+}
+
+// function setOnPlaylistToTrue(lobbyId, memberId) {
+// 	const i = getLobbyIndex(lobbyId);
+// 	const lobby = lobbies[i];
+// 	const j = getMemberIndex(lobby.users, memberId);
+// 	lobbies[i].users[j].onPlaylist = true;
+// }
+
 // Adds a message to the lobby by first finding the lobbies index then inserting the new message to the lobby
 function addMessageToLobby(message, lobbyId) {
 	const i = getLobbyIndex(lobbyId);
@@ -125,65 +149,17 @@ function addMessageToLobby(message, lobbyId) {
 }
 
 // Adds song to lobby by first finding the index then adding the song to the lobby queue
-function addSongToLobby(lobby_id, songData) {
+function addSongToLobby(
+	lobby_id,
+	{ dataForSpotifyPlayer, dataForApplePlayer, dataForUi }
+) {
 	const i = getLobbyIndex(lobby_id);
-	lobbies[i].queue.push(songData);
-}
 
-// Adds designated player to the lobby
-function addDesignatedPlayer(lobbyIndex, { music_provider, token }) {
-	// Get info on players in lobby
-	const { spotify, apple } = lobbies[lobbyIndex].players;
-	const bothPlayersUsed = spotify.count > 0 && apple.count > 0;
-	const playerInUse = spotify.count > 0 ? 'spotify' : 'apple';
-
-	// If only one player is being used and the new users player is unique
-	if (!bothPlayersUsed && playerInUse !== music_provider) {
-		// Update the players count and add token to be used for searches
-		if (music_provider === 'spotify') {
-			lobbies[lobbyIndex].players.spotify.count += 1;
-			lobbies[lobbyIndex].players.spotify.token = token;
-		} else {
-			lobbies[lobbyIndex].players.apple.count += 1;
-			lobbies[lobbyIndex].players.apple.token = token;
-		}
-		// Both players are already being used just update the count
-	} else {
-		if (music_provider === 'spotify') {
-			lobbies[lobbyIndex].players.spotify.count += 1;
-		} else {
-			lobbies[lobbyIndex].players.apple.count += 1;
-		}
-	}
-}
-
-// Remove designated player from the lobby
-function removeDesignatedPlayer(lobbyIndex, { music_provider }) {
-	// Get info on players in lobby
-	const { spotify, apple } = lobbies[lobbyIndex].players;
-
-	// If the member who left was using spotify and there is still other members
-	// using spotify just reduce count and keep token for searches
-	if (music_provider === 'spotify' && spotify.count > 1) {
-		lobbies[lobbyIndex].players.spotify.count -= 1;
-	}
-	// If the member who left was the last member using spotify
-	// reduce count and remove token
-	else if (music_provider === 'spotify') {
-		lobbies[lobbyIndex].players.spotify.count -= 1;
-		lobbies[lobbyIndex].players.spotify.token = '';
-	}
-	// If the member who left was using apple and there is still other members
-	// using apple just reduce count and keep token for searches
-	else if (apple.count > 1) {
-		lobbies[lobbyIndex].players.apple.count -= 1;
-	}
-	// If the member who left was the last member using apple
-	// reduce count and remove token
-	else {
-		lobbies[lobbyIndex].players.apple.count -= 1;
-		lobbies[lobbyIndex].players.apple.token = '';
-	}
+	lobbies[i].queue.push({
+		ui: dataForUi,
+		spotify: dataForSpotifyPlayer,
+		apple: dataForApplePlayer,
+	});
 }
 
 module.exports = {
@@ -199,4 +175,9 @@ module.exports = {
 	getLobbyByUserId,
 	leaveLobby,
 	deleteLobbyByIndex,
+	setStatusToPlaying,
+	setStatusToPaused,
+	setDeviceId,
+	getAdminData,
+	getMostRecentlyJoined,
 };

@@ -1,5 +1,4 @@
 const lobby = require('./lobby');
-const spotify = require('./spotify');
 const helpers = require('./helpers');
 
 // ---------- Handle when someone creates or joins lobby ----------
@@ -10,26 +9,41 @@ async function handleJoinLobby(io, socket, data) {
 
 	// Set playlist id to new spotify playlist created on users account
 	if (music_provider === 'spotify') {
-		data.playlistId = await spotify.createTempPlaylist(token);
+		// console.log(data);
 	}
 
 	// Check if lobby exists and handle accordingly
 	if (!lobby.lobbyExists(lobby_id)) {
+		// Get token for music provider that admin is NOT using
+		const tempToken = await helpers.generateTempToken(data.music_provider);
+
 		// Create and join lobby
-		lobby.generateLobby(data);
+		lobby.generateLobby(data, tempToken);
 		const members = [username];
 		const messages = [];
 		// Send new lobby data back to members
 		io.to(lobby_id).emit('setLobbyInfo', members, messages);
-	} else {
-		// Join existing lobby
+		io.to(lobby_id).emit('doneLoading');
+	}
+	// Join existing lobby
+	else {
 		lobby.joinLobby(data);
+		const lobbyRef = lobby.getLobbyById(data.lobby_id);
+
 		const members = lobby.getMemberUsernames(lobby_id);
 		const messages = lobby.getLobbyMessages(lobby_id);
 		// Send new lobby data back to members
 		// TODO send queue and ui queue to designated player
 		io.to(lobby_id).emit('setLobbyInfo', members, messages);
+		io.to(socket.id).emit('updateLobbyQueue', lobbyRef.queue);
+
+		const adminData = lobby.getAdminData(data);
+		io.to(adminData.user_id).emit('getPlayerData', socket.id);
 	}
+}
+// ---------- Handle when spotify users player is ready ----------
+async function handleSetDeviceId(io, socket, data) {
+	lobby.setDeviceId(socket.id, data);
 }
 
 // ---------- Handle when someone leaves the lobby ----------
@@ -37,13 +51,6 @@ async function handleDisconnect(io, socket) {
 	console.log('----- disconnection -----');
 	// Get lobby data
 	const lobbyRef = lobby.getLobbyByUserId(socket.id);
-	// Get user that left data
-	const user = lobbyRef.users.find((user) => user.user_id === socket.id);
-
-	// If the member who left was using spotify delete the temp playlist they were using from their account
-	if (user.music_provider === 'spotify') {
-		await spotify.deletePlaylist(user.token, user.playlistId);
-	}
 
 	// Remove the member who left from the lobby
 	const i = lobby.leaveLobby(lobbyRef, socket.id);
@@ -84,38 +91,36 @@ async function handleUniSearch(io, socket, data) {
 async function handleAddSongToQueue(io, socket, data) {
 	// Get lobby data
 	const lobbyRef = lobby.getLobbyById(data.user.lobby_id);
+
 	// Perform the necessary searches and return an object containing display for ui and data for each player
-	const songDataForPlayers = await helpers.getSongDataForPlayers(
-		lobbyRef.players,
+	const allSongData = await helpers.getSongDataForPlayers(
+		lobbyRef.tokens,
 		data
 	);
 
-	// Send ui and players the data
-	sendSongToUi(io, data, lobbyRef);
-	sendSongToPlayers(io, lobbyRef, songDataForPlayers);
-}
+	// Add song to lobby
+	lobby.addSongToLobby(data.user.lobby_id, allSongData);
 
-// Display song on members ui
-function sendSongToUi(io, { songData }, { lobby_id, queue }) {
-	lobby.addSongToLobby(lobby_id, songData);
-	io.to(lobby_id).emit('updateLobbyQueue', queue);
+	// Send front end the data for ui, spotify player, and apple player
+	io.to(data.user.lobby_id).emit('updateLobbyQueue', lobbyRef.queue);
 }
 
 // Add song to members players
-function sendSongToPlayers(
-	io,
-	lobbyRef,
-	{ dataForSpotifyPlayer, dataForApplePlayer }
-) {
-	// for each member add song to their playlist
-	lobbyRef.users.forEach((member) => {
-		if (member.music_provider === 'spotify') {
-			spotify.addSongToPlaylist(dataForSpotifyPlayer, member);
-		} else {
-			io.to(member.user_id).emit('updateAppleQueue', dataForApplePlayer);
-		}
-	});
-}
+// function sendSongToPlayers(
+// 	io,
+// 	lobbyRef,
+// 	{ dataForSpotifyPlayer, dataForApplePlayer }
+// ) {
+// 	// for each member add song to their playlist
+// 	lobbyRef.users.forEach((member) => {
+// 		if (member.music_provider === 'spotify') {
+// 			// Alexis TODO
+// 			// spotify.addSongToPlaylist(dataForSpotifyPlayer, member);
+// 		} else {
+// 			io.to(member.user_id).emit('updateAppleQueue', dataForApplePlayer);
+// 		}
+// 	});
+// }
 
 // ---------- Handle adding album to queue ----------
 async function handleAddAlbumToQueue(io, socket, data) {
@@ -143,7 +148,8 @@ function sendAlbumToPlayers(
 	// For all members in lobby add songs in album to their playlist
 	lobbyRef.users.forEach((user) => {
 		if (user.music_provider === 'spotify') {
-			spotify.addAlbumToPlaylist(dataForSpotifyPlayer, user);
+			// Alexis TODO
+			// spotify.addAlbumToPlaylist(dataForSpotifyPlayer, user);
 		} else {
 			io.to(user.user_id).emit('updateAppleQueue', dataForApplePlayer);
 		}
@@ -151,23 +157,137 @@ function sendAlbumToPlayers(
 }
 
 // ---------- Handle when someone clicks play ----------
-function handlePlaySong(io, socket, data) {
-	// Get all members in lobby
-	const members = lobby.getLobbyById(data.lobby_id).users;
-	// Begin playing song for all members
-	startSongForMembers(io, members);
+function handleTogglePlay(io, socket, { lobby_id }) {
+	io.to(lobby_id).emit('togglePlay');
 }
 
-// Begin playing the song for all members
-function startSongForMembers(io, members) {
-	// For each member play song on their player
-	members.forEach(async ({ music_provider, token, user_id }) => {
-		if (music_provider === 'spotify') {
-			await spotify.playSong(token);
-		} else {
-			io.to(user_id).emit('playApple');
-		}
+// Play the song for all members
+// function startSongForMembers(io, memberId, { users, lobby_id }) {
+// 	// For each member play song on their player
+// 	users.forEach(async ({ music_provider, token, onPlaylist, playlistId }) => {
+// 		if (music_provider === 'spotify') {
+// 			io.to(user_id).emit('play');
+// 		} else {
+// 			// Justin TODO
+// 			// io.to(user_id).emit('play');
+// 		}
+// 	});
+// }
+
+// // Play the song for all members
+// function startSongForMembers(io, memberId, { users, lobby_id }) {
+// 	// For each member play song on their player
+// 	users.forEach(async ({ music_provider, token, onPlaylist, playlistId }) => {
+// 		if (music_provider === 'spotify') {
+// 			// If the playback is on a different playlist
+// 			if (!onPlaylist) {
+// 				// Set it to the correct playlist then play song
+// 				await spotify.setPlaylistAndPlay(playlistId, token);
+// 				// Update the status so that we know we are on the correct player now
+// 				lobby.setOnPlaylistToTrue(lobby_id, memberId);
+// 			}
+// 			// Already on correct playlist just play song
+// 			else {
+// 				await spotify.playSong(token);
+// 			}
+// 		} else {
+// 			// Justin TODO
+// 			// io.to(user_id).emit('play');
+// 		}
+// 	});
+// }
+
+// // Pause the song for all members
+// function pauseSongForMembers(io, { users }) {
+// 	// For each member play song on their player
+// 	users.forEach(async ({ music_provider, token }) => {
+// 		if (music_provider === 'spotify') {
+// 			// Alexis TODO
+// 			// await spotify.pauseSong(token);
+// 		} else {
+// 			// Justin TODO
+// 			// io.to(user_id).emit('pause');
+// 		}
+// 	});
+// }
+
+// ---------- Handle when someone clicks play next ----------
+function handleSkip(io, socket, { lobby_id }) {
+	// Get all members in lobby
+	const lobbyRef = lobby.getLobbyById(lobby_id);
+
+	// If there is at least two songs in the queue
+	// if (lobbyRef.queue.length > 1) {
+	io.to(lobby_id).emit('skip');
+	lobby.setStatusToPlaying(lobby_id);
+	// startNextSongForMembers(io, socket.id, lobbyRef);
+	// }
+}
+
+// function startNextSongForMembers(io, memberId, { users, lobby_id }) {
+// 	// For each member play song on their player
+// 	users.forEach(async ({ music_provider, token, onPlaylist, playlistId }) => {
+// 		if (music_provider === 'spotify') {
+// 			// Alexis TODO
+// 		} else {
+// 			// Justin TODO
+// 			// io.to(user_id).emit('playNext);
+// 		}
+// 	});
+// }
+
+// function startNextSongForMembers(io, memberId, { users, lobby_id }) {
+// 	// For each member play song on their player
+// 	users.forEach(async ({ music_provider, token, onPlaylist, playlistId }) => {
+// 		if (music_provider === 'spotify') {
+// 			// If the playback is on a different playlist
+// 			if (!onPlaylist) {
+// 				// Set it to the correct playlist then play song
+// 				await spotify.setPlaylistAndPlayNext(playlistId, token);
+// 				// Update the status so that we know we are on the correct player now
+// 				lobby.setOnPlaylistToTrue(lobby_id, memberId);
+// 			}
+// 			// Already on correct playlist just play song
+// 			else {
+// 				await spotify.playNext(token);
+// 			}
+// 		} else {
+// 			// Justin TODO
+// 			// io.to(user_id).emit('playNext);
+// 		}
+// 	});
+// }
+
+// ---------- Handle when someone clicks play next ----------
+function handlePlayerData(io, socket, data) {
+	const member = lobby.getMostRecentlyJoined(data);
+	socket.to(member.user_id).emit('doneLoading', {
+		paused: data.paused,
+		timestamp: data.timestamp,
 	});
+
+	// Get admin data
+	// const adminData = lobby.getAdminData(data);
+	// const playerData = await helpers.getAdminPlayerState(adminData);
+
+	// // --------- TODO ----------
+	// // const playerData = await io.emitWait('getPlayerData');
+
+	// // Player is playing and songs in queue
+	// if (playerData.isPlaying && lobbyRef.queue.length > 0) {
+	// 	// io.to(socket.id).emit('setUpPlayer', playerData);
+	// 	console.log('BACK END: switch player');
+	// 	console.log('FRONT END: set timestamp then play');
+	// }
+
+	// // Player is paused and songs in lobby
+	// else if (!playerData.isPlaying && lobbyRef.queue.length > 0) {
+	// 	console.log('FRONT END: change timestamp');
+	// }
+	// // Player is paused and no songs in lobby
+	// else {
+	// 	console.log('Do Nothing');
+	// }
 }
 
 module.exports = {
@@ -177,5 +297,9 @@ module.exports = {
 	handleUniSearch,
 	handleAddSongToQueue,
 	handleAddAlbumToQueue,
-	handlePlaySong,
+	// handlePlay,
+	handleSkip,
+	handleSetDeviceId,
+	handlePlayerData,
+	handleTogglePlay,
 };

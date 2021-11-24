@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppleMusicProvider } from './context/AppleMusicContext';
+import { PlayersProvider } from './context/PlayersContext';
 import { SocketContextProvider } from './context/SocketContext';
 import Home from './pages/home/Home';
 import ChooseService from './pages/choose-service/ChooseService';
@@ -10,7 +10,7 @@ import './App.scss';
 function App() {
 	return (
 		<SocketContextProvider>
-			<AppleMusicProvider>
+			<PlayersProvider>
 				<div className='App'>
 					<Router>
 						<Switch>
@@ -20,7 +20,7 @@ function App() {
 						</Switch>
 					</Router>
 				</div>
-			</AppleMusicProvider>
+			</PlayersProvider>
 		</SocketContextProvider>
 	);
 }

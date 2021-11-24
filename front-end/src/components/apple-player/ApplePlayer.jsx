@@ -1,13 +1,14 @@
 import React, { useEffect, useContext } from 'react';
 import { SocketContext } from '../../context/SocketContext';
-import { AppleMusicContext } from '../../context/AppleMusicContext';
+import { PlayersContext } from '../../context/PlayersContext';
 import './apple-player.scss';
 
 function ApplePlayer({ lobby_id }) {
 	const [socket] = useContext(SocketContext);
-	const [musicKit] = useContext(AppleMusicContext);
+	const { apple } = useContext(PlayersContext);
+	const [applePlayer] = apple;
 	useEffect(() => {
-		console.log(musicKit);
+		console.log(applePlayer);
 		// Apple Socket Functions
 		socket.on('playApple', async () => {
 			await play();
@@ -15,16 +16,16 @@ function ApplePlayer({ lobby_id }) {
 
 		// Apple Player Controllers
 		let play = async () => {
-			await musicKit.authorize();
-			await musicKit.play();
-			musicKit.player.volume = 0.05;
+			await applePlayer.authorize();
+			await applePlayer.play();
+			applePlayer.player.volume = 0.05;
 		};
 
 		socket.on('updateAppleQueue', (playerData) => {
 			// {href, id, type}
 			setMusicKitQueue(playerData);
 		});
-	}, [socket, musicKit]);
+	}, [socket, applePlayer]);
 
 	function playSong() {
 		socket.emit('playSong', lobby_id);
@@ -32,13 +33,13 @@ function ApplePlayer({ lobby_id }) {
 
 	//All I need passed in an object that has an {href, id, type}
 	async function setMusicKitQueue(item) {
-		await musicKit.authorize();
+		await applePlayer.authorize();
 
-		let musicQueue = musicKit.player.queue;
+		let musicQueue = applePlayer.player.queue;
 		if (item.type === 'songs') {
 			musicQueue.append(item);
 		} else if (item.type === 'albums') {
-			let album = await musicKit.api.album(item.id);
+			let album = await applePlayer.api.album(item.id);
 			let tracks = album.relationships.tracks.data;
 			tracks.forEach((song) => {
 				musicQueue.append(song);
@@ -48,16 +49,16 @@ function ApplePlayer({ lobby_id }) {
 
 	// TEMP PLAYER CONTROLS --- FOR TESTING
 	let nextSong = async () => {
-		await musicKit.authorize();
-		await musicKit.skipToNextItem();
+		await applePlayer.authorize();
+		await applePlayer.skipToNextItem();
 	};
 	let prevSong = async () => {
-		await musicKit.authorize();
-		await musicKit.skipToPreviousItem();
+		await applePlayer.authorize();
+		await applePlayer.skipToPreviousItem();
 	};
 	let pauseSong = async () => {
-		await musicKit.authorize();
-		await musicKit.pause();
+		await applePlayer.authorize();
+		await applePlayer.pause();
 	};
 
 	// TEMP PLAYER CONTROLS --- FOR TESTING

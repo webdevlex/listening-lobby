@@ -10,6 +10,11 @@ function socketsReciever(io) {
 			await handlers.handleJoinLobby(io, socket, data);
 		});
 
+		// Handle when a spotify users player is finished loading, ( Only for spotify users )
+		socket.on('setDeviceId', (data) => {
+			handlers.handleSetDeviceId(io, socket, data);
+		});
+
 		// TODO: make sure used players gets updated on leave
 		socket.on('disconnect', async () => {
 			await handlers.handleDisconnect(io, socket);
@@ -36,11 +41,18 @@ function socketsReciever(io) {
 		});
 
 		// Handle when a user hits play
-		socket.on('playSong', (data) => {
-			handlers.handlePlaySong(io, socket, data);
+		socket.on('togglePlay', (data) => {
+			handlers.handleTogglePlay(io, socket, data);
 		});
 
-		// TODO Handle when a user hits next song
+		// Handle when a user hits play next song
+		socket.on('skip', (data) => {
+			handlers.handleSkip(io, socket, data);
+		});
+
+		socket.on('playerData', (data) => {
+			handlers.handlePlayerData(io, socket, data);
+		});
 
 		// TODO Handle when a user likes a song
 	});

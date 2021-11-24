@@ -1,7 +1,13 @@
 import React, { useContext, useEffect } from 'react';
 import { SocketContext } from '../../context/SocketContext';
 
-function SocketHandler({ setUser, setMembers, setMessages, setQueue }) {
+function SocketHandler({
+	setUser,
+	setMembers,
+	setMessages,
+	setQueue,
+	setLoading,
+}) {
 	const params = new URLSearchParams(window.location.search);
 	const token = params.get('token');
 	const refresh_token = params.get('refresh_token');
@@ -29,7 +35,13 @@ function SocketHandler({ setUser, setMembers, setMessages, setQueue }) {
 		});
 
 		socket.on('updateLobbyQueue', (queue) => {
+			console.log(queue);
 			setQueue(queue);
+		});
+
+		socket.on('doneLoading', (playerData) => {
+			setLoading(false);
+			console.log(playerData);
 		});
 	}, [
 		socket,

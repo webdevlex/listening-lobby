@@ -24,6 +24,7 @@ function Lobby() {
 	);
 
 	// State managament
+	const [loading, setLoading] = useState(true);
 	const [members, setMembers] = useState([]);
 	const [messages, setMessages] = useState([]);
 	const [queue, setQueue] = useState([]);
@@ -41,29 +42,40 @@ function Lobby() {
 				setMembers={setMembers}
 				setMessages={setMessages}
 				setQueue={setQueue}
+				setLoading={setLoading}
 			/>
-			<div className='settings-grid'>
-				<LobbySettings
-					lobbyId={user.lobby_id}
-					centerDisplay={centerDisplay}
-					setCenterDisplay={setCenterDisplay}
-				/>
-			</div>
-			<div className='members-grid'>
-				<LobbyMembers members={members} />
-			</div>
-			<div className='messages-grid'>
-				<LobbyMessages messages={messages} user={user} />
-			</div>
-			<div className='center-grid'>
-				<LobbyCenter centerDisplay={centerDisplay} queue={queue} user={user} />
-			</div>
-			<div className='player-grid'>
-				<DesignatedPlayer
-					musicProvider={user.music_provider}
-					lobby_id={user.lobby_id}
-				/>
-			</div>
+			{loading ? (
+				<h1>LOADING</h1>
+			) : (
+				<>
+					<div className='settings-grid'>
+						<LobbySettings
+							lobbyId={user.lobby_id}
+							centerDisplay={centerDisplay}
+							setCenterDisplay={setCenterDisplay}
+						/>
+					</div>
+					<div className='members-grid'>
+						<LobbyMembers members={members} />
+					</div>
+					<div className='messages-grid'>
+						<LobbyMessages messages={messages} user={user} />
+					</div>
+					<div className='center-grid'>
+						<LobbyCenter
+							centerDisplay={centerDisplay}
+							queue={queue}
+							user={user}
+						/>
+					</div>
+					<div className='player-grid'>
+						<DesignatedPlayer
+							musicProvider={user.music_provider}
+							lobby_id={user.lobby_id}
+						/>
+					</div>
+				</>
+			)}
 		</div>
 	) : null;
 }

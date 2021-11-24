@@ -33,7 +33,7 @@ async function search(searchValue, token) {
 
 // Perfoms a track search on spotify by query
 async function searchForTrack(searchValue, token) {
-	const endPoint = '	https://api.spotify.com/v1/search';
+	const endPoint = 'https://api.spotify.com/v1/search';
 	const config = {
 		headers: defaultHeader(token).headers,
 		params: {
@@ -73,7 +73,7 @@ async function searchForAlbum(searchValue, token) {
 
 // Format song data for spotify player
 function formatSongData(songData) {
-	return songData.id;
+	return songData.uri;
 }
 
 // Search for a song using apple data and return the id of the result
@@ -152,121 +152,219 @@ async function spotifyAlbumSearchById(album, token) {
 	}
 }
 
-// Get the users id and create a playlist on their account and return playlist uri
-async function createTempPlaylist(token) {
-	const user = await getUserData(token);
-	const uri = await createPlaylist(token, user.data.id);
-	return uri;
+async function setDevice({ device_id, token }) {
+	const endPoint = `https://api.spotify.com/v1/me/player`;
+	const body = {
+		device_ids: [device_id],
+	};
+
+	try {
+		await axios.put(endPoint, body, defaultHeader(token));
+	} catch (err) {
+		// TODO
+	}
 }
+
+// Pause active player
+async function pause({ token }) {
+	const endPoint = `https://api.spotify.com/v1/me/player/pause`;
+
+	try {
+		return await axios.put(endPoint, {}, defaultHeader(token));
+	} catch (err) {
+		// console.log(err);
+	}
+}
+
+// Get current player state
+async function playerState(token) {
+	const endPoint = `https://api.spotify.com/v1/me/player`;
+
+	try {
+		const res = await axios.get(endPoint, defaultHeader(token));
+		return res.data;
+	} catch (err) {
+		// console.log(err);
+	}
+}
+
+async function getTempToken() {
+	const endPoint = 'http://localhost:8888/spotify/temp_token';
+
+	try {
+		const res = await axios.get(endPoint);
+		return res.data;
+	} catch (err) {
+		// TODO
+	}
+}
+
+// Get the users id and create a playlist on their account and return playlist uri
+// async function createTempPlaylist(token) {
+// 	const user = await getUserData(token);
+// 	const uri = await createPlaylist(token, user.data.id);
+// 	return uri;
+// }
 
 // Get the users account data
-async function getUserData(token) {
-	const endPoint = 'https://api.spotify.com/v1/me';
+// async function getUserData(token) {
+// 	const endPoint = 'https://api.spotify.com/v1/me';
 
-	try {
-		const user = await axios.get(endPoint, defaultHeader(token));
-		return user;
-	} catch (err) {
-		// TODO
-	}
-}
-
-// Creates a temp playlist on users account and returns the playlist uri
-async function createPlaylist(token, id) {
-	const endPoint = `https://api.spotify.com/v1/users/${id}/playlists`;
-	const body = {
-		name: 'Listening Party!',
-		description: 'A temporary playlist used for our app to work',
-		public: false,
-	};
-
-	try {
-		const res = await axios.post(endPoint, body, defaultHeader(token));
-		return res.data.id;
-	} catch (err) {
-		// TODO
-	}
-}
+// 	try {
+// 		const user = await axios.get(endPoint, defaultHeader(token));
+// 		return user;
+// 	} catch (err) {
+// 		// TODO
+// 	}
+// }
 
 // Creates a temp playlist on users account and returns the playlist uri
-async function deletePlaylist(token, id) {
-	const endPoint = `https://api.spotify.com/v1/playlists/${id}/followers`;
+// async function createPlaylist(token, id) {
+// 	const endPoint = `https://api.spotify.com/v1/users/${id}/playlists`;
+// 	const body = {
+// 		name: 'Listening Party!',
+// 		description: 'A temporary playlist used for our app to work',
+// 		public: false,
+// 	};
 
-	try {
-		await axios.delete(endPoint, defaultHeader(token));
-	} catch (err) {
-		// TODO
-	}
-}
+// 	try {
+// 		const res = await axios.post(endPoint, body, defaultHeader(token));
+// 		return res.data.id;
+// 	} catch (err) {
+// 		// TODO
+// 	}
+// }
+
+// Creates a temp playlist on users account and returns the playlist uri
+// async function deletePlaylist(token, id) {
+// 	const endPoint = `https://api.spotify.com/v1/playlists/${id}/followers`;
+
+// 	try {
+// 		await axios.delete(endPoint, defaultHeader(token));
+// 	} catch (err) {
+// 		// TODO
+// 	}
+// }
 
 // Adds a song by id to the users temp playlist
-async function addSongToPlaylist(songId, user) {
-	const { token, playlistId } = user;
-	const endPoint = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
-	const body = {
-		uris: [`spotify:track:${songId}`],
-	};
+// async function addSongToPlaylist(songId, user) {
+// 	const { token, playlistId } = user;
+// 	const endPoint = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
+// 	const body = {
+// 		uris: [`spotify:track:${songId}`],
+// 	};
 
-	try {
-		await axios.post(endPoint, body, defaultHeader(token));
-	} catch (err) {
-		// TODO
-	}
-}
+// 	try {
+// 		await axios.post(endPoint, body, defaultHeader(token));
+// 	} catch (err) {
+// 		// TODO
+// 	}
+// }
 
 // Adds an entire album to the users temp playlist by array of uris
-async function addAlbumToPlaylist(uriArray, user) {
-	const { token, playlistId } = user;
-	const endPoint = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
-	const body = {
-		uris: uriArray,
-	};
+// async function addAlbumToPlaylist(uriArray, user) {
+// 	const { token, playlistId } = user;
+// 	const endPoint = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
+// 	const body = {
+// 		uris: uriArray,
+// 	};
 
-	try {
-		await axios.post(endPoint, body, defaultHeader(token));
-	} catch (err) {
-		// TODO
-	}
-}
+// 	try {
+// 		await axios.post(endPoint, body, defaultHeader(token));
+// 	} catch (err) {
+// 		// TODO
+// 	}
+// }
 
 // Make request to spotify api to start the player
-async function playSong(token) {
-	const endPoint = 'https://api.spotify.com/v1/me/player/play';
-	try {
-		await axios.put(endPoint, {}, defaultHeader(token));
-	} catch (err) {
-		// TODO
-	}
-}
+// async function playSong(token) {
+// 	const endPoint = 'https://api.spotify.com/v1/me/player/play';
+// 	try {
+// 		await axios.put(endPoint, {}, defaultHeader(token));
+// 	} catch (err) {
+// 		// TODO
+// 	}
+// }
+
+// Make request to spotify api to start the player
+// async function pauseSong(token) {
+// 	const endPoint = 'https://api.spotify.com/v1/me/player/pause';
+// 	try {
+// 		await axios.put(endPoint, {}, defaultHeader(token));
+// 	} catch (err) {
+// 		// TODO
+// 	}
+// }
+
+// Make request to spotify api to start the player
+// async function playNext(token) {
+// 	const endPoint = 'https://api.spotify.com/v1/me/player/next';
+// 	try {
+// 		await axios.post(endPoint, {}, defaultHeader(token));
+// 	} catch (err) {
+// 		// TODO
+// 	}
+// }
+
+// async function setPlaylistAndPlay(playlistId, token) {
+// 	const devices = await getDevices(token);
+// 	const player = devices.find((device) => device.name === 'Web Playback SDK');
+// 	await setPlaybackToPlaylist(player.id, playlistId, token);
+// }
+
+// async function setPlaylistAndPlayNext(playlistId, token) {
+// 	const devices = await getDevices(token);
+// 	const player = devices.find((device) => device.name === 'Web Playback SDK');
+// 	await setPlaybackToPlaylist(player.id, playlistId, token, 1);
+// }
+
+// async function getDevices(token) {
+// 	const endPoint = 'https://api.spotify.com/v1/me/player/devices';
+
+// 	try {
+// 		const res = await axios.get(endPoint, defaultHeader(token));
+// 		return res.data.devices;
+// 	} catch (err) {
+// 		// TODO
+// 	}
+// }
 
 //TODO when play is hit for the first time set playback to the correct playlist
-async function setPlaybackToNewPlaylist(device_id, uri, token) {
-	const endPoint = 'https://api.spotify.com/v1/me/player/play';
-	const body = {
-		device_id: device_id,
-		context_uri: uri,
-		offset: {
-			position: 0,
-		},
-		position_ms: 0,
-	};
+// async function setPlaybackToDevice(deviceId, id, token, offset = 0) {
+// 	const endPoint = `https://api.spotify.com/v1/me/player`;
+// 	const body = {
+// 		context_uri: `spotify:playlist:${id}`,
+// 		offset: {
+// 			position: offset,
+// 		},
+// 		position_ms: 0,
+// 	};
 
-	try {
-		const res = await axios.put(endPoint, body, defaultHeader(headers));
-	} catch (err) {
-		// TODO
-	}
-}
+// 	try {
+// 		await axios.put(endPoint, body, defaultHeader(token));
+// 	} catch (err) {
+// 		// TODO
+// 	}
+// }
 
 module.exports = {
-	playSong,
+	// playSong,
+	// pauseSong,
+	// playNext,
+	pause,
 	search,
-	createTempPlaylist,
-	addSongToPlaylist,
+	playerState,
+	// setPlaybackToDevice,
+	// createTempPlaylist,
+	// addSongToPlaylist,
 	formatSongData,
 	getAndFormatSongData,
 	formatAlbum,
-	addAlbumToPlaylist,
+	// addAlbumToPlaylist,
 	albumSearchAndFormat,
-	deletePlaylist,
+	setDevice,
+	getTempToken,
+	// deletePlaylist,
+	// setPlaylistAndPlay,
+	// setPlaylistAndPlayNext,
 };

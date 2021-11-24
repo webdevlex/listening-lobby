@@ -3,7 +3,7 @@ import axios from 'axios';
 export function setUpMusicKit(
 	authorized,
 	setAuthorized,
-	setMusicKit,
+	setApplePlayer,
 	setAppleToken
 ) {
 	axios
@@ -21,15 +21,14 @@ export function setUpMusicKit(
 				};
 
 				const setupMusicKit = new Promise((resolve) => {
-					let musicKitInstance =
-						window.MusicKit.configure(configData);
+					let musicKitInstance = window.MusicKit.configure(configData);
 					resolve(musicKitInstance);
 				});
 
 				setupMusicKit
 					.then((musicKitInstance) => {
 						musicKitInstance.authorize();
-						setMusicKit(musicKitInstance);
+						setApplePlayer(musicKitInstance);
 						setAuthorized(true);
 					})
 					.catch((error) => {});

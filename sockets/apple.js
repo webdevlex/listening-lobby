@@ -110,11 +110,23 @@ async function getAlbumTracks(album, token) {
 	}
 }
 
+async function getTempToken() {
+	const endPoint = 'http://localhost:8888/apple/token';
+
+	try {
+		const res = await axios.get(endPoint);
+		return res.data.token;
+	} catch (err) {
+		// TODO
+	}
+}
+
 module.exports = {
 	search,
 	getAndFormatSongData,
 	formatSongData,
 	formatAlbum,
 	albumSearchAndFormat,
+	getTempToken,
 };
 exports = module.exports;

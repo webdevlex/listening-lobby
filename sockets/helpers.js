@@ -29,8 +29,9 @@ async function uniSearch({ searchValue, user }) {
 	// If the user is using spotify player perform spotify search
 	if (user.music_provider === 'spotify') {
 		return await spotify.search(searchValue, token);
-		// If the user is using apple player format their query then perform spotify search
-	} else {
+	}
+	// If the user is using apple player format their query then perform spotify search
+	else {
 		searchValue = appleFormatSearchQuery(searchValue);
 		return await apple.search(searchValue, token);
 	}
@@ -65,6 +66,7 @@ function extractSpotifySongData(searchResults) {
 			artists: track.artists.map(({ name }) => name).join(', '),
 			trackCover: track.album.images[0].url,
 			id: track.id,
+			uri: track.uri,
 			uniId: track.external_ids.isrc,
 		};
 	});
@@ -125,49 +127,34 @@ function extractAppleAlbumData(searchResults) {
 }
 
 // Retrieves necessary song data for the active players in lobby
-async function getSongDataForPlayers(players, { songData, user }) {
-	// Players in lobby
-	const applePlayerCount = players.apple.count;
-	const spotifyPlayerCount = players.spotify.count;
-
+async function getSongDataForPlayers(tokens, { songData, user }) {
 	// Tokens that will be used if a search is required
-	const appleToken = players.apple.token;
-	const spotifyToken = players.spotify.token;
+	const spotifyToken = tokens.spotify;
+	const appleToken = tokens.apple;
 
 	// The data that will be returned to the players
 	let dataForSpotifyPlayer;
 	let dataForApplePlayer;
 
-	// If both spotify and apple players are being used
-	if (applePlayerCount > 0 && spotifyPlayerCount > 0) {
-		// If the user that made the request is using spotify
-		if (user.music_provider === 'spotify') {
-			// We already have spotify data just format it
-			dataForSpotifyPlayer = spotify.formatSongData(songData);
-			// We do not have apple data so search for it then format it
-			dataForApplePlayer = await apple.getAndFormatSongData(
-				songData,
-				appleToken
-			);
-			// If the user that made the request is using apple
-		} else {
-			// We do not have spotify data so search for it then format it
-			dataForSpotifyPlayer = await spotify.getAndFormatSongData(
-				songData,
-				spotifyToken
-			);
-			// We already have apple data so just format it
-			dataForApplePlayer = apple.formatSongData(songData);
-		}
-		// If only spotify players are being used
-	} else if (spotifyPlayerCount > 0) {
+	// If the user that made the request is using spotify
+	if (user.music_provider === 'spotify') {
+		// We already have spotify data just format it
 		dataForSpotifyPlayer = spotify.formatSongData(songData);
-		// If only apple players are being used
-	} else {
+		// We do not have apple data so search for it then format it
+		dataForApplePlayer = await apple.getAndFormatSongData(songData, appleToken);
+	}
+	// If the user that made the request is using apple
+	else {
+		// We do not have spotify data so search for it then format it
+		dataForSpotifyPlayer = await spotify.getAndFormatSongData(
+			songData,
+			spotifyToken
+		);
+		// We already have apple data so just format it
 		dataForApplePlayer = apple.formatSongData(songData);
 	}
 
-	return { dataForSpotifyPlayer, dataForApplePlayer };
+	return { dataForSpotifyPlayer, dataForApplePlayer, dataForUi: songData };
 }
 
 // Retrieves necessary album data for the active players in lobby
@@ -229,10 +216,17 @@ async function uniAlbumSearch(players, { album, user }) {
 	};
 }
 
+async function generateTempToken(musicProvider) {
+	return musicProvider !== 'spotify'
+		? await spotify.getTempToken()
+		: await apple.getTempToken();
+}
+
 module.exports = {
 	formatUniSearchResults,
 	getSongDataForPlayers,
 	uniAlbumSearch,
 	formatMessage,
 	uniSearch,
+	generateTempToken,
 };
