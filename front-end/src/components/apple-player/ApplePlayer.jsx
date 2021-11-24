@@ -10,6 +10,7 @@ function ApplePlayer({ lobby_id }) {
 	useEffect(() => {
 		console.log(applePlayer);
 		// Apple Socket Functions
+		// --------- UPDATE ---------: 'togglePlay' now
 		socket.on('playApple', async () => {
 			await play();
 		});
@@ -20,6 +21,16 @@ function ApplePlayer({ lobby_id }) {
 			await applePlayer.play();
 			applePlayer.player.volume = 0.05;
 		};
+
+		// --------- UPDATE ---------: needed for people to join if admin is using apple player
+		socket.on('getPlayerData', (memberId) => {
+			// socket.emit('playerData', {
+			// 	paused: TODO,
+			// 	timestamp: TODO,
+			// 	lobby_id, // Completed
+			// 	memberId, // Completed
+			// });
+		});
 
 		socket.on('updateAppleQueue', (playerData) => {
 			// {href, id, type}

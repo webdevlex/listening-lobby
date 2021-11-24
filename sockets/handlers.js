@@ -105,23 +105,6 @@ async function handleAddSongToQueue(io, socket, data) {
 	io.to(data.user.lobby_id).emit('updateLobbyQueue', lobbyRef.queue);
 }
 
-// Add song to members players
-// function sendSongToPlayers(
-// 	io,
-// 	lobbyRef,
-// 	{ dataForSpotifyPlayer, dataForApplePlayer }
-// ) {
-// 	// for each member add song to their playlist
-// 	lobbyRef.users.forEach((member) => {
-// 		if (member.music_provider === 'spotify') {
-// 			// Alexis TODO
-// 			// spotify.addSongToPlaylist(dataForSpotifyPlayer, member);
-// 		} else {
-// 			io.to(member.user_id).emit('updateAppleQueue', dataForApplePlayer);
-// 		}
-// 	});
-// }
-
 // ---------- Handle adding album to queue ----------
 async function handleAddAlbumToQueue(io, socket, data) {
 	// Get lobby data
@@ -161,101 +144,17 @@ function handleTogglePlay(io, socket, { lobby_id }) {
 	io.to(lobby_id).emit('togglePlay');
 }
 
-// Play the song for all members
-// function startSongForMembers(io, memberId, { users, lobby_id }) {
-// 	// For each member play song on their player
-// 	users.forEach(async ({ music_provider, token, onPlaylist, playlistId }) => {
-// 		if (music_provider === 'spotify') {
-// 			io.to(user_id).emit('play');
-// 		} else {
-// 			// Justin TODO
-// 			// io.to(user_id).emit('play');
-// 		}
-// 	});
-// }
-
-// // Play the song for all members
-// function startSongForMembers(io, memberId, { users, lobby_id }) {
-// 	// For each member play song on their player
-// 	users.forEach(async ({ music_provider, token, onPlaylist, playlistId }) => {
-// 		if (music_provider === 'spotify') {
-// 			// If the playback is on a different playlist
-// 			if (!onPlaylist) {
-// 				// Set it to the correct playlist then play song
-// 				await spotify.setPlaylistAndPlay(playlistId, token);
-// 				// Update the status so that we know we are on the correct player now
-// 				lobby.setOnPlaylistToTrue(lobby_id, memberId);
-// 			}
-// 			// Already on correct playlist just play song
-// 			else {
-// 				await spotify.playSong(token);
-// 			}
-// 		} else {
-// 			// Justin TODO
-// 			// io.to(user_id).emit('play');
-// 		}
-// 	});
-// }
-
-// // Pause the song for all members
-// function pauseSongForMembers(io, { users }) {
-// 	// For each member play song on their player
-// 	users.forEach(async ({ music_provider, token }) => {
-// 		if (music_provider === 'spotify') {
-// 			// Alexis TODO
-// 			// await spotify.pauseSong(token);
-// 		} else {
-// 			// Justin TODO
-// 			// io.to(user_id).emit('pause');
-// 		}
-// 	});
-// }
-
 // ---------- Handle when someone clicks play next ----------
-function handleSkip(io, socket, { lobby_id }) {
-	// Get all members in lobby
-	const lobbyRef = lobby.getLobbyById(lobby_id);
+// function handleSkip(io, socket, { lobby_id }) {
+// 	// Get all members in lobby
+// 	const lobbyRef = lobby.getLobbyById(lobby_id);
 
-	// If there is at least two songs in the queue
-	// if (lobbyRef.queue.length > 1) {
-	io.to(lobby_id).emit('skip');
-	lobby.setStatusToPlaying(lobby_id);
-	// startNextSongForMembers(io, socket.id, lobbyRef);
-	// }
-}
-
-// function startNextSongForMembers(io, memberId, { users, lobby_id }) {
-// 	// For each member play song on their player
-// 	users.forEach(async ({ music_provider, token, onPlaylist, playlistId }) => {
-// 		if (music_provider === 'spotify') {
-// 			// Alexis TODO
-// 		} else {
-// 			// Justin TODO
-// 			// io.to(user_id).emit('playNext);
-// 		}
-// 	});
-// }
-
-// function startNextSongForMembers(io, memberId, { users, lobby_id }) {
-// 	// For each member play song on their player
-// 	users.forEach(async ({ music_provider, token, onPlaylist, playlistId }) => {
-// 		if (music_provider === 'spotify') {
-// 			// If the playback is on a different playlist
-// 			if (!onPlaylist) {
-// 				// Set it to the correct playlist then play song
-// 				await spotify.setPlaylistAndPlayNext(playlistId, token);
-// 				// Update the status so that we know we are on the correct player now
-// 				lobby.setOnPlaylistToTrue(lobby_id, memberId);
-// 			}
-// 			// Already on correct playlist just play song
-// 			else {
-// 				await spotify.playNext(token);
-// 			}
-// 		} else {
-// 			// Justin TODO
-// 			// io.to(user_id).emit('playNext);
-// 		}
-// 	});
+// 	// If there is at least two songs in the queue
+// 	// if (lobbyRef.queue.length > 1) {
+// 	io.to(lobby_id).emit('skip');
+// 	lobby.setStatusToPlaying(lobby_id);
+// 	// startNextSongForMembers(io, socket.id, lobbyRef);
+// 	// }
 // }
 
 // ---------- Handle when someone clicks play next ----------
@@ -297,7 +196,6 @@ module.exports = {
 	handleUniSearch,
 	handleAddSongToQueue,
 	handleAddAlbumToQueue,
-	// handlePlay,
 	handleSkip,
 	handleSetDeviceId,
 	handlePlayerData,
