@@ -144,7 +144,7 @@ function sendAlbumToPlayers(
 
 // ---------- Handle when someone clicks play ----------
 function handleTogglePlay(io, socket, { lobby_id }) {
-	const lobbyRef = lobby.getLobbyById(data.user.lobby_id);
+	const lobbyRef = lobby.getLobbyById(lobby_id);
 	if (lobbyRef.queue.length > 0) {
 		io.to(lobby_id).emit('togglePlay');
 	} else {
