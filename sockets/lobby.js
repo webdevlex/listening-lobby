@@ -162,6 +162,11 @@ function addSongToLobby(
 	});
 }
 
+function popSong(lobby_id) {
+	const i = getLobbyIndex(lobby_id);
+	lobbies[i].queue.splice(0, 1);
+}
+
 module.exports = {
 	generateLobby,
 	lobbyExists,
@@ -180,4 +185,5 @@ module.exports = {
 	setDeviceId,
 	getAdminData,
 	getMostRecentlyJoined,
+	popSong,
 };

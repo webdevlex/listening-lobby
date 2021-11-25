@@ -7,21 +7,27 @@
 // 	}
 // }
 
-// export async function pause(socket, spotifyPlayer) {
-// 	const playingOnBrowser = await spotifyPlayer.getCurrentState();
-// 	if (playingOnBrowser) {
-// 		await spotifyPlayer.pause();
-// 	} else {
-// 		console.log('Not playing on browser');
-// 	}
-// }
+export async function pause(socket, spotifyPlayer) {
+	const playerState = await spotifyPlayer.getCurrentState();
+	if (playerState) {
+		const volume = await spotifyPlayer.getVolume();
+		console.log(playerState);
+		await spotifyPlayer.setVolume(0);
+		setTimeout(async () => {
+			await spotifyPlayer.pause();
+			await spotifyPlayer.setVolume(volume);
+		}, 1000);
+	} else {
+		console.log('Not playing on browser');
+	}
+}
 
 export async function togglePlay(socket, spotifyPlayer) {
 	const playingOnBrowser = await spotifyPlayer.getCurrentState();
 	if (playingOnBrowser) {
 		await spotifyPlayer.togglePlay();
 	} else {
-		console.log('Not playing on browser');
+		socket.emit('setPlayback');
 	}
 }
 
@@ -46,4 +52,8 @@ export async function getPlayerData(socket, spotifyPlayer, lobby_id, memberId) {
 	} else {
 		console.log('Not playing on browser');
 	}
+}
+
+export async function firstSong(socket, spotifyPlayer) {
+	console.log('First song added');
 }

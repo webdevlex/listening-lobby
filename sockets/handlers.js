@@ -103,6 +103,9 @@ async function handleAddSongToQueue(io, socket, data) {
 
 	// Send front end the data for ui, spotify player, and apple player
 	io.to(data.user.lobby_id).emit('updateLobbyQueue', lobbyRef.queue);
+	if (lobbyRef.queue.length === 1) {
+		io.to(data.user.lobby_id).emit('firstSong');
+	}
 }
 
 // ---------- Handle adding album to queue ----------
@@ -141,7 +144,12 @@ function sendAlbumToPlayers(
 
 // ---------- Handle when someone clicks play ----------
 function handleTogglePlay(io, socket, { lobby_id }) {
-	io.to(lobby_id).emit('togglePlay');
+	const lobbyRef = lobby.getLobbyById(data.user.lobby_id);
+	if (lobbyRef.queue.length > 0) {
+		io.to(lobby_id).emit('togglePlay');
+	} else {
+		console.log('empty queue');
+	}
 }
 
 // ---------- Handle when someone clicks play next ----------
@@ -189,6 +197,19 @@ function handlePlayerData(io, socket, data) {
 	// }
 }
 
+// ---------- Handle when current song ends ----------
+function handleSongEnd(io, socket, { lobby_id }) {
+	const lobbyRef = lobby.getLobbyById(lobby_id);
+	if (lobbyRef.queue.length > 0) {
+		console.log('popping');
+		lobby.popSong(lobby_id);
+		io.to(lobby_id).emit('updateLobbyQueue', lobbyRef.queue);
+	} else {
+		console.log('pausing');
+		io.to(lobby_id).emit('pause');
+	}
+}
+
 module.exports = {
 	handleJoinLobby,
 	handleDisconnect,
@@ -200,4 +221,5 @@ module.exports = {
 	handleSetDeviceId,
 	handlePlayerData,
 	handleTogglePlay,
+	handleSongEnd,
 };

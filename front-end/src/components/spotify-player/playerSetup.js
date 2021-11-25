@@ -22,18 +22,23 @@ export function setupPlayer(socket, setSpotifyPlayer, lobby_id) {
 		player.addListener('ready', ({ device_id }) => {
 			socket.emit('setDeviceId', { lobby_id, device_id });
 			setSpotifyPlayer(player);
-			setupSocketRecievers(socket, player, lobby_id);
+			setupSocketRecievers(socket, player, lobby_id, device_id);
 		});
 
 		player.addListener('player_state_changed', (state) => {
 			if (
-				state.paused &&
-				state.position === 0 &&
-				state.restrictions.disallow_resuming_reasons &&
-				state.restrictions.disallow_resuming_reasons[0] === 'not_paused'
+				player.state &&
+				state.track_window.previous_tracks.find(
+					(x) => x.id === player.state.track_window.current_track.id
+				)
 			) {
-				console.log('song ended');
+				socket.emit('songEnded', { lobby_id });
 			}
+			player.state = state;
+		});
+
+		player.addListener('not_ready', ({ device_id }) => {
+			console.log('Device ID is not ready for playback', device_id);
 		});
 
 		player.connect();

@@ -6,7 +6,7 @@ function SocketHandler({
 	setMembers,
 	setMessages,
 	setQueue,
-	setLoading,
+	setPlayerStatus,
 }) {
 	const params = new URLSearchParams(window.location.search);
 	const token = params.get('token');
@@ -40,7 +40,7 @@ function SocketHandler({
 		});
 
 		socket.on('doneLoading', (playerData) => {
-			setLoading(false);
+			setPlayerStatus(playerData);
 			console.log(playerData);
 		});
 	}, [

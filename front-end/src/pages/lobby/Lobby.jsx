@@ -11,8 +11,8 @@ import { SocketContext } from '../../context/SocketContext';
 import './lobby.scss';
 
 function Lobby() {
-	// Test
 	const [socket, setSocket] = useContext(SocketContext);
+
 	useEffect(() => {
 		const url = '' || 'http://localhost:8888';
 		setSocket(socketio.connect(url));
@@ -24,7 +24,7 @@ function Lobby() {
 	);
 
 	// State managament
-	const [loading, setLoading] = useState(true);
+	const [playerStatus, setPlayerStatus] = useContext(null);
 	const [members, setMembers] = useState([]);
 	const [messages, setMessages] = useState([]);
 	const [queue, setQueue] = useState([]);
@@ -42,9 +42,9 @@ function Lobby() {
 				setMembers={setMembers}
 				setMessages={setMessages}
 				setQueue={setQueue}
-				setLoading={setLoading}
+				setPlayerStatus={setPlayerStatus}
 			/>
-			{loading ? (
+			{playerStatus ? (
 				<h1>LOADING</h1>
 			) : (
 				<>
@@ -72,6 +72,7 @@ function Lobby() {
 						<DesignatedPlayer
 							musicProvider={user.music_provider}
 							lobby_id={user.lobby_id}
+							playerStatus={playerStatus}
 						/>
 					</div>
 				</>

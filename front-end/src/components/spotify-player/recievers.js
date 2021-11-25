@@ -1,17 +1,21 @@
 import * as handlers from './handlers.js';
 
-export function setupSocketRecievers(socket, spotifyPlayer, lobby_id) {
+export function setupSocketRecievers(
+	socket,
+	spotifyPlayer,
+	lobby_id,
+	device_id
+) {
 	// socket.on('play', () => {
 	// 	handlers.play(socket, spotifyPlayer);
 	// });
 
-	// socket.on('pause', () => {
-	// 	handlers.pause(socket, spotifyPlayer);
-	// });
+	socket.on('pause', () => {
+		handlers.pause(socket, spotifyPlayer);
+	});
 
 	socket.on('togglePlay', () => {
-		console.log('recieved');
-		handlers.togglePlay(socket, spotifyPlayer);
+		handlers.togglePlay(socket, spotifyPlayer, device_id);
 	});
 
 	socket.on('skip', () => {
@@ -20,5 +24,9 @@ export function setupSocketRecievers(socket, spotifyPlayer, lobby_id) {
 
 	socket.on('getPlayerData', (memberId) => {
 		handlers.getPlayerData(socket, spotifyPlayer, lobby_id, memberId);
+	});
+
+	socket.on('firstSong', () => {
+		handlers.firstSong(socket, spotifyPlayer);
 	});
 }

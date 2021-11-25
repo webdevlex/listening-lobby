@@ -4,14 +4,18 @@ import ApplePlayer from '../../components/apple-player/ApplePlayer';
 import AppleLogin from '../apple-login/AppleLogin';
 import { PlayersContext } from '../../context/PlayersContext';
 
-function DesignatedPlayer({ musicProvider, token, lobby_id }) {
+function DesignatedPlayer({ musicProvider, lobby_id, playerStatus }) {
 	const { apple } = useContext(PlayersContext);
 	const [applePlayer] = apple;
 
 	if (musicProvider === 'spotify') {
-		return <SpotifyPlayer token={token} lobby_id={lobby_id} />;
+		return <SpotifyPlayer lobby_id={lobby_id} playerStatus={playerStatus} />;
 	} else {
-		return applePlayer ? <ApplePlayer lobby_id={lobby_id} /> : <AppleLogin />;
+		return applePlayer ? (
+			<ApplePlayer lobby_id={lobby_id} playerStatus={playerStatus} />
+		) : (
+			<AppleLogin />
+		);
 	}
 }
 
