@@ -1,6 +1,6 @@
 import { setupSocketRecievers } from './recievers.js';
 
-export function setupPlayer(socket, setSpotifyPlayer, lobby_id) {
+export function setupPlayer(socket, setSpotifyPlayer, lobby_id, playerStatus) {
 	const params = new URLSearchParams(window.location.search);
 	const token = params.get('token');
 
@@ -35,10 +35,6 @@ export function setupPlayer(socket, setSpotifyPlayer, lobby_id) {
 				socket.emit('songEnded', { lobby_id });
 			}
 			player.state = state;
-		});
-
-		player.addListener('not_ready', ({ device_id }) => {
-			console.log('Device ID is not ready for playback', device_id);
 		});
 
 		player.connect();
