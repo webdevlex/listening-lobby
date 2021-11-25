@@ -7,7 +7,7 @@
 // 	}
 // }
 
-export async function pause(socket, spotifyPlayer) {
+export async function endOfQueue(socket, spotifyPlayer) {
 	const playerState = await spotifyPlayer.getCurrentState();
 	if (playerState) {
 		const volume = await spotifyPlayer.getVolume();

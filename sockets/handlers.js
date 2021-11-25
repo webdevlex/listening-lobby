@@ -198,15 +198,13 @@ function handlePlayerData(io, socket, data) {
 }
 
 // ---------- Handle when current song ends ----------
-function handleSongEnd(io, socket, { lobby_id }) {
+function handleMediaChange(io, socket, { lobby_id }) {
 	const lobbyRef = lobby.getLobbyById(lobby_id);
 	if (lobbyRef.queue.length > 0) {
-		console.log('popping');
 		lobby.popSong(lobby_id);
 		io.to(lobby_id).emit('updateLobbyQueue', lobbyRef.queue);
 	} else {
-		console.log('pausing');
-		io.to(lobby_id).emit('pause');
+		io.to(lobby_id).emit('endOfQueue');
 	}
 }
 
@@ -221,5 +219,5 @@ module.exports = {
 	handleSetDeviceId,
 	handlePlayerData,
 	handleTogglePlay,
-	handleSongEnd,
+	handleMediaChange,
 };

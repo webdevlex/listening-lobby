@@ -10,8 +10,8 @@ export function setupSocketRecievers(
 	// 	handlers.play(socket, spotifyPlayer);
 	// });
 
-	socket.on('pause', () => {
-		handlers.pause(socket, spotifyPlayer);
+	socket.on('endOfQueue', () => {
+		handlers.endOfQueue(socket, spotifyPlayer);
 	});
 
 	socket.on('togglePlay', () => {
