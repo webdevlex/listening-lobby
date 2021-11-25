@@ -41,11 +41,11 @@ export async function skip(socket, spotifyPlayer) {
 }
 
 export async function getPlayerData(socket, spotifyPlayer, lobby_id, memberId) {
-	const playingOnBrowser = await spotifyPlayer.getCurrentState();
-	if (playingOnBrowser) {
+	const playerStatus = await spotifyPlayer.getCurrentState();
+	if (playerStatus) {
 		socket.emit('playerData', {
-			paused: playingOnBrowser.paused,
-			timestamp: playingOnBrowser.position,
+			paused: playerStatus.paused,
+			timestamp: playerStatus.position,
 			lobby_id,
 			memberId,
 		});

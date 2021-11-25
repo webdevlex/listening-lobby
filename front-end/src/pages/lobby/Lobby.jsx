@@ -73,6 +73,7 @@ function Lobby() {
 							musicProvider={user.music_provider}
 							lobby_id={user.lobby_id}
 							playerStatus={playerStatus}
+							queue={queue}
 						/>
 					</div>
 				</>
