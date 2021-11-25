@@ -24,7 +24,7 @@ function Lobby() {
 	);
 
 	// State managament
-	const [playerStatus, setPlayerStatus] = useContext(null);
+	const [playerStatus, setPlayerStatus] = useState(null);
 	const [members, setMembers] = useState([]);
 	const [messages, setMessages] = useState([]);
 	const [queue, setQueue] = useState([]);

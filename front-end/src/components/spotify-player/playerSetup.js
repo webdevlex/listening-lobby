@@ -25,17 +25,17 @@ export function setupPlayer(socket, setSpotifyPlayer, lobby_id, playerStatus) {
 			setupSocketRecievers(socket, player, lobby_id, device_id);
 		});
 
-		player.addListener('player_state_changed', (state) => {
-			if (
-				player.state &&
-				state.track_window.previous_tracks.find(
-					(x) => x.id === player.state.track_window.current_track.id
-				)
-			) {
-				socket.emit('songEnded', { lobby_id });
-			}
-			player.state = state;
-		});
+		// player.addListener('player_state_changed', (state) => {
+		// 	if (
+		// 		player.state &&
+		// 		state.track_window.previous_tracks.find(
+		// 			(x) => x.id === player.state.track_window.current_track.id
+		// 		)
+		// 	) {
+		// 		socket.emit('songEnded', { lobby_id });
+		// 	}
+		// 	player.state = state;
+		// });
 
 		player.connect();
 	};
