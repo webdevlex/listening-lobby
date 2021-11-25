@@ -1,89 +1,85 @@
-import React, { useEffect, useContext } from 'react';
-import { SocketContext } from '../../context/SocketContext';
-import { PlayersContext } from '../../context/PlayersContext';
-import './apple-player.scss';
+import React, { useEffect, useContext } from "react";
+import { SocketContext } from "../../context/SocketContext";
+import { PlayersContext } from "../../context/PlayersContext";
+import "./apple-player.scss";
 
 function ApplePlayer({ lobby_id }) {
-	const [socket] = useContext(SocketContext);
-	const { apple } = useContext(PlayersContext);
-	const [applePlayer] = apple;
-	useEffect(() => {
-		console.log(applePlayer);
-		// Apple Socket Functions
-		// --------- UPDATE ---------: 'togglePlay' now
-		socket.on('playApple', async () => {
-			await play();
-		});
+  const [socket] = useContext(SocketContext);
+  const { apple } = useContext(PlayersContext);
+  const [applePlayer] = apple;
 
-		// Apple Player Controllers
-		let play = async () => {
-			await applePlayer.authorize();
-			await applePlayer.play();
-			applePlayer.player.volume = 0.05;
-		};
+  useEffect(() => {
+    console.log(applePlayer);
+    //Event listener for media change
+    applePlayer.addEventListener("mediaItemDidChange", () => {
+      socket.emit("mediaChange");
+    });
 
-		// --------- UPDATE ---------: needed for people to join if admin is using apple player
-		socket.on('getPlayerData', (memberId) => {
-			// socket.emit('playerData', {
-			// 	paused: TODO,
-			// 	timestamp: TODO,
-			// 	lobby_id, // Completed
-			// 	memberId, // Completed
-			// });
-		});
+    // Apple Socket Functions
+    socket.on("togglePlay", async () => {
+      await play();
+    });
 
-		socket.on('updateAppleQueue', (playerData) => {
-			// {href, id, type}
-			setMusicKitQueue(playerData);
-		});
-	}, [socket, applePlayer]);
+    // Apple Player Controllers
+    let play = async () => {
+      await applePlayer.authorize();
+      await applePlayer.play();
+    };
 
-	function playSong() {
-		socket.emit('playSong', lobby_id);
-	}
+    // --------- UPDATE ---------: needed for people to join if admin is using apple player
+    socket.on("getPlayerData", (memberId) => {
+      // socket.emit('playerData', {
+      // 	paused: TODO,
+      // 	timestamp: TODO,
+      // 	lobby_id, // Completed
+      // 	memberId, // Completed
+      // });
+    });
+    socket.on("updateLobbyQueue", (queue) => {
+      setMusicKitQueue(queue[0].apple.id);
+    });
+    socket.on("updateAppleQueue", (playerData) => {
+      setMusicKitQueue(playerData);
+    });
+  }, [socket, applePlayer]);
 
-	//All I need passed in an object that has an {href, id, type}
-	async function setMusicKitQueue(item) {
-		await applePlayer.authorize();
+  let play = async () => {
+    socket.emit("togglePlay", lobby_id);
+  };
 
-		let musicQueue = applePlayer.player.queue;
-		if (item.type === 'songs') {
-			musicQueue.append(item);
-		} else if (item.type === 'albums') {
-			let album = await applePlayer.api.album(item.id);
-			let tracks = album.relationships.tracks.data;
-			tracks.forEach((song) => {
-				musicQueue.append(song);
-			});
-		}
-	}
+  async function setMusicKitQueue(id) {
+    await applePlayer.authorize();
+    await applePlayer.setQueue({
+      song: id,
+    });
+  }
 
-	// TEMP PLAYER CONTROLS --- FOR TESTING
-	let nextSong = async () => {
-		await applePlayer.authorize();
-		await applePlayer.skipToNextItem();
-	};
-	let prevSong = async () => {
-		await applePlayer.authorize();
-		await applePlayer.skipToPreviousItem();
-	};
-	let pauseSong = async () => {
-		await applePlayer.authorize();
-		await applePlayer.pause();
-	};
+  // TEMP PLAYER CONTROLS --- FOR TESTING
+  let nextSong = async () => {
+    await applePlayer.authorize();
+    await applePlayer.skipToNextItem();
+  };
+  let prevSong = async () => {
+    await applePlayer.authorize();
+    await applePlayer.skipToPreviousItem();
+  };
+  let pauseSong = async () => {
+    await applePlayer.authorize();
+    await applePlayer.pause();
+  };
 
-	// TEMP PLAYER CONTROLS --- FOR TESTING
+  // TEMP PLAYER CONTROLS --- FOR TESTING
 
-	return (
-		<div className='apple-player'>
-			<div>
-				<button onClick={() => playSong()}>Play</button>
-				<button onClick={() => prevSong()}>Prev</button>
-				<button onClick={() => pauseSong()}>Pause</button>
-				<button onClick={() => nextSong()}>Next</button>
-			</div>
-		</div>
-	);
+  return (
+    <div className='apple-player'>
+      <div>
+        <button onClick={() => play()}>Play</button>
+        <button onClick={() => prevSong()}>Prev</button>
+        <button onClick={() => pauseSong()}>Pause</button>
+        <button onClick={() => nextSong()}>Next</button>
+      </div>
+    </div>
+  );
 }
 
 export default ApplePlayer;
