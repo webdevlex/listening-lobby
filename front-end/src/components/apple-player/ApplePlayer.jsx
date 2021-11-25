@@ -1,85 +1,103 @@
-import React, { useEffect, useContext } from 'react';
-import { SocketContext } from '../../context/SocketContext';
-import { PlayersContext } from '../../context/PlayersContext';
-import './apple-player.scss';
+import React, { useEffect, useContext } from "react";
+import { SocketContext } from "../../context/SocketContext";
+import { PlayersContext } from "../../context/PlayersContext";
+import "./apple-player.scss";
 
-function ApplePlayer({ lobby_id, playerStatus }) {
-	const [socket] = useContext(SocketContext);
-	const { apple } = useContext(PlayersContext);
-	const [applePlayer] = apple;
+function ApplePlayer({ lobby_id, playerStatus, queue }) {
+  const [socket] = useContext(SocketContext);
+  const { apple } = useContext(PlayersContext);
+  const [applePlayer] = apple;
+  let removeEventListener = () => {
+    applePlayer.removeEventListener("mediaItemDidChange", () => {});
+  };
+  let addEventListener = () => {
+    applePlayer.addEventListener("mediaItemDidChange", () => {
+      alert("changed");
+      socket.emit("mediaChange", { lobby_id });
+    });
+  };
 
-	useEffect(() => {
-		console.log(applePlayer);
-		//Event listener for media change
-		applePlayer.addEventListener('mediaItemDidChange', () => {
-			socket.emit('mediaChange');
-		});
+  useEffect(() => {
+    console.log(applePlayer);
 
-		// Apple Socket Functions
-		socket.on('togglePlay', async () => {
-			await play();
-		});
+    // Handles users who join a session and needs to catch up.
+    if (playerStatus && queue.length > 0) {
+      setMusicKitQueue(queue[0].apple.id);
+      applePlayer.seekToTime(playerStatus.timestamp / 1000);
+      if (!playerStatus.paused) {
+        play();
+      }
+    }
+    //Event listener for media change on startup
+    addEventListener();
 
-		// Apple Player Controllers
-		let play = async () => {
-			await applePlayer.authorize();
-			await applePlayer.play();
-		};
+    // Apple Socket Functions
+    socket.on("togglePlay", async () => {
+      removeEventListener();
+      await play();
+      addEventListener();
+    });
 
-		// --------- UPDATE ---------: needed for people to join if admin is using apple player
-		socket.on('getPlayerData', (memberId) => {
-			// socket.emit('playerData', {
-			// 	paused: TODO: get current player status (boolean)
-			// 	timestamp: get current player timestamp (milliseconds)
-			// 	lobby_id, // Completed
-			// 	memberId, // Completed
-			// });
-		});
-		socket.on('updateLobbyQueue', (queue) => {
-			setMusicKitQueue(queue[0].apple.id);
-		});
-		socket.on('updateAppleQueue', (playerData) => {
-			setMusicKitQueue(playerData);
-		});
-	}, [socket, applePlayer]);
+    // Apple Player Controllers
+    let play = async () => {
+      await applePlayer.authorize();
+      await applePlayer.play();
+    };
 
-	let play = async () => {
-		socket.emit('togglePlay', { lobby_id });
-	};
+    // needed for people to join if admin is using apple player
+    socket.on("getPlayerData", (memberId) => {
+      socket.emit("playerData", {
+        paused: !applePlayer.player.isPlaying,
+        timestamp: applePlayer.player.currentPlaybackTime * 1000,
+        lobby_id,
+        memberId,
+      });
+    });
+    socket.on("updateLobbyQueue", async (queue) => {
+      setMusicKitQueue(queue[0].apple.id);
+    });
+    socket.on("updateAppleQueue", (playerData) => {
+      setMusicKitQueue(playerData);
+    });
+  }, [socket, applePlayer]);
 
-	async function setMusicKitQueue(id) {
-		await applePlayer.authorize();
-		await applePlayer.setQueue({
-			song: id,
-		});
-	}
+  let play = async () => {
+    socket.emit("togglePlay", { lobby_id });
+  };
 
-	// TEMP PLAYER CONTROLS --- FOR TESTING
-	let nextSong = async () => {
-		await applePlayer.authorize();
-		await applePlayer.skipToNextItem();
-	};
-	let prevSong = async () => {
-		await applePlayer.authorize();
-		await applePlayer.skipToPreviousItem();
-	};
-	let pauseSong = async () => {
-		await applePlayer.authorize();
-		await applePlayer.pause();
-	};
+  async function setMusicKitQueue(id) {
+    await applePlayer.authorize();
+    await applePlayer.setQueue({
+      song: id,
+    });
+  }
 
-	// TEMP PLAYER CONTROLS --- FOR TESTING
+  // TEMP PLAYER CONTROLS --- FOR TESTING
+  let nextSong = async () => {
+    await applePlayer.authorize();
+    await applePlayer.skipToNextItem();
+  };
+  let prevSong = async () => {
+    await applePlayer.authorize();
+    await applePlayer.skipToPreviousItem();
+  };
+  let pauseSong = async () => {
+    await applePlayer.authorize();
+    await applePlayer.pause();
+  };
 
-	return (
-		<div className='apple-player'>
-			<div>
-				<button onClick={() => play()}>Play</button>
-				<button onClick={() => prevSong()}>Prev</button>
-				<button onClick={() => pauseSong()}>Pause</button>
-				<button onClick={() => nextSong()}>Next</button>
-			</div>
-		</div>
-	);
+  // TEMP PLAYER CONTROLS --- FOR TESTING
+
+  return (
+    <div className='apple-player'>
+      <div>
+        <button onClick={() => play()}>Play</button>
+        <button onClick={() => prevSong()}>Prev</button>
+        <button onClick={() => pauseSong()}>Pause</button>
+        <button onClick={() => nextSong()}>Next</button>
+      </div>
+    </div>
+  );
 }
 
 export default ApplePlayer;
@@ -124,4 +142,9 @@ export default ApplePlayer;
 //     songs: [],
 //   });
 //   await musicKit.pause();
+// }
+// try {
+//   await applePlayer.addToLibrary(queue[0].apple.id, "song");
+// } catch (res) {
+//   console.log(res);
 // }
