@@ -35,8 +35,8 @@ async function getAndFormatSongData(song, token) {
 	let result = searchResult.songs.data.find(
 		(song) => song.attributes.isrc.substring(0, 8) === uniId.substring(0, 8)
 	);
-	result = result === undefined ? { href: '', type: '', id: '' } : result;
-	return { href: result.href, type: result.type, id: result.id };
+	result = result === undefined ? '' : result;
+	return result.id;
 }
 
 //Searching from Spotify
@@ -68,8 +68,8 @@ async function appleAlbumSearch(albumName, token) {
 	}
 }
 
-function formatSongData({ href, type, id }) {
-	return { href, type, id };
+function formatSongData({ id }) {
+	return id;
 }
 
 async function formatAlbum(album, token) {
