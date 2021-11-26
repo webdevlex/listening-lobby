@@ -10,15 +10,24 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
   let removeEventListener = () => {
     applePlayer.removeEventListener("mediaItemDidChange", () => {});
   };
-  let addEventListener = () => {
+  let addEventListener = (toAdd) => {
     applePlayer.addEventListener("mediaItemDidChange", () => {
-      alert("changed");
+      alert("popped");
       socket.emit("mediaChange", { lobby_id });
     });
+    if (toAdd) {
+      applePlayer.player.addEventListener("playbackStateDidChange", () => {
+        if (applePlayer.player.playbackState === 10) {
+          alert("popped");
+          socket.emit("mediaChange", { lobby_id });
+        }
+      });
+    }
   };
 
   useEffect(() => {
-    console.log(applePlayer);
+    //Event listener for media change on startup
+    addEventListener(true);
 
     // Handles users who join a session and needs to catch up.
     if (playerStatus && queue.length > 0) {
@@ -28,14 +37,12 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
         play();
       }
     }
-    //Event listener for media change on startup
-    addEventListener();
 
     // Apple Socket Functions
     socket.on("togglePlay", async () => {
       removeEventListener();
       await play();
-      addEventListener();
+      addEventListener(false);
     });
 
     // Apple Player Controllers
@@ -54,7 +61,9 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
       });
     });
     socket.on("updateLobbyQueue", async (queue) => {
-      setMusicKitQueue(queue[0].apple.id);
+      if (queue.length > 0) {
+        setMusicKitQueue(queue[0].apple);
+      }
     });
     socket.on("updateAppleQueue", (playerData) => {
       setMusicKitQueue(playerData);
@@ -77,9 +86,8 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
     await applePlayer.authorize();
     await applePlayer.skipToNextItem();
   };
-  let prevSong = async () => {
-    await applePlayer.authorize();
-    await applePlayer.skipToPreviousItem();
+  let getInstance = async () => {
+    console.log(applePlayer);
   };
   let pauseSong = async () => {
     await applePlayer.authorize();
@@ -92,9 +100,9 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
     <div className='apple-player'>
       <div>
         <button onClick={() => play()}>Play</button>
-        <button onClick={() => prevSong()}>Prev</button>
         <button onClick={() => pauseSong()}>Pause</button>
         <button onClick={() => nextSong()}>Next</button>
+        <button onClick={() => getInstance()}>Get Instance</button>
       </div>
     </div>
   );
@@ -102,6 +110,7 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
 
 export default ApplePlayer;
 
+// await applePlayer.addToLibrary(id);
 // Refrence functions:
 //  async function removeItemFromQueue(index) {
 //   //Changing the display of the queue
