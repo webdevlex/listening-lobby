@@ -1,9 +1,10 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { SocketContext } from "../../context/SocketContext";
 import { PlayersContext } from "../../context/PlayersContext";
 import "./apple-player.scss";
 
 function ApplePlayer({ lobby_id, playerStatus, queue }) {
+  const [volume, setVolume] = useState(10);
   const [socket] = useContext(SocketContext);
   const { apple } = useContext(PlayersContext);
   const [applePlayer] = apple;
@@ -28,6 +29,9 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
   useEffect(() => {
     //Event listener for media change on startup
     addEventListener(true);
+
+    //Sets defualt volume to half
+    applePlayer.player.volume = 0.1;
 
     // Handles users who join a session and needs to catch up.
     if (playerStatus && queue.length > 0) {
@@ -93,6 +97,10 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
     await applePlayer.authorize();
     await applePlayer.pause();
   };
+  let updateVolume = (e, data) => {
+    applePlayer.player.volume = e.target.value / 100;
+    setVolume(data);
+  };
 
   // TEMP PLAYER CONTROLS --- FOR TESTING
 
@@ -103,6 +111,14 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
         <button onClick={() => pauseSong()}>Pause</button>
         <button onClick={() => nextSong()}>Next</button>
         <button onClick={() => getInstance()}>Get Instance</button>
+        <input
+          className='volume-slider'
+          type='range'
+          min='0'
+          max='100'
+          value={volume}
+          onChange={updateVolume}
+        />
       </div>
     </div>
   );
