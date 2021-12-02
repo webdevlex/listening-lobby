@@ -25,7 +25,7 @@ async function search(searchName, token) {
         : defaultSearchResults;
     return serachResults;
   } catch (err) {
-    console.log(err.response.status, err.response.statusText);
+    console.log(err);
     return defaultSearchResults;
   }
 }

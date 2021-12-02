@@ -13,13 +13,11 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
   };
   let addEventListener = (toAdd) => {
     applePlayer.addEventListener("mediaItemDidChange", () => {
-      alert("popped");
       socket.emit("mediaChange", { lobby_id });
     });
     if (toAdd) {
       applePlayer.player.addEventListener("playbackStateDidChange", () => {
         if (applePlayer.player.playbackState === 10) {
-          alert("popped");
           socket.emit("mediaChange", { lobby_id });
         }
       });
@@ -29,6 +27,9 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
   useEffect(() => {
     //Event listener for media change on startup
     addEventListener(true);
+
+    //0 pause 1 play
+    let togglePlayCounter = 0;
 
     //Sets defualt volume to half
     applePlayer.player.volume = 0.1;
@@ -41,18 +42,32 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
         play();
       }
     }
+    //Still testing
 
     // Apple Socket Functions
     socket.on("togglePlay", async () => {
-      removeEventListener();
-      await play();
-      addEventListener(false);
+      if (togglePlayCounter) {
+        await pauseSong();
+        togglePlayCounter = 0;
+      } else {
+        await playSong();
+        togglePlayCounter = 1;
+      }
     });
 
-    // Apple Player Controllers
-    let play = async () => {
+    // Apple Player Controllers - user only play pause function
+    let playSong = async () => {
       await applePlayer.authorize();
+      removeEventListener();
       await applePlayer.play();
+      addEventListener(false);
+    };
+
+    let pauseSong = async () => {
+      await applePlayer.authorize();
+      removeEventListener();
+      await applePlayer.pause();
+      addEventListener(false);
     };
 
     // needed for people to join if admin is using apple player
@@ -64,16 +79,21 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
         memberId,
       });
     });
+
     socket.on("updateLobbyQueue", async (queue) => {
       if (queue.length > 0) {
-        setMusicKitQueue(queue[0].apple);
+        await setMusicKitQueue(queue[0].apple);
+        if (togglePlayCounter) {
+          playSong();
+        }
+      } else {
+        console.log("Queue now empty");
+        togglePlayCounter = 0;
       }
-    });
-    socket.on("updateAppleQueue", (playerData) => {
-      setMusicKitQueue(playerData);
     });
   }, [socket, applePlayer]);
 
+  //Emits play to all users
   let play = async () => {
     socket.emit("togglePlay", { lobby_id });
   };
@@ -93,10 +113,7 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
   let getInstance = async () => {
     console.log(applePlayer);
   };
-  let pauseSong = async () => {
-    await applePlayer.authorize();
-    await applePlayer.pause();
-  };
+
   let updateVolume = (e, data) => {
     applePlayer.player.volume = e.target.value / 100;
     setVolume(data);
@@ -108,7 +125,6 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
     <div className='apple-player'>
       <div>
         <button onClick={() => play()}>Play</button>
-        <button onClick={() => pauseSong()}>Pause</button>
         <button onClick={() => nextSong()}>Next</button>
         <button onClick={() => getInstance()}>Get Instance</button>
         <input
@@ -173,3 +189,6 @@ export default ApplePlayer;
 // } catch (res) {
 //   console.log(res);
 // }
+// socket.on("updateAppleQueue", (playerData) => {
+//   setMusicKitQueue(playerData);
+// });
