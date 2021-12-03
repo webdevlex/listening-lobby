@@ -87,27 +87,6 @@ async function handleUniSearch(io, socket, data) {
 	io.to(socket.id).emit('uniSearchResults', formattedResults);
 }
 
-// ---------- Handle adding song to queue ----------
-async function handleAddSongToQueue(io, socket, data) {
-	// Get lobby data
-	const lobbyRef = lobby.getLobbyById(data.user.lobby_id);
-
-	// Perform the necessary searches and return an object containing display for ui and data for each player
-	const allSongData = await helpers.getSongDataForPlayers(
-		lobbyRef.tokens,
-		data
-	);
-
-	// Add song to lobby
-	lobby.addSongToLobby(data.user.lobby_id, allSongData);
-
-	// Send front end the data for ui, spotify player, and apple player
-	io.to(data.user.lobby_id).emit('updateLobbyQueue', lobbyRef.queue);
-	if (lobbyRef.queue.length === 1) {
-		io.to(data.user.lobby_id).emit('firstSong');
-	}
-}
-
 // ---------- Handle adding album to queue ----------
 async function handleAddAlbumToQueue(io, socket, data) {
 	// Get lobby data
@@ -195,6 +174,28 @@ function handlePlayerData(io, socket, data) {
 	// else {
 	// 	console.log('Do Nothing');
 	// }
+}
+
+// TODAY
+// ---------- Handle adding song to queue ----------
+async function handleAddSongToQueue(io, socket, data) {
+	// Get lobby data
+	const lobbyRef = lobby.getLobbyById(data.user.lobby_id);
+
+	// Perform the necessary searches and return an object containing display for ui and data for each player
+	const allSongData = await helpers.getSongDataForPlayers(
+		lobbyRef.tokens,
+		data
+	);
+
+	// Add song to lobby
+	lobby.addSongToLobby(data.user.lobby_id, allSongData);
+
+	// Send front end the data for ui, spotify player, and apple player
+	io.to(data.user.lobby_id).emit('updateLobbyQueue', lobbyRef.queue);
+	if (lobbyRef.queue.length === 1) {
+		io.to(data.user.lobby_id).emit('firstSong');
+	}
 }
 
 // ---------- Handle when current song ends ----------

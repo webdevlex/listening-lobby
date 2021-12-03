@@ -34,6 +34,7 @@ function SocketHandler({
 			setMessages(lobbyMessages);
 		});
 
+		// TODAY
 		socket.on('updateLobbyQueue', (queue) => {
 			setQueue(queue);
 		});
