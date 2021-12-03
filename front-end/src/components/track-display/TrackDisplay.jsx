@@ -6,7 +6,7 @@ export default function TrackDisplay({ tracks, user }) {
 	const [socket] = useContext(SocketContext);
 
 	function handleSongClick(songData) {
-		socket.emit('addSongToQueue', { songData, user });
+		socket.emit('addSong', { songData, user });
 	}
 
 	const hasTracks = tracks[0];

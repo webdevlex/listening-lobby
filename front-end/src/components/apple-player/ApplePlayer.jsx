@@ -8,6 +8,8 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
 	const [socket] = useContext(SocketContext);
 	const { apple } = useContext(PlayersContext);
 	const [applePlayer] = apple;
+	const [playing, setPlaying] = useState(false);
+
 	let removeEventListener = () => {
 		applePlayer.removeEventListener('mediaItemDidChange', () => {});
 	};
@@ -44,17 +46,6 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
 		}
 		//Still testing
 
-		// Apple Socket Functions
-		socket.on('togglePlay', async () => {
-			if (togglePlayCounter) {
-				await pauseSong();
-				togglePlayCounter = 0;
-			} else {
-				await playSong();
-				togglePlayCounter = 1;
-			}
-		});
-
 		// Apple Player Controllers - user only play pause function
 		let playSong = async () => {
 			await applePlayer.authorize();
@@ -80,23 +71,37 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
 			});
 		});
 
-		// TODAY
-		socket.on('updateLobbyQueue', async (queue) => {
-			if (queue.length > 0) {
-				await setMusicKitQueue(queue[0].apple);
-				if (togglePlayCounter) {
-					playSong();
-				}
-			} else {
-				console.log('Queue now empty');
-				togglePlayCounter = 0;
+		socket.on('play', async () => {
+			setPlaying(true);
+			await playSong();
+		});
+
+		socket.on('pause', async () => {
+			setPlaying(false);
+			await pauseSong();
+		});
+
+		socket.on('firstSong', async (queue) => {
+			await setMusicKitQueue(queue[0].apple);
+		});
+
+		// On end or on skip
+		socket.on('popped', async (queue) => {
+			await setMusicKitQueue(queue[0].apple);
+			if (togglePlayCounter) {
+				playSong();
 			}
+		});
+
+		socket.on('emptyQueue', async (queue) => {
+			console.log('Queue now empty');
+			togglePlayCounter = 0;
 		});
 	}, [socket, applePlayer]);
 
 	//Emits play to all users
 	let play = async () => {
-		socket.emit('togglePlay', { lobby_id });
+		socket.emit('play', { lobby_id });
 	};
 
 	async function setMusicKitQueue(id) {
@@ -125,7 +130,9 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
 	return (
 		<div className='apple-player'>
 			<div>
-				<button onClick={() => play()}>Play</button>
+				<button onClick={() => play()}>
+					<p>{playing ? 'PAUSE' : 'PLAY'}</p>
+				</button>
 				<button onClick={() => nextSong()}>Next</button>
 				<button onClick={() => getInstance()}>Get Instance</button>
 				<input

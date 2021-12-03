@@ -31,8 +31,8 @@ function socketsReciever(io) {
 		});
 
 		// Handle when a user attempts to add a song to the queue
-		socket.on('addSongToQueue', async (data) => {
-			await handlers.handleAddSongToQueue(io, socket, data);
+		socket.on('addSong', async (data) => {
+			await handlers.handleAddSong(io, socket, data);
 		});
 
 		// Handle wehn a user attempts to add an album to queue
@@ -41,8 +41,8 @@ function socketsReciever(io) {
 		});
 
 		// Handle when a user hits play
-		socket.on('togglePlay', (data) => {
-			handlers.handleTogglePlay(io, socket, data);
+		socket.on('play', (data) => {
+			handlers.handlePlay(io, socket, data);
 		});
 
 		// Handle when a user hits play next song

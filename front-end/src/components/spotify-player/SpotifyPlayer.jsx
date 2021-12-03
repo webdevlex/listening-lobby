@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import { setupPlayer } from './playerSetup';
 import { SocketContext } from '../../context/SocketContext';
 import { PlayersContext } from '../../context/PlayersContext';
@@ -7,6 +7,7 @@ function SpotifyPlayer({ user, queue, playerStatus, setLoading }) {
 	const [socket] = useContext(SocketContext);
 	const { spotify, spotifyRan } = useContext(PlayersContext);
 	const [spotifyPlayer, setSpotifyPlayer] = spotify;
+	const [playing, setPlaying] = useState(false);
 	const [ran, setRan] = spotifyRan;
 
 	useEffect(() => {
@@ -19,7 +20,8 @@ function SpotifyPlayer({ user, queue, playerStatus, setLoading }) {
 				user,
 				queue,
 				playerStatus,
-				setLoading
+				setLoading,
+				setPlaying
 			);
 		}
 	}, [
@@ -30,10 +32,11 @@ function SpotifyPlayer({ user, queue, playerStatus, setLoading }) {
 		queue,
 		playerStatus,
 		setLoading,
+		setPlaying,
 	]);
 
 	async function play() {
-		socket.emit('togglePlay', { lobby_id: user.lobby_id });
+		socket.emit('play', { lobby_id: user.lobby_id });
 	}
 
 	function skip() {
@@ -43,7 +46,7 @@ function SpotifyPlayer({ user, queue, playerStatus, setLoading }) {
 	return (
 		<div>
 			<button onClick={() => play()}>
-				<p>PLAY</p>
+				<p>{playing ? 'PAUSE' : 'PLAY'}</p>
 			</button>
 			<button onClick={() => skip()}>
 				<p>SKIP</p>

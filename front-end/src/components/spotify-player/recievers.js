@@ -4,18 +4,25 @@ export function setupSocketRecievers(
 	socket,
 	spotifyPlayer,
 	lobby_id,
-	device_id
+	device_id,
+	setPlaying
 ) {
 	// socket.on('play', () => {
 	// 	handlers.play(socket, spotifyPlayer);
 	// });
 
-	socket.on('endOfQueue', () => {
-		handlers.endOfQueue(socket, spotifyPlayer);
+	socket.on('emptyQueue', () => {
+		handlers.emptyQueue(socket, spotifyPlayer);
 	});
 
-	socket.on('togglePlay', () => {
-		handlers.togglePlay(socket, spotifyPlayer, device_id);
+	socket.on('play', () => {
+		handlers.play(socket, spotifyPlayer, device_id);
+		setPlaying(true);
+	});
+
+	socket.on('pause', () => {
+		handlers.pause(socket, spotifyPlayer, device_id);
+		setPlaying(false);
 	});
 
 	socket.on('skip', () => {

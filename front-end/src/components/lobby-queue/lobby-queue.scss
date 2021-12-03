@@ -1,48 +1,62 @@
 .lobby-queue {
-	background-color: goldenrod;
+  background-color: goldenrod;
 }
 
 .queue-item {
-	padding-block: 5px;
-	display: flex;
-	align-items: center;
+  padding-block: 5px;
+  display: flex;
+  align-items: center;
 }
 
 .index {
-	margin-inline: 20px;
+  margin-inline: 20px;
 }
 
 .queue-item .text {
-	margin-left: 20px;
+  margin-left: 20px;
 
-	.primary-text {
-		font-weight: bold;
-	}
+  .primary-text {
+    font-weight: bold;
+  }
 }
 
 .primary-info {
-	display: flex;
+  display: flex;
 
-	.album-cover-container {
-		width: 50px;
-		height: 50px;
+  .album-cover-container {
+    width: 50px;
+    height: 50px;
 
-		img {
-			height: 100%;
-		}
-	}
+    img {
+      height: 100%;
+    }
+  }
 }
 
 .remove-button {
-	display: flex;
-	align-items: center;
-	margin-left: auto;
-	margin-right: 20px;
-	cursor: pointer;
-	padding-inline: 10px;
-	height: fit-content;
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  margin-right: 20px;
+  cursor: pointer;
+  padding-inline: 10px;
+  height: fit-content;
 
-	&:hover {
-		background: gray;
-	}
+  &:hover {
+    background: gray;
+  }
+}
+
+.add-to-library-button {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  margin-right: 20px;
+  cursor: pointer;
+  padding-inline: 10px;
+  height: fit-content;
+
+  &:hover {
+    background: gray;
+  }
 }

@@ -9,6 +9,7 @@ function generateLobby(data, tempToken) {
 		queue: [],
 		messages: [],
 		tokens: generateTokens(data, tempToken),
+		playing: false,
 	};
 
 	lobbies.push(newLobby);
@@ -167,7 +168,24 @@ function popSong(lobby_id) {
 	lobbies[i].queue.splice(0, 1);
 }
 
+function updatePlayStatus(lobby_id) {
+	const i = getLobbyIndex(lobby_id);
+	if (lobbies[i].playing === true) {
+		lobbies[i].playing = false;
+	} else {
+		lobbies[i].playing = true;
+	}
+	return lobbies[i].playing;
+}
+
+function setPlayStatusPaused(lobby_id) {
+	const i = getLobbyIndex(lobby_id);
+	lobbies[i].playing = false;
+}
+
 module.exports = {
+	setPlayStatusPaused,
+	updatePlayStatus,
 	generateLobby,
 	lobbyExists,
 	getLobbyById,

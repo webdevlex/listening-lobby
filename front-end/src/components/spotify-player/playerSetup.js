@@ -7,7 +7,8 @@ export function setupPlayer(
 	user,
 	queue,
 	playerStatus,
-	setLoading
+	setLoading,
+	setPlaying
 ) {
 	const params = new URLSearchParams(window.location.search);
 	const token = params.get('token');
@@ -31,7 +32,13 @@ export function setupPlayer(
 		player.addListener('ready', ({ device_id }) => {
 			console.log('ready');
 			socket.emit('setDeviceId', { lobby_id: user.lobby_id, device_id });
-			setupSocketRecievers(socket, player, user.lobby_id, device_id);
+			setupSocketRecievers(
+				socket,
+				player,
+				user.lobby_id,
+				device_id,
+				setPlaying
+			);
 			setupPlayback(
 				player,
 				device_id,

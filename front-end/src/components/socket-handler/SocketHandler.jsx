@@ -35,7 +35,7 @@ function SocketHandler({
 		});
 
 		// TODAY
-		socket.on('updateLobbyQueue', (queue) => {
+		socket.on('addSong', (queue) => {
 			setQueue(queue);
 		});
 

@@ -35,7 +35,7 @@ async function handleJoinLobby(io, socket, data) {
 		// Send new lobby data back to members
 		// TODO send queue and ui queue to designated player
 		io.to(lobby_id).emit('setLobbyInfo', members, messages);
-		io.to(socket.id).emit('updateLobbyQueue', lobbyRef.queue);
+		io.to(socket.id).emit('addSong', lobbyRef.queue);
 
 		const adminData = lobby.getAdminData(data);
 		io.to(adminData.user_id).emit('getPlayerData', socket.id);
@@ -101,7 +101,7 @@ async function handleAddAlbumToQueue(io, socket, data) {
 // Display each song in album on members ui
 function sendAlbumToUi(io, albumData, { lobby_id, queue }) {
 	albumData.dataForUi.forEach((track) => lobby.addSongToLobby(lobby_id, track));
-	io.to(lobby_id).emit('updateLobbyQueue', queue);
+	io.to(lobby_id).emit('addSong', queue);
 }
 
 // Add songs in album to members players
@@ -122,10 +122,16 @@ function sendAlbumToPlayers(
 }
 
 // ---------- Handle when someone clicks play ----------
-function handleTogglePlay(io, socket, { lobby_id }) {
+function handlePlay(io, socket, { lobby_id }) {
 	const lobbyRef = lobby.getLobbyById(lobby_id);
+	const play = lobby.updatePlayStatus(lobby_id);
+
 	if (lobbyRef.queue.length > 0) {
-		io.to(lobby_id).emit('togglePlay');
+		if (play) {
+			io.to(lobby_id).emit('play');
+		} else {
+			io.to(lobby_id).emit('pause');
+		}
 	} else {
 		console.log('empty queue');
 	}
@@ -178,7 +184,7 @@ function handlePlayerData(io, socket, data) {
 
 // TODAY
 // ---------- Handle adding song to queue ----------
-async function handleAddSongToQueue(io, socket, data) {
+async function handleAddSong(io, socket, data) {
 	// Get lobby data
 	const lobbyRef = lobby.getLobbyById(data.user.lobby_id);
 
@@ -192,9 +198,9 @@ async function handleAddSongToQueue(io, socket, data) {
 	lobby.addSongToLobby(data.user.lobby_id, allSongData);
 
 	// Send front end the data for ui, spotify player, and apple player
-	io.to(data.user.lobby_id).emit('updateLobbyQueue', lobbyRef.queue);
+	io.to(data.user.lobby_id).emit('addSong', lobbyRef.queue);
 	if (lobbyRef.queue.length === 1) {
-		io.to(data.user.lobby_id).emit('firstSong');
+		io.to(data.user.lobby_id).emit('firstSong', lobbyRef.queue);
 	}
 }
 
@@ -203,9 +209,14 @@ function handleMediaChange(io, socket, { lobby_id }) {
 	const lobbyRef = lobby.getLobbyById(lobby_id);
 	if (lobbyRef.queue.length > 0) {
 		lobby.popSong(lobby_id);
-		io.to(lobby_id).emit('updateLobbyQueue', lobbyRef.queue);
-	} else {
-		io.to(lobby_id).emit('endOfQueue');
+		io.to(lobby_id).emit('addSong', lobbyRef.queue);
+
+		if (lobbyRef.queue.length === 0) {
+			lobby.setPlayStatusPaused(lobby_id);
+			io.to(lobby_id).emit('emptyQueue', lobbyRef.queue);
+		} else {
+			io.to(lobby_id).emit('popped', lobbyRef.queue);
+		}
 	}
 }
 
@@ -214,11 +225,11 @@ module.exports = {
 	handleDisconnect,
 	handleLobbyMessage,
 	handleUniSearch,
-	handleAddSongToQueue,
+	handleAddSong,
 	handleAddAlbumToQueue,
 	// handleSkip,
 	handleSetDeviceId,
 	handlePlayerData,
-	handleTogglePlay,
+	handlePlay,
 	handleMediaChange,
 };
