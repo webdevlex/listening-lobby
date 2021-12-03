@@ -11,29 +11,29 @@ import { SocketContext } from '../../context/SocketContext';
 import './lobby.scss';
 
 function Lobby() {
+	// Context
 	const [socket, setSocket] = useContext(SocketContext);
-
-	useEffect(() => {
-		const url = '' || 'http://localhost:8888';
-		setSocket(socketio.connect(url));
-	}, []);
-
-	// Local storage data
-	const { username, music_provider, lobby_id } = JSON.parse(
-		localStorage.getItem('user')
-	);
-
 	// State managament
 	const [playerStatus, setPlayerStatus] = useState(null);
 	const [members, setMembers] = useState([]);
 	const [messages, setMessages] = useState([]);
 	const [queue, setQueue] = useState([]);
-	const [user, setUser] = useState({
-		username,
-		music_provider,
-		lobby_id,
-	});
+	const [user, setUser] = useState(null);
+	const [loading, setLoading] = useState(true);
 	const [centerDisplay, setCenterDisplay] = useState('player');
+
+	useEffect(() => {
+		if (!user) {
+			const userData = JSON.parse(localStorage.getItem('user'));
+			setUser(userData);
+			console.log('userData', userData);
+		}
+
+		if (!socket) {
+			const url = '' || 'http://localhost:8888';
+			setSocket(socketio.connect(url));
+		}
+	}, []);
 
 	return socket ? (
 		<div className='lobby'>
@@ -44,7 +44,7 @@ function Lobby() {
 				setQueue={setQueue}
 				setPlayerStatus={setPlayerStatus}
 			/>
-			{playerStatus ? (
+			{!playerStatus && !loading ? (
 				<h1>LOADING</h1>
 			) : (
 				<>
@@ -70,10 +70,10 @@ function Lobby() {
 					</div>
 					<div className='player-grid'>
 						<DesignatedPlayer
-							musicProvider={user.music_provider}
-							lobby_id={user.lobby_id}
+							user={user}
 							playerStatus={playerStatus}
 							queue={queue}
+							setLoading={setLoading}
 						/>
 					</div>
 				</>

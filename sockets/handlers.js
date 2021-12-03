@@ -23,7 +23,7 @@ async function handleJoinLobby(io, socket, data) {
 		const messages = [];
 		// Send new lobby data back to members
 		io.to(lobby_id).emit('setLobbyInfo', members, messages);
-		io.to(lobby_id).emit('doneLoading');
+		io.to(lobby_id).emit('doneLoading', {});
 	}
 	// Join existing lobby
 	else {

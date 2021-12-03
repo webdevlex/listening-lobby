@@ -35,13 +35,12 @@ function SocketHandler({
 		});
 
 		socket.on('updateLobbyQueue', (queue) => {
-			console.log(queue);
 			setQueue(queue);
 		});
 
 		socket.on('doneLoading', (playerData) => {
 			setPlayerStatus(playerData);
-			console.log(playerData);
+			console.log('player data recieved', playerData);
 		});
 	}, [
 		socket,

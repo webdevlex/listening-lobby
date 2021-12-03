@@ -1,6 +1,14 @@
 import { setupSocketRecievers } from './recievers.js';
+import { setupPlayback } from './helper.js';
 
-export function setupPlayer(socket, setSpotifyPlayer, lobby_id, playerStatus) {
+export function setupPlayer(
+	socket,
+	setSpotifyPlayer,
+	user,
+	queue,
+	playerStatus,
+	setLoading
+) {
 	const params = new URLSearchParams(window.location.search);
 	const token = params.get('token');
 
@@ -19,23 +27,21 @@ export function setupPlayer(socket, setSpotifyPlayer, lobby_id, playerStatus) {
 			volume: 0.5,
 		});
 
+		setSpotifyPlayer(player);
 		player.addListener('ready', ({ device_id }) => {
-			socket.emit('setDeviceId', { lobby_id, device_id });
-			setSpotifyPlayer(player);
-			setupSocketRecievers(socket, player, lobby_id, device_id);
+			console.log('ready');
+			socket.emit('setDeviceId', { lobby_id: user.lobby_id, device_id });
+			setupSocketRecievers(socket, player, user.lobby_id, device_id);
+			setupPlayback(
+				player,
+				device_id,
+				playerStatus,
+				queue,
+				user,
+				socket,
+				setLoading
+			);
 		});
-
-		// player.addListener('player_state_changed', (state) => {
-		// 	if (
-		// 		player.state &&
-		// 		state.track_window.previous_tracks.find(
-		// 			(x) => x.id === player.state.track_window.current_track.id
-		// 		)
-		// 	) {
-		// 		socket.emit('songEnded', { lobby_id });
-		// 	}
-		// 	player.state = state;
-		// });
 
 		player.connect();
 	};

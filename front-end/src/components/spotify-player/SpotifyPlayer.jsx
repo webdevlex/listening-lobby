@@ -3,23 +3,41 @@ import { setupPlayer } from './playerSetup';
 import { SocketContext } from '../../context/SocketContext';
 import { PlayersContext } from '../../context/PlayersContext';
 
-function SpotifyPlayer({ lobby_id }) {
+function SpotifyPlayer({ user, queue, playerStatus, setLoading }) {
 	const [socket] = useContext(SocketContext);
-	const { spotify } = useContext(PlayersContext);
+	const { spotify, spotifyRan } = useContext(PlayersContext);
 	const [spotifyPlayer, setSpotifyPlayer] = spotify;
+	const [ran, setRan] = spotifyRan;
 
 	useEffect(() => {
-		if (!spotifyPlayer) {
-			setupPlayer(socket, setSpotifyPlayer, lobby_id);
+		if (!ran) {
+			setRan(true);
+			console.log('running');
+			setupPlayer(
+				socket,
+				setSpotifyPlayer,
+				user,
+				queue,
+				playerStatus,
+				setLoading
+			);
 		}
-	}, [socket, spotifyPlayer, setSpotifyPlayer, lobby_id]);
+	}, [
+		socket,
+		spotifyPlayer,
+		setSpotifyPlayer,
+		user,
+		queue,
+		playerStatus,
+		setLoading,
+	]);
 
 	async function play() {
-		socket.emit('togglePlay', { lobby_id });
+		socket.emit('togglePlay', { lobby_id: user.lobby_id });
 	}
 
 	function skip() {
-		socket.emit('skip', { lobby_id });
+		socket.emit('skip', { lobby_id: user.lobby_id });
 	}
 
 	return (

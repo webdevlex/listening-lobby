@@ -93,7 +93,7 @@ async function getAndFormatSongData(
 	);
 
 	// If found return the songs id
-	return songMatch.id;
+	return songMatch.uri;
 }
 
 // Search for an album using apple data and return all the uri's if found
