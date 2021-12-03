@@ -16,6 +16,34 @@ function appleFormatSearchQuery(query) {
   query = replaceAll(query, "’", "");
   return query;
 }
+//Formats for cross platform searching for optimization - work in progress
+function uniTrackFormatter(query) {
+  query = replaceAll(query, "&", "and");
+  query = replaceAll(query, "with", "");
+  query = replaceAll(query, "feat.", "");
+  query = replaceAll(query, "feat", "");
+  query = replaceAll(query, "’", "");
+  let indexFirst = query.indexOf("(");
+  let indexLast = query.indexOf(")");
+  if (indexFirst != -1 || indexLast != -1) {
+    query = query.substr(0, indexFirst) + query.substr(indexLast + 1);
+  }
+  return query;
+}
+function uniArtistsFormatter(query) {
+  query = replaceAll(query, "&", "");
+  query = replaceAll(query, "and", "");
+  query = replaceAll(query, ",", "");
+  query = replaceAll(query, "with", "");
+  query = replaceAll(query, "feat.", "");
+  query = replaceAll(query, "feat", "");
+  query = replaceAll(query, "’", "");
+  // let index = query.indexOf(","); This will limit to one artist
+  // if (index != -1) {
+  //   query = query.substr(0, index);
+  // }
+  return query;
+}
 
 // Replace substring in string
 // params: entire string, item to replace, replacement
@@ -136,10 +164,19 @@ async function getSongDataForPlayers(tokens, { songData, user }) {
   let dataForSpotifyPlayer;
   let dataForApplePlayer;
 
+  //This will format the track name to be optimal for cross platform searches
+
+  let tempTrackName = songData.trackName;
+  let tempArtistName = songData.artists;
+  songData.trackName = uniTrackFormatter(songData.trackName);
+  songData.artists = uniArtistsFormatter(songData.artists);
+  // console.log(songData.trackName);
+  // console.log(songData.artists);
   // If the user that made the request is using spotify
   if (user.music_provider === "spotify") {
     // We already have spotify data just format it
     dataForSpotifyPlayer = spotify.formatSongData(songData);
+
     // We do not have apple data so search for it then format it
     // Must first format search query for api call
     songData.trackName = appleFormatSearchQuery(songData.trackName);
@@ -156,7 +193,8 @@ async function getSongDataForPlayers(tokens, { songData, user }) {
     // We already have apple data so just format it
     dataForApplePlayer = apple.formatSongData(songData);
   }
-
+  songData.trackName = tempTrackName;
+  songData.artists = tempArtistName;
   return { dataForSpotifyPlayer, dataForApplePlayer, dataForUi: songData };
 }
 
