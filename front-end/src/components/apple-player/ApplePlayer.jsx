@@ -1,6 +1,7 @@
 import React, { useEffect, useContext, useState } from "react";
 import { SocketContext } from "../../context/SocketContext";
 import { PlayersContext } from "../../context/PlayersContext";
+
 import "./apple-player.scss";
 
 function ApplePlayer({ lobby_id, playerStatus, queue }) {
