@@ -3,7 +3,7 @@ import * as handlers from './handlers.js';
 export function setupSocketRecievers(
 	socket,
 	spotifyPlayer,
-	lobby_id,
+	user,
 	device_id,
 	setPlaying
 ) {
@@ -30,10 +30,19 @@ export function setupSocketRecievers(
 	});
 
 	socket.on('getPlayerData', (memberId) => {
-		handlers.getPlayerData(socket, spotifyPlayer, lobby_id, memberId);
+		handlers.getPlayerData(socket, spotifyPlayer, user.lobby_id, memberId);
 	});
 
-	socket.on('firstSong', () => {
-		handlers.firstSong(socket, spotifyPlayer);
+	socket.on('firstSong', (queue) => {
+		handlers.firstSong(socket, spotifyPlayer, device_id, queue, user);
+	});
+
+	socket.on('emptyQueue', () => {
+		setPlaying(false);
+		handlers.pause(socket, spotifyPlayer, device_id);
+	});
+
+	socket.on('popped', (queue) => {
+		handlers.popped(socket, spotifyPlayer, device_id, queue, user);
 	});
 }

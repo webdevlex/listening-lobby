@@ -7,22 +7,36 @@ export async function setupPlayback(
 	queue,
 	user,
 	socket,
-	setLoading
+	setLoading,
+	setPlaying
 ) {
 	if (playerStatus && queue.length > 0) {
-		console.log('helper');
-		// await setPlaybackTo(device_id, user, queue[0], playerStatus);
-		// let interval = setInterval(async () => {
-		// 	if (await player.getCurrentState()) {
-		// 		if (playerStatus.paused) {
-		// 			await player.pause();
-		// 		}
-		// 		clearInterval(interval);
-		// 	}
-		// }, 500);
-		// setListener(socket, player, user);
-		// setLoading(false);
+		await setPlaybackTo(device_id, user, queue[0], playerStatus);
+
+		let interval = setInterval(async () => {
+			if (await player.getCurrentState()) {
+				if (playerStatus.paused) {
+					pausePlayer(player);
+				} else {
+					setPlaying(true);
+				}
+				clearInterval(interval);
+			}
+		}, 500);
+		setListener(socket, player, user);
 	}
+	setLoading(false);
+}
+
+function pausePlayer(player) {
+	let interval = setInterval(async () => {
+		const currentStatus = await player.getCurrentState();
+		if (!currentStatus.paused) {
+			await player.pause();
+		} else {
+			clearInterval(interval);
+		}
+	}, 500);
 }
 
 async function setPlaybackTo(device_id, user, song, playerStatus) {
@@ -47,16 +61,37 @@ async function setPlaybackTo(device_id, user, song, playerStatus) {
 	}
 }
 
-function setListener(socket, player, user) {
+export function setListener(socket, player, user) {
 	player.addListener('player_state_changed', (state) => {
+		const stateTrack = state.track_window.previous_tracks[0] || { id: -1 };
 		if (
 			player.state &&
-			state.track_window.previous_tracks.find(
-				(x) => x.id === player.state.track_window.current_track.id
-			)
+			stateTrack.id === player.state.track_window.current_track.id
 		) {
-			socket.emit('songEnded', { lobby_id: user.lobby_id });
+			socket.emit('mediaChange', { lobby_id: user.lobby_id });
+			player.removeListener('player_state_changed');
 		}
 		player.state = state;
 	});
+}
+
+export async function setupPlaybackForFirst(
+	socket,
+	player,
+	device_id,
+	queue,
+	user
+) {
+	await setPlaybackTo(device_id, user, queue[0], { timestamp: 0 });
+	let interval = setInterval(async () => {
+		if (await player.getCurrentState()) {
+			pausePlayer(player);
+			clearInterval(interval);
+		}
+	}, 500);
+	setListener(socket, player, user);
+}
+
+export async function setupNextSong(device_id, queue, user) {
+	await setPlaybackTo(device_id, user, queue[0], { timestamp: 0 });
 }

@@ -32,13 +32,7 @@ export function setupPlayer(
 		player.addListener('ready', ({ device_id }) => {
 			console.log('ready');
 			socket.emit('setDeviceId', { lobby_id: user.lobby_id, device_id });
-			setupSocketRecievers(
-				socket,
-				player,
-				user.lobby_id,
-				device_id,
-				setPlaying
-			);
+			setupSocketRecievers(socket, player, user, device_id, setPlaying);
 			setupPlayback(
 				player,
 				device_id,
@@ -46,7 +40,8 @@ export function setupPlayer(
 				queue,
 				user,
 				socket,
-				setLoading
+				setLoading,
+				setPlaying
 			);
 		});
 

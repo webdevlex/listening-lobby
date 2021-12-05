@@ -11,9 +11,8 @@ function SpotifyPlayer({ user, queue, playerStatus, setLoading }) {
 	const [ran, setRan] = spotifyRan;
 
 	useEffect(() => {
-		if (!ran) {
+		if (!ran && playerStatus) {
 			setRan(true);
-			console.log('running');
 			setupPlayer(
 				socket,
 				setSpotifyPlayer,

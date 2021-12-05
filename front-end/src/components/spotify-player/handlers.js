@@ -1,11 +1,4 @@
-// export async function play(socket, spotifyPlayer) {
-// 	const playingOnBrowser = await spotifyPlayer.getCurrentState();
-// 	if (playingOnBrowser) {
-// 		await spotifyPlayer.resume();
-// 	} else {
-// 		console.log('Not playing on browser');
-// 	}
-// }
+import { setupPlaybackForFirst, setListener, setupNextSong } from './helper.js';
 
 export async function emptyQueue(socket, spotifyPlayer) {
 	const playerState = await spotifyPlayer.getCurrentState();
@@ -64,6 +57,11 @@ export async function getPlayerData(socket, spotifyPlayer, lobby_id, memberId) {
 	}
 }
 
-export async function firstSong(socket, spotifyPlayer) {
-	console.log('First song added');
+export async function firstSong(socket, spotifyPlayer, device_id, queue, user) {
+	setupPlaybackForFirst(socket, spotifyPlayer, device_id, queue, user);
+}
+
+export async function popped(socket, spotifyPlayer, device_id, queue, user) {
+	setupNextSong(device_id, queue, user);
+	setListener(socket, spotifyPlayer, user);
 }
