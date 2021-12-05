@@ -26,7 +26,6 @@ function Lobby() {
 		if (!user) {
 			const userData = JSON.parse(localStorage.getItem('user'));
 			setUser(userData);
-			console.log('userData', userData);
 		}
 
 		if (!socket) {
@@ -44,30 +43,11 @@ function Lobby() {
 				setQueue={setQueue}
 				setPlayerStatus={setPlayerStatus}
 			/>
-			{!playerStatus && !loading ? (
-				<h1>LOADING</h1>
+
+			{!playerStatus ? (
+				<h1>LOADING 1</h1>
 			) : (
 				<>
-					<div className='settings-grid'>
-						<LobbySettings
-							lobbyId={user.lobby_id}
-							centerDisplay={centerDisplay}
-							setCenterDisplay={setCenterDisplay}
-						/>
-					</div>
-					<div className='members-grid'>
-						<LobbyMembers members={members} />
-					</div>
-					<div className='messages-grid'>
-						<LobbyMessages messages={messages} user={user} />
-					</div>
-					<div className='center-grid'>
-						<LobbyCenter
-							centerDisplay={centerDisplay}
-							queue={queue}
-							user={user}
-						/>
-					</div>
 					<div className='player-grid'>
 						<DesignatedPlayer
 							user={user}
@@ -76,6 +56,32 @@ function Lobby() {
 							setLoading={setLoading}
 						/>
 					</div>
+					{loading ? (
+						<h1>LOADING 2</h1>
+					) : (
+						<>
+							<div className='settings-grid'>
+								<LobbySettings
+									lobbyId={user.lobby_id}
+									centerDisplay={centerDisplay}
+									setCenterDisplay={setCenterDisplay}
+								/>
+							</div>
+							<div className='members-grid'>
+								<LobbyMembers members={members} />
+							</div>
+							<div className='messages-grid'>
+								<LobbyMessages messages={messages} user={user} />
+							</div>
+							<div className='center-grid'>
+								<LobbyCenter
+									centerDisplay={centerDisplay}
+									queue={queue}
+									user={user}
+								/>
+							</div>
+						</>
+					)}
 				</>
 			)}
 		</div>

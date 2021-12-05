@@ -11,13 +11,11 @@ function AppleLogin() {
 
 	useEffect(() => {
 		if (!applePlayer) {
-			console.log('no apple player');
 			setUpMusicKit(authorized, setAuthorized, setApplePlayer, setAppleToken);
 		}
 	}, [authorized, setAuthorized, setApplePlayer, setAppleToken, applePlayer]);
 
 	if (authorized) {
-		console.log('Authorized!');
 		return <Redirect to={`/lobby?token=${appleToken}`} />;
 	}
 	return <></>;

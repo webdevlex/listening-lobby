@@ -1,5 +1,4 @@
 import { setupSocketRecievers } from './recievers.js';
-import { setupPlayback } from './helper.js';
 
 export function setupPlayer(
 	socket,
@@ -20,7 +19,7 @@ export function setupPlayer(
 	document.body.appendChild(script);
 
 	window.onSpotifyWebPlaybackSDKReady = () => {
-		const player = new window.Spotify.Player({
+		const spotifyPlayer = new window.Spotify.Player({
 			name: 'Web Playback SDK',
 			getOAuthToken: (cb) => {
 				cb(token);
@@ -28,23 +27,21 @@ export function setupPlayer(
 			volume: 0.5,
 		});
 
-		setSpotifyPlayer(player);
-		player.addListener('ready', ({ device_id }) => {
-			console.log('ready');
+		setSpotifyPlayer(spotifyPlayer);
+		spotifyPlayer.addListener('ready', ({ device_id }) => {
 			socket.emit('setDeviceId', { lobby_id: user.lobby_id, device_id });
-			setupSocketRecievers(socket, player, user, device_id, setPlaying);
-			setupPlayback(
-				player,
+			setupSocketRecievers(
+				socket,
+				spotifyPlayer,
 				device_id,
 				playerStatus,
 				queue,
 				user,
-				socket,
 				setLoading,
 				setPlaying
 			);
 		});
 
-		player.connect();
+		spotifyPlayer.connect();
 	};
 }

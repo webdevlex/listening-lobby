@@ -11,7 +11,7 @@ function SpotifyPlayer({ user, queue, playerStatus, setLoading }) {
 	const [ran, setRan] = spotifyRan;
 
 	useEffect(() => {
-		if (!ran && playerStatus) {
+		if (!ran) {
 			setRan(true);
 			setupPlayer(
 				socket,
@@ -32,6 +32,8 @@ function SpotifyPlayer({ user, queue, playerStatus, setLoading }) {
 		playerStatus,
 		setLoading,
 		setPlaying,
+		ran,
+		setRan,
 	]);
 
 	async function play() {

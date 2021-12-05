@@ -4,7 +4,8 @@ export function setUpMusicKit(
 	authorized,
 	setAuthorized,
 	setApplePlayer,
-	setAppleToken
+	setAppleToken,
+	setLoading
 ) {
 	axios
 		.get('http://localhost:8888/apple/token')
@@ -28,6 +29,7 @@ export function setUpMusicKit(
 				setupMusicKit
 					.then((musicKitInstance) => {
 						musicKitInstance.authorize();
+
 						setApplePlayer(musicKitInstance);
 						setAuthorized(true);
 					})

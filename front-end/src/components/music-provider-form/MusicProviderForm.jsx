@@ -36,7 +36,6 @@ function MusicProviderForm({ handleSubmit, register, errors }) {
 	}
 
 	function redirectToApple() {
-		console.log('displaying');
 		setDisplayAppleLogin(true);
 	}
 

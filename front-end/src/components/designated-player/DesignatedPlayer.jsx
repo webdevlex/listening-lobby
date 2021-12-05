@@ -18,15 +18,18 @@ function DesignatedPlayer({ user, playerStatus, queue, setLoading }) {
 			/>
 		);
 	} else {
-		return applePlayer ? (
-			<ApplePlayer
-				lobby_id={user.lobby_id}
-				playerStatus={playerStatus}
-				queue={queue}
-			/>
-		) : (
-			<AppleLogin />
-		);
+		if (applePlayer) {
+			setLoading(false);
+			return (
+				<ApplePlayer
+					lobby_id={user.lobby_id}
+					playerStatus={playerStatus}
+					queue={queue}
+				/>
+			);
+		} else {
+			return <AppleLogin />;
+		}
 	}
 }
 

@@ -3,27 +3,38 @@ import * as handlers from './handlers.js';
 export function setupSocketRecievers(
 	socket,
 	spotifyPlayer,
-	user,
 	device_id,
+	playerStatus,
+	queue,
+	user,
+	setLoading,
 	setPlaying
 ) {
-	socket.on('emptyQueue', () => {
-		setPlaying(false);
-		handlers.emptyQueue(socket, spotifyPlayer);
-	});
+	handlers.setupPlayback(
+		spotifyPlayer,
+		device_id,
+		playerStatus,
+		queue,
+		user,
+		socket,
+		setLoading,
+		setPlaying
+	);
 
 	socket.on('play', () => {
-		handlers.play(socket, spotifyPlayer, device_id);
-		setPlaying(true);
+		handlers.play(socket, spotifyPlayer, setPlaying);
 	});
 
 	socket.on('pause', () => {
-		handlers.pause(socket, spotifyPlayer, device_id);
-		setPlaying(false);
+		handlers.pause(socket, spotifyPlayer, setPlaying);
 	});
 
 	socket.on('skip', () => {
 		handlers.skip(socket, spotifyPlayer);
+	});
+
+	socket.on('emptyQueue', () => {
+		handlers.emptyQueue(socket, spotifyPlayer, setPlaying);
 	});
 
 	socket.on('getPlayerData', (memberId) => {
@@ -32,6 +43,10 @@ export function setupSocketRecievers(
 
 	socket.on('firstSong', (queue) => {
 		handlers.firstSong(socket, spotifyPlayer, device_id, queue, user);
+	});
+
+	socket.on('popped', (queue) => {
+		handlers.popped(socket, spotifyPlayer, device_id, queue, user);
 	});
 
 	socket.on('removeFirst', (queue, playing) => {
@@ -43,9 +58,5 @@ export function setupSocketRecievers(
 			user,
 			playing
 		);
-	});
-
-	socket.on('popped', (queue) => {
-		handlers.popped(socket, spotifyPlayer, device_id, queue, user);
 	});
 }
