@@ -28,7 +28,7 @@ export async function setupPlayback(
 	setLoading(false);
 }
 
-function pausePlayer(player) {
+export async function pausePlayer(player) {
 	let interval = setInterval(async () => {
 		const currentStatus = await player.getCurrentState();
 		if (!currentStatus.paused) {
@@ -94,4 +94,11 @@ export async function setupPlaybackForFirst(
 
 export async function setupNextSong(device_id, queue, user) {
 	await setPlaybackTo(device_id, user, queue[0], { timestamp: 0 });
+}
+
+export async function removeFirstSong(player, device_id, queue, user, playing) {
+	await setPlaybackTo(device_id, user, queue[0], { timestamp: 0 });
+	if (!playing) {
+		pausePlayer(player);
+	}
 }

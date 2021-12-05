@@ -212,6 +212,24 @@ function handleMediaChange(io, socket, { lobby_id }) {
 	}
 }
 
+function handleRemove(io, socket, { index, lobby_id }) {
+	const lobbyRef = lobby.getLobbyById(lobby_id);
+
+	if (index === 0) {
+		lobby.popSong(lobby_id);
+
+		if (lobbyRef.queue.length === 0) {
+			lobby.setPlayStatusPaused(lobby_id);
+			io.to(lobby_id).emit('emptyQueue', lobbyRef.queue);
+		} else {
+			io.to(lobby_id).emit('removeFirst', lobbyRef.queue, lobbyRef.playing);
+		}
+	} else {
+		lobby.removeSong(index, lobby_id);
+	}
+	io.to(lobby_id).emit('addSong', lobbyRef.queue);
+}
+
 module.exports = {
 	handleJoinLobby,
 	handleDisconnect,
@@ -224,4 +242,5 @@ module.exports = {
 	handlePlayerData,
 	handlePlay,
 	handleMediaChange,
+	handleRemove,
 };

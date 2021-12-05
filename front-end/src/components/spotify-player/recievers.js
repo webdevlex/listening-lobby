@@ -7,11 +7,8 @@ export function setupSocketRecievers(
 	device_id,
 	setPlaying
 ) {
-	// socket.on('play', () => {
-	// 	handlers.play(socket, spotifyPlayer);
-	// });
-
 	socket.on('emptyQueue', () => {
+		setPlaying(false);
 		handlers.emptyQueue(socket, spotifyPlayer);
 	});
 
@@ -37,9 +34,15 @@ export function setupSocketRecievers(
 		handlers.firstSong(socket, spotifyPlayer, device_id, queue, user);
 	});
 
-	socket.on('emptyQueue', () => {
-		setPlaying(false);
-		handlers.pause(socket, spotifyPlayer, device_id);
+	socket.on('removeFirst', (queue, playing) => {
+		handlers.removeFirst(
+			socket,
+			spotifyPlayer,
+			device_id,
+			queue,
+			user,
+			playing
+		);
 	});
 
 	socket.on('popped', (queue) => {

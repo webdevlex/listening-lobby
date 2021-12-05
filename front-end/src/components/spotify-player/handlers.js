@@ -1,4 +1,9 @@
-import { setupPlaybackForFirst, setListener, setupNextSong } from './helper.js';
+import {
+	setupPlaybackForFirst,
+	setListener,
+	setupNextSong,
+	removeFirstSong,
+} from './helper.js';
 
 export async function emptyQueue(socket, spotifyPlayer) {
 	const playerState = await spotifyPlayer.getCurrentState();
@@ -7,10 +12,15 @@ export async function emptyQueue(socket, spotifyPlayer) {
 		const volume = await spotifyPlayer.getVolume();
 		await spotifyPlayer.setVolume(0);
 
-		setTimeout(async () => {
-			await spotifyPlayer.pause();
-			await spotifyPlayer.setVolume(volume);
-		}, 1000);
+		let interval = setInterval(async () => {
+			const currentStatus = await spotifyPlayer.getCurrentState();
+			if (!currentStatus.paused) {
+				await spotifyPlayer.pause();
+			} else {
+				await spotifyPlayer.setVolume(volume);
+				clearInterval(interval);
+			}
+		}, 500);
 	} else {
 		console.log('Not playing on browser');
 	}
@@ -63,5 +73,17 @@ export async function firstSong(socket, spotifyPlayer, device_id, queue, user) {
 
 export async function popped(socket, spotifyPlayer, device_id, queue, user) {
 	setupNextSong(device_id, queue, user);
+	setListener(socket, spotifyPlayer, user);
+}
+
+export async function removeFirst(
+	socket,
+	spotifyPlayer,
+	device_id,
+	queue,
+	user,
+	playing
+) {
+	removeFirstSong(spotifyPlayer, device_id, queue, user, playing);
 	setListener(socket, spotifyPlayer, user);
 }

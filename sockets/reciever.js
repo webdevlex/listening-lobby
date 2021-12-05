@@ -58,7 +58,9 @@ function socketsReciever(io) {
 			handlers.handleMediaChange(io, socket, data);
 		});
 
-		// TODO Handle when a user likes a song
+		socket.on('remove', (data) => {
+			handlers.handleRemove(io, socket, data);
+		});
 	});
 }
 
