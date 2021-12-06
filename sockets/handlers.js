@@ -149,29 +149,6 @@ function handlePlayerData(io, socket, data) {
 		paused: data.paused,
 		timestamp: data.timestamp,
 	});
-
-	// Get admin data
-	// const adminData = lobby.getAdminData(data);
-	// const playerData = await helpers.getAdminPlayerState(adminData);
-
-	// // --------- TODO ----------
-	// // const playerData = await io.emitWait('getPlayerData');
-
-	// // Player is playing and songs in queue
-	// if (playerData.isPlaying && lobbyRef.queue.length > 0) {
-	// 	// io.to(socket.id).emit('setUpPlayer', playerData);
-	// 	console.log('BACK END: switch player');
-	// 	console.log('FRONT END: set timestamp then play');
-	// }
-
-	// // Player is paused and songs in lobby
-	// else if (!playerData.isPlaying && lobbyRef.queue.length > 0) {
-	// 	console.log('FRONT END: change timestamp');
-	// }
-	// // Player is paused and no songs in lobby
-	// else {
-	// 	console.log('Do Nothing');
-	// }
 }
 
 // TODAY
@@ -207,6 +184,7 @@ function handleMediaChange(io, socket, { lobby_id }) {
 			lobby.setPlayStatusPaused(lobby_id);
 			io.to(lobby_id).emit('emptyQueue', lobbyRef.queue);
 		} else {
+			lobby.setPlayStatusPlaying(lobby_id);
 			io.to(lobby_id).emit('popped', lobbyRef.queue);
 		}
 	}

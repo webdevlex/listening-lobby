@@ -32,7 +32,7 @@ function Lobby() {
 			const url = '' || 'http://localhost:8888';
 			setSocket(socketio.connect(url));
 		}
-	}, []);
+	}, [setSocket, socket, user]);
 
 	return socket ? (
 		<div className='lobby'>

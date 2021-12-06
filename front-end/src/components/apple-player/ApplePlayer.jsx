@@ -4,7 +4,7 @@ import { PlayersContext } from '../../context/PlayersContext';
 import './apple-player.scss';
 
 function ApplePlayer({ lobby_id, playerStatus, queue }) {
-	const [volume, setVolume] = useState(10);
+	const [volume, setVolume] = useState('10');
 	const [socket] = useContext(SocketContext);
 	const { apple } = useContext(PlayersContext);
 	const [applePlayer] = apple;
@@ -58,7 +58,6 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
 			addEventListener(false);
 		};
 
-		// needed for people to join if admin is using apple player
 		socket.on('getPlayerData', (memberId) => {
 			socket.emit('playerData', {
 				paused: !applePlayer.player.isPlaying,
@@ -82,7 +81,13 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
 			await setMusicKitQueue(queue[0].apple);
 		});
 
-		// On end or on skip
+		socket.on('removeFirst', async (queue, playing) => {
+			await setMusicKitQueue(queue[0].apple);
+			if (playing) {
+				playSong();
+			}
+		});
+
 		socket.on('popped', async (queue) => {
 			await setMusicKitQueue(queue[0].apple);
 			playSong();
@@ -134,9 +139,9 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
 				<input
 					className='volume-slider'
 					type='range'
-					min='0'
+					min='1'
 					max='100'
-					value={volume}
+					defaultValue={volume}
 					onChange={updateVolume}
 				/>
 			</div>
