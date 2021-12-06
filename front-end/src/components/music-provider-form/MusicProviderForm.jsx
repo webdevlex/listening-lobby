@@ -5,6 +5,7 @@ function MusicProviderForm({ handleSubmit, register, errors }) {
 	const params = new URLSearchParams(window.location.search);
 	const action = params.get('action');
 	const [displayAppleLogin, setDisplayAppleLogin] = useState(false);
+	const [authorized, setAuthorized] = useState(false);
 
 	var generateRandomString = function (length) {
 		var text = '';
@@ -45,7 +46,9 @@ function MusicProviderForm({ handleSubmit, register, errors }) {
 
 	return (
 		<>
-			{displayAppleLogin ? <AppleLogin /> : null}
+			{displayAppleLogin ? (
+				<AppleLogin authorized={authorized} setAuthorized={setAuthorized} />
+			) : null}
 			<form className='music-provider-form' onSubmit={handleSubmit(onSubmit)}>
 				<div className='inputs'>
 					{/* Hidden input for music provider, value set by MusicProviderButtons component via the setValue function */}

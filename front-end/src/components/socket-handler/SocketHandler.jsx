@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { SocketContext } from '../../context/SocketContext';
 
 function SocketHandler({
@@ -40,7 +40,6 @@ function SocketHandler({
 
 		socket.on('doneLoading', (playerData) => {
 			setPlayerStatus(playerData);
-			console.log('player data recieved', playerData);
 		});
 	}, [
 		socket,
@@ -50,6 +49,7 @@ function SocketHandler({
 		setMessages,
 		setUser,
 		setQueue,
+		setPlayerStatus,
 	]);
 
 	return null;

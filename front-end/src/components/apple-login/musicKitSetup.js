@@ -1,40 +1,38 @@
 import axios from 'axios';
 
-export function setUpMusicKit(
+export async function setUpMusicKit(
 	authorized,
 	setAuthorized,
 	setApplePlayer,
-	setAppleToken,
-	setLoading
+	setAppleToken
 ) {
-	axios
-		.get('http://localhost:8888/apple/token')
-		.then((res) => {
-			const devToken = res.data.token;
-			setAppleToken(devToken);
-			if (window.MusicKit && !authorized) {
-				let configData = {
-					developerToken: devToken,
-					app: {
-						name: 'MusicKit Web App',
-						build: '1.0.0',
-					},
-				};
+	try {
+		const res = await axios.get('http://localhost:8888/apple/token');
+		const devToken = res.data.token;
+		setAppleToken(devToken);
 
-				const setupMusicKit = new Promise((resolve) => {
-					let musicKitInstance = window.MusicKit.configure(configData);
-					resolve(musicKitInstance);
-				});
+		if (window.MusicKit && !authorized) {
+			let configData = {
+				developerToken: devToken,
+				app: {
+					name: 'MusicKit Web App',
+					build: '1.0.0',
+				},
+			};
 
-				setupMusicKit
-					.then((musicKitInstance) => {
-						musicKitInstance.authorize();
+			const setupMusicKit = new Promise((resolve) => {
+				let musicKitInstance = window.MusicKit.configure(configData);
+				resolve(musicKitInstance);
+			});
 
-						setApplePlayer(musicKitInstance);
-						setAuthorized(true);
-					})
-					.catch((error) => {});
-			}
-		})
-		.catch((error) => {});
+			try {
+				const musicKitInstance = await setupMusicKit;
+				await musicKitInstance.authorize();
+				setApplePlayer(musicKitInstance);
+				setAuthorized(true);
+			} catch (err) {}
+		}
+	} catch (err) {
+		console.log(err);
+	}
 }

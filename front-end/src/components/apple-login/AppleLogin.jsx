@@ -3,10 +3,10 @@ import { PlayersContext } from '../../context/PlayersContext';
 import { Redirect } from 'react-router-dom';
 import { setUpMusicKit } from './musicKitSetup';
 
-function AppleLogin() {
+function AppleLogin({ authorized, setAuthorized }) {
 	const { apple } = useContext(PlayersContext);
 	const [applePlayer, setApplePlayer] = apple;
-	const [authorized, setAuthorized] = useState(false);
+
 	const [appleToken, setAppleToken] = useState('');
 
 	useEffect(() => {

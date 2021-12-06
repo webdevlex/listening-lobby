@@ -183,12 +183,18 @@ function setPlayStatusPaused(lobby_id) {
 	lobbies[i].playing = false;
 }
 
+function setPlayStatusPlaying(lobby_id) {
+	const i = getLobbyIndex(lobby_id);
+	lobbies[i].playing = true;
+}
+
 function removeSong(index, lobby_id) {
 	const i = getLobbyIndex(lobby_id);
 	lobbies[i].queue.splice(index, 1);
 }
 
 module.exports = {
+	setPlayStatusPlaying,
 	setPlayStatusPaused,
 	updatePlayStatus,
 	generateLobby,

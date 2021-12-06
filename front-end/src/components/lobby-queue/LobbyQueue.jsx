@@ -26,7 +26,7 @@ export default function LobbyQueue({ queue, user }) {
 			<h1>Queue</h1>
 			{queueHasItems &&
 				queue.map(({ ui, apple, spotify }, index) => (
-					<div className='queue-item'>
+					<div className='queue-item' key={index}>
 						<p className='index'>{index + 1}</p>
 						<div className='primary-info'>
 							<div className='album-cover-container'>
