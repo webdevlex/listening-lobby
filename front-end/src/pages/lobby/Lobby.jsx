@@ -23,13 +23,14 @@ function Lobby() {
 	const [centerDisplay, setCenterDisplay] = useState('player');
 
 	useEffect(() => {
-		const navigations = performance.getEntriesByType('navigation');
-		if (navigations[0].type === 'reload') {
-			window.location.replace('http://localhost:3000');
-		}
-
 		if (!user) {
 			const userData = JSON.parse(localStorage.getItem('user'));
+			if (userData.authorized) {
+				userData.authorized = false;
+				localStorage.setItem('user', JSON.stringify(userData));
+			} else {
+				window.location.replace('http://localhost:3000');
+			}
 			setUser(userData);
 		}
 
