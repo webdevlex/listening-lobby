@@ -41,15 +41,16 @@ async function getAndFormatSongData(song, token) {
 }
 
 //Searching from Spotify
-async function albumSearchAndFormat(album, token) {
-	const searchResults = await appleAlbumSearch(album, token);
+async function getAlbumId(albumData, token) {
+	const searchResults = await appleAlbumSearch(albumData.albumName, token);
+
 	let result = searchResults.find(
 		({ attributes }) =>
-			attributes.name === album.albumName ||
-			attributes.releaseDate === album.releaseDate
+			attributes.name === albumData.albumName ||
+			attributes.releaseDate === albumData.releaseDate
 	);
-	result = result === undefined ? { href: '', type: '', id: '' } : result;
-	return { href: result.href, type: result.type, id: result.id };
+	result = result === undefined ? { id: '' } : result;
+	return result.id;
 }
 
 async function appleAlbumSearch(albumName, token) {
@@ -69,35 +70,13 @@ async function appleAlbumSearch(albumName, token) {
 	}
 }
 
-function formatSongData({ id }) {
-	return id;
+async function getAlbumSongsIdByAlbumId(appleAlbumId, appleToken) {
+	const allAlbumSongData = await getAlbumSongsData(appleAlbumId, appleToken);
+	return allAlbumSongData.map((track) => track.id);
 }
 
-async function formatAlbum(album, token) {
-	const tracks = await getAlbumTracks(album, token);
-	let appleAlbum = {
-		id: album.id,
-		type: album.type,
-		href: album.href,
-	};
-	let appleAlbumDisplay = [];
-
-	tracks.forEach((track) => {
-		appleAlbumDisplay.push({
-			trackName: track.attributes.name,
-			artists: track.attributes.artistName,
-			trackCover: album.albumCover,
-			id: track.id,
-			type: track.type,
-			href: track.href,
-		});
-	});
-
-	return { appleAlbum, appleAlbumDisplay };
-}
-
-async function getAlbumTracks(album, token) {
-	const endPoint = `https://api.music.apple.com/v1/catalog/us/albums/${album.id}/tracks`;
+async function getAlbumSongsData(id, token) {
+	const endPoint = `https://api.music.apple.com/v1/catalog/us/albums/${id}/tracks`;
 	const config = {
 		headers: {
 			Authorization: 'Bearer ' + token,
@@ -109,6 +88,31 @@ async function getAlbumTracks(album, token) {
 	} catch (err) {
 		console.log(err);
 	}
+}
+
+function formatSongData({ id }) {
+	return id;
+}
+
+// TODO id
+async function formatAlbumData(albumData, appleToken) {
+	const allAlbumSongData = await getAlbumSongsData(albumData.id, appleToken);
+
+	let dataForApplePlayer = [];
+	let dataForUi = [];
+
+	allAlbumSongData.forEach((track) => {
+		dataForApplePlayer.push(track.id);
+
+		dataForUi.push({
+			trackName: track.attributes.name,
+			artists: track.attributes.artistName,
+			trackCover: albumData.albumCover,
+			id: track.id,
+		});
+	});
+
+	return { dataForApplePlayer, dataForUi };
 }
 
 async function getTempToken() {
@@ -126,8 +130,9 @@ module.exports = {
 	search,
 	getAndFormatSongData,
 	formatSongData,
-	formatAlbum,
-	albumSearchAndFormat,
+	formatAlbumData,
+	getAlbumId,
 	getTempToken,
+	getAlbumSongsIdByAlbumId,
 };
 exports = module.exports;

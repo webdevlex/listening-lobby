@@ -23,6 +23,11 @@ function Lobby() {
 	const [centerDisplay, setCenterDisplay] = useState('player');
 
 	useEffect(() => {
+		const navigations = performance.getEntriesByType('navigation');
+		if (navigations[0].type === 'reload') {
+			window.location.replace('http://localhost:3000');
+		}
+
 		if (!user) {
 			const userData = JSON.parse(localStorage.getItem('user'));
 			setUser(userData);

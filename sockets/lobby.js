@@ -163,6 +163,22 @@ function addSongToLobby(
 	});
 }
 
+// Adds album to lobby by first finding the index then adding each song to the lobby queue
+function addAlbumToLobby(
+	lobby_id,
+	{ dataForSpotifyPlayer, dataForApplePlayer, dataForUi }
+) {
+	const i = getLobbyIndex(lobby_id);
+
+	for (let j = 0; j < dataForUi.length; ++j) {
+		lobbies[i].queue.push({
+			ui: dataForUi[j],
+			spotify: dataForSpotifyPlayer[j],
+			apple: dataForApplePlayer[j],
+		});
+	}
+}
+
 function popSong(lobby_id) {
 	const i = getLobbyIndex(lobby_id);
 	lobbies[i].queue.splice(0, 1);
@@ -216,4 +232,5 @@ module.exports = {
 	getMostRecentlyJoined,
 	popSong,
 	removeSong,
+	addAlbumToLobby,
 };
