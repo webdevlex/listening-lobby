@@ -151,6 +151,7 @@ function handlePlay(io, socket, { lobby_id }) {
 	const play = lobby.updatePlayStatus(lobby_id);
 
 	if (lobbyRef.queue.length > 0) {
+		io.to(lobby_id).emit('deactivateButtons');
 		if (play) {
 			io.to(lobby_id).emit('play');
 		} else {
@@ -181,6 +182,7 @@ function handleMediaChange(io, socket, { lobby_id }) {
 	if (lobbyRef.queue.length > 0) {
 		lobby.popSong(lobby_id);
 		io.to(lobby_id).emit('addSong', lobbyRef.queue);
+		io.to(lobby_id).emit('deactivateButtons');
 
 		if (lobbyRef.queue.length === 0) {
 			lobby.setPlayStatusPaused(lobby_id);

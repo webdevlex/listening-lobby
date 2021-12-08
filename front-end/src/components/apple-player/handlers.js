@@ -71,6 +71,7 @@ export async function handlePlay(applePlayer, socket, lobby_id, setPlaying) {
 		joinOnPause = false;
 	}
 	setPlaying(true);
+	socket.emit('userReady', { user: { lobby_id } });
 	addEventListener(applePlayer, socket, lobby_id, false);
 }
 //Handles pause
@@ -78,8 +79,9 @@ export async function handlePause(applePlayer, socket, lobby_id, setPlaying) {
 	await applePlayer.authorize();
 	removeEventListener(applePlayer);
 	await applePlayer.pause();
-	addEventListener(applePlayer, socket, lobby_id, false);
 	setPlaying(false);
+	socket.emit('userReady', { user: { lobby_id } });
+	addEventListener(applePlayer, socket, lobby_id, false);
 }
 //Handles first song add
 export async function handleFirstSong(applePlayer, queue, socket, lobby_id) {
@@ -95,6 +97,7 @@ export async function handlePopped(
 	setPlaying
 ) {
 	await setMusicKitQueue(applePlayer, queue[0].apple);
+	socket.emit('userReady', { user: { lobby_id } });
 	handlePlay(applePlayer, socket, lobby_id, setPlaying);
 }
 //Handles empty queue
@@ -105,6 +108,7 @@ export async function handleEmptyQueue(
 	setPlaying
 ) {
 	handlePause(applePlayer, socket, lobby_id, setPlaying);
+	socket.emit('userReady', { user: { lobby_id } });
 }
 
 export async function handleRemoveFirst(

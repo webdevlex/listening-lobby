@@ -22,11 +22,11 @@ export function setupSocketRecievers(
 	);
 
 	socket.on('play', () => {
-		handlers.play(socket, spotifyPlayer, setPlaying);
+		handlers.play(socket, spotifyPlayer, setPlaying, user);
 	});
 
 	socket.on('pause', () => {
-		handlers.pause(socket, spotifyPlayer, setPlaying);
+		handlers.pause(socket, spotifyPlayer, setPlaying, user);
 	});
 
 	// socket.on('skip', () => {
