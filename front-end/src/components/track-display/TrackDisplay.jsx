@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { SocketContext } from '../../context/SocketContext';
 import './track-display.scss';
 
-export default function TrackDisplay({ tracks, user, addSongLoading }) {
+export default function TrackDisplay({ tracks, user, buttonsClickable }) {
 	const [socket] = useContext(SocketContext);
 
 	function handleSongClick(songData) {
@@ -24,7 +24,7 @@ export default function TrackDisplay({ tracks, user, addSongLoading }) {
 								<p className='primary'>{track.trackName}</p>
 								<p>{track.artists}</p>
 							</div>
-							{!addSongLoading ? (
+							{buttonsClickable ? (
 								<div
 									className='add-button'
 									onClick={() => handleSongClick(track)}>

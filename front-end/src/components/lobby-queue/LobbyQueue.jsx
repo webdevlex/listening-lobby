@@ -37,9 +37,11 @@ export default function LobbyQueue({ queue, user }) {
 								<p>{ui.artists}</p>
 							</div>
 						</div>
+
 						<p className='remove-button' onClick={() => remove(index)}>
 							remove
 						</p>
+
 						<p
 							className='add-to-library-button'
 							onClick={() => {

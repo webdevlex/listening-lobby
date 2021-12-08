@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { SocketContext } from '../../context/SocketContext';
 import './album-display.scss';
 
-export default function AlbumDispaly({ albums, user, addSongLoading }) {
+export default function AlbumDispaly({ albums, user, buttonsClickable }) {
 	const [socket] = useContext(SocketContext);
 
 	function handleAlbumClick(albumData) {
@@ -24,7 +24,7 @@ export default function AlbumDispaly({ albums, user, addSongLoading }) {
 								<p className='primary'>{album.albumName}</p>
 								<p>{album.artists}</p>
 							</div>
-							{!addSongLoading ? (
+							{buttonsClickable ? (
 								<div
 									className='add-button'
 									onClick={() => handleAlbumClick(album)}>

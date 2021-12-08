@@ -108,6 +108,7 @@ export async function firstSong(socket, spotifyPlayer, device_id, queue, user) {
 		if (await spotifyPlayer.getCurrentState()) {
 			pausePlayer(spotifyPlayer);
 			setVolumeInterval(spotifyPlayer, volume);
+			socket.emit('userReady', { user });
 			clearInterval(interval);
 		}
 	}, 500);
@@ -250,6 +251,7 @@ async function removeFirstSong(spotifyPlayer, device_id, queue, user, playing) {
 	}
 
 	await setPlaybackTo(device_id, user, queue[0], { timestamp: 0 });
+
 	if (!playing) {
 		pausePlayer(spotifyPlayer);
 		if (!playing) {

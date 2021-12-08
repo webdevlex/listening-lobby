@@ -64,6 +64,12 @@ async function handleDisconnect(io, socket) {
 		const members = lobby.getMemberUsernames(lobbyRef.lobby_id);
 		const messages = lobby.getLobbyMessages(lobbyRef.lobby_id);
 		io.to(lobbyRef.lobby_id).emit('setLobbyInfo', members, messages);
+
+		// Check if the person left while buttons were loading
+		if (lobbyRef.usersReady === lobbyRef.users.length) {
+			io.to(user.lobby_id).emit('activateButtons');
+			lobby.resetReadyCount(user.lobby_id);
+		}
 	}
 }
 
@@ -91,7 +97,7 @@ async function handleUniSearch(io, socket, data) {
 async function handleAddSong(io, socket, data) {
 	// Get lobby data
 	const lobbyRef = lobby.getLobbyById(data.user.lobby_id);
-	io.to(data.user.lobby_id).emit('addSongLoading');
+	io.to(data.user.lobby_id).emit('deactivateButtons');
 
 	// Perform the necessary searches and return an object containing display for ui and data for each player
 	const allSongData = await helpers.getSongDataForPlayers(
@@ -106,6 +112,8 @@ async function handleAddSong(io, socket, data) {
 	io.to(data.user.lobby_id).emit('addSong', lobbyRef.queue);
 	if (lobbyRef.queue.length === 1) {
 		io.to(data.user.lobby_id).emit('firstSong', lobbyRef.queue);
+	} else {
+		io.to(data.user.lobby_id).emit('activateButtons');
 	}
 }
 
@@ -113,6 +121,7 @@ async function handleAddSong(io, socket, data) {
 async function handleAddAlbum(io, socket, data) {
 	// Get lobby data
 	const lobbyRef = lobby.getLobbyById(data.user.lobby_id);
+	io.to(data.user.lobby_id).emit('deactivateButtons');
 
 	// Check if first time a song/album is added to the queue
 	let firstSong;
@@ -131,6 +140,8 @@ async function handleAddAlbum(io, socket, data) {
 
 	if (firstSong) {
 		io.to(data.user.lobby_id).emit('firstSong', lobbyRef.queue);
+	} else {
+		io.to(data.user.lobby_id).emit('activateButtons');
 	}
 }
 
@@ -199,6 +210,16 @@ function handleRemove(io, socket, { index, lobby_id }) {
 	io.to(lobby_id).emit('addSong', lobbyRef.queue);
 }
 
+function handleUserReady(io, socket, { user }) {
+	const lobbyRef = lobby.getLobbyById(user.lobby_id);
+	lobby.increaseReadyCount(user.lobby_id);
+
+	if (lobbyRef.usersReady === lobbyRef.users.length) {
+		io.to(user.lobby_id).emit('activateButtons');
+		lobby.resetReadyCount(user.lobby_id);
+	}
+}
+
 module.exports = {
 	handleJoinLobby,
 	handleDisconnect,
@@ -212,4 +233,5 @@ module.exports = {
 	handlePlay,
 	handleMediaChange,
 	handleRemove,
+	handleUserReady,
 };

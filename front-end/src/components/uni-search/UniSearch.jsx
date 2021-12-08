@@ -4,7 +4,7 @@ import AlbumDispaly from '../album-display/AlbumDispaly';
 import UniSearchForm from '../uni-search-form/UniSearchForm';
 import './uni-search.scss';
 
-function UniSearch({ user, addSongLoading }) {
+function UniSearch({ user, buttonsClickable }) {
 	const [albums, setAlbums] = useState([]);
 	const [tracks, setTracks] = useState([]);
 
@@ -15,12 +15,12 @@ function UniSearch({ user, addSongLoading }) {
 				<TrackDisplay
 					tracks={tracks}
 					user={user}
-					addSongLoading={addSongLoading}
+					buttonsClickable={buttonsClickable}
 				/>
 				<AlbumDispaly
 					albums={albums}
 					user={user}
-					addSongLoading={addSongLoading}
+					buttonsClickable={buttonsClickable}
 				/>
 			</div>
 		</>

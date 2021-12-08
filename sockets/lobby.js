@@ -10,6 +10,7 @@ function generateLobby(data, tempToken) {
 		messages: [],
 		tokens: generateTokens(data, tempToken),
 		playing: false,
+		usersReady: 0,
 	};
 
 	lobbies.push(newLobby);
@@ -209,6 +210,21 @@ function removeSong(index, lobby_id) {
 	lobbies[i].queue.splice(index, 1);
 }
 
+function increaseReadyCount(lobby_id) {
+	const i = getLobbyIndex(lobby_id);
+	lobbies[i].usersReady += 1;
+}
+
+function decreaseReadyCount(lobby_id) {
+	const i = getLobbyIndex(lobby_id);
+	lobbies[i].usersReady -= 1;
+}
+
+function resetReadyCount(lobby_id) {
+	const i = getLobbyIndex(lobby_id);
+	lobbies[i].usersReady = 0;
+}
+
 module.exports = {
 	setPlayStatusPlaying,
 	setPlayStatusPaused,
@@ -233,4 +249,7 @@ module.exports = {
 	popSong,
 	removeSong,
 	addAlbumToLobby,
+	increaseReadyCount,
+	resetReadyCount,
+	decreaseReadyCount,
 };

@@ -7,7 +7,7 @@ export default function LobbyCenter({
 	centerDisplay,
 	queue,
 	user,
-	addSongLoading,
+	buttonsClickable,
 }) {
 	return centerDisplay === 'player' ? (
 		<>
@@ -15,6 +15,6 @@ export default function LobbyCenter({
 			<LobbyQueue queue={queue} user={user} />
 		</>
 	) : (
-		<LobbySearch addSongLoading={addSongLoading} user={user} />
+		<LobbySearch user={user} buttonsClickable={buttonsClickable} />
 	);
 }

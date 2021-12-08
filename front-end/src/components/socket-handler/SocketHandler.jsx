@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { SocketContext } from '../../context/SocketContext';
 
 function SocketHandler({
@@ -7,7 +7,7 @@ function SocketHandler({
 	setMessages,
 	setQueue,
 	setPlayerStatus,
-	setAddSongLoading,
+	setButtonsClickable,
 }) {
 	const params = new URLSearchParams(window.location.search);
 	const token = params.get('token');
@@ -38,7 +38,6 @@ function SocketHandler({
 		});
 
 		socket.on('addSong', (queue) => {
-			setAddSongLoading(false);
 			setQueue(queue);
 		});
 
@@ -46,8 +45,12 @@ function SocketHandler({
 			setPlayerStatus(playerData);
 		});
 
-		socket.on('addSongLoading', (playerData) => {
-			setAddSongLoading(true);
+		socket.on('deactivateButtons', () => {
+			setButtonsClickable(false);
+		});
+
+		socket.on('activateButtons', () => {
+			setButtonsClickable(true);
 		});
 	}, [
 		socket,
@@ -58,7 +61,7 @@ function SocketHandler({
 		setUser,
 		setQueue,
 		setPlayerStatus,
-		setAddSongLoading,
+		setButtonsClickable,
 	]);
 
 	return null;
