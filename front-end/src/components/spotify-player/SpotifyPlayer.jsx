@@ -3,7 +3,13 @@ import { setupPlayer } from './playerSetup';
 import { SocketContext } from '../../context/SocketContext';
 import { PlayersContext } from '../../context/PlayersContext';
 
-function SpotifyPlayer({ user, queue, playerStatus, setLoading }) {
+function SpotifyPlayer({
+	user,
+	queue,
+	playerStatus,
+	setLoading,
+	buttonsClickable,
+}) {
 	const [socket] = useContext(SocketContext);
 	const { spotify, spotifyRan } = useContext(PlayersContext);
 	const [spotifyPlayer, setSpotifyPlayer] = spotify;
@@ -46,12 +52,20 @@ function SpotifyPlayer({ user, queue, playerStatus, setLoading }) {
 
 	return (
 		<div>
-			<button onClick={() => play()}>
-				<p>{playing ? 'PAUSE' : 'PLAY'}</p>
-			</button>
-			<button onClick={() => skip()}>
-				<p>SKIP</p>
-			</button>
+			{buttonsClickable ? (
+				<button onClick={() => play()}>
+					<p>{playing ? 'PAUSE' : 'PLAY'}</p>
+				</button>
+			) : (
+				<p>loading</p>
+			)}
+			{buttonsClickable ? (
+				<button onClick={() => skip()}>
+					<p>SKIP</p>
+				</button>
+			) : (
+				<p>loading</p>
+			)}
 		</div>
 	);
 }

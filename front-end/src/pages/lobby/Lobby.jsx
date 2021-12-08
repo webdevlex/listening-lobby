@@ -64,6 +64,7 @@ function Lobby() {
 							playerStatus={playerStatus}
 							queue={queue}
 							setLoading={setLoading}
+							buttonsClickable={buttonsClickable}
 						/>
 					</div>
 					{loading ? (

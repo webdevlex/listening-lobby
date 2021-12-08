@@ -4,7 +4,7 @@ import { PlayersContext } from '../../context/PlayersContext';
 import './apple-player.scss';
 import { setupSocketRecievers } from '../apple-player/recievers';
 
-function ApplePlayer({ lobby_id, playerStatus, queue }) {
+function ApplePlayer({ lobby_id, playerStatus, queue, buttonsClickable }) {
 	const [volume, setVolume] = useState(10);
 	const [socket] = useContext(SocketContext);
 	const { apple } = useContext(PlayersContext);
@@ -51,11 +51,21 @@ function ApplePlayer({ lobby_id, playerStatus, queue }) {
 	return (
 		<div className='apple-player'>
 			<div>
-				<button onClick={() => play()}>
-					<p>{playing ? 'PAUSE' : 'PLAY'}</p>
-				</button>
-				<button onClick={() => nextSong()}>Next</button>
+				{buttonsClickable ? (
+					<button onClick={() => play()}>
+						<p>{playing ? 'PAUSE' : 'PLAY'}</p>
+					</button>
+				) : (
+					<p>loading</p>
+				)}
+				{buttonsClickable ? (
+					<button onClick={() => nextSong()}>Next</button>
+				) : (
+					<p>loading</p>
+				)}
+
 				<button onClick={() => getInstance()}>Get Instance</button>
+
 				<input
 					className='volume-slider'
 					type='range'
