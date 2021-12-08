@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { SocketContext } from '../../context/SocketContext';
 import './album-display.scss';
 
-export default function AlbumDispaly({ albums, user }) {
+export default function AlbumDispaly({ albums, user, addSongLoading }) {
 	const [socket] = useContext(SocketContext);
 
 	function handleAlbumClick(albumData) {
@@ -16,10 +16,7 @@ export default function AlbumDispaly({ albums, user }) {
 			<h1>Albums</h1>
 			{hasAlbum
 				? albums.map((album) => (
-						<div
-							key={album.id}
-							className='results-display'
-							onClick={() => handleAlbumClick(album)}>
+						<div key={album.id} className='results-display'>
 							<div className='album-cover-container'>
 								<img src={album.albumCover} alt='' />
 							</div>
@@ -27,7 +24,15 @@ export default function AlbumDispaly({ albums, user }) {
 								<p className='primary'>{album.albumName}</p>
 								<p>{album.artists}</p>
 							</div>
-							<div className='add-button'>+</div>
+							{!addSongLoading ? (
+								<div
+									className='add-button'
+									onClick={() => handleAlbumClick(album)}>
+									+
+								</div>
+							) : (
+								<div className='loading'>loading</div>
+							)}
 						</div>
 				  ))
 				: null}

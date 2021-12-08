@@ -22,6 +22,9 @@ function Lobby() {
 	const [loading, setLoading] = useState(true);
 	const [centerDisplay, setCenterDisplay] = useState('player');
 
+	// Loaders
+	const [addSongLoading, setAddSongLoading] = useState(false);
+
 	useEffect(() => {
 		if (!user) {
 			const userData = JSON.parse(localStorage.getItem('user'));
@@ -48,6 +51,7 @@ function Lobby() {
 				setMessages={setMessages}
 				setQueue={setQueue}
 				setPlayerStatus={setPlayerStatus}
+				setAddSongLoading={setAddSongLoading}
 			/>
 
 			{!playerStatus ? (
@@ -84,6 +88,7 @@ function Lobby() {
 									centerDisplay={centerDisplay}
 									queue={queue}
 									user={user}
+									addSongLoading={addSongLoading}
 								/>
 							</div>
 						</>

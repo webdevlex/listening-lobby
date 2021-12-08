@@ -91,6 +91,7 @@ async function handleUniSearch(io, socket, data) {
 async function handleAddSong(io, socket, data) {
 	// Get lobby data
 	const lobbyRef = lobby.getLobbyById(data.user.lobby_id);
+	io.to(data.user.lobby_id).emit('addSongLoading');
 
 	// Perform the necessary searches and return an object containing display for ui and data for each player
 	const allSongData = await helpers.getSongDataForPlayers(

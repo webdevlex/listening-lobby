@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { SocketContext } from '../../context/SocketContext';
 
 function SocketHandler({
@@ -7,11 +7,14 @@ function SocketHandler({
 	setMessages,
 	setQueue,
 	setPlayerStatus,
+	setAddSongLoading,
 }) {
 	const params = new URLSearchParams(window.location.search);
 	const token = params.get('token');
 	const refresh_token = params.get('refresh_token');
 	const [socket] = useContext(SocketContext);
+
+	// Loaders
 
 	useEffect(() => {
 		const localStorageData = JSON.parse(localStorage.getItem('user'));
@@ -35,11 +38,16 @@ function SocketHandler({
 		});
 
 		socket.on('addSong', (queue) => {
+			setAddSongLoading(false);
 			setQueue(queue);
 		});
 
 		socket.on('doneLoading', (playerData) => {
 			setPlayerStatus(playerData);
+		});
+
+		socket.on('addSongLoading', (playerData) => {
+			setAddSongLoading(true);
 		});
 	}, [
 		socket,
@@ -50,6 +58,7 @@ function SocketHandler({
 		setUser,
 		setQueue,
 		setPlayerStatus,
+		setAddSongLoading,
 	]);
 
 	return null;
