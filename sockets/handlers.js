@@ -3,14 +3,9 @@ const helpers = require('./helpers');
 
 // ---------- Handle when someone creates or joins lobby ----------
 async function handleJoinLobby(io, socket, data) {
-	const { lobby_id, username, music_provider, token } = data;
+	const { lobby_id, username } = data;
 	data.user_id = socket.id;
 	socket.join(lobby_id);
-
-	// Set playlist id to new spotify playlist created on users account
-	if (music_provider === 'spotify') {
-		// console.log(data);
-	}
 
 	// Check if lobby exists and handle accordingly
 	if (!lobby.lobbyExists(lobby_id)) {
@@ -28,7 +23,8 @@ async function handleJoinLobby(io, socket, data) {
 	// Join existing lobby
 	else {
 		lobby.joinLobby(data);
-		const lobbyRef = lobby.getLobbyById(data.lobby_id);
+		const lobbyRef = lobby.getLobbyById(lobby_id);
+		io.to(lobby_id).emit('deactivateButtons');
 
 		const members = lobby.getMemberUsernames(lobby_id);
 		const messages = lobby.getLobbyMessages(lobby_id);
@@ -36,6 +32,7 @@ async function handleJoinLobby(io, socket, data) {
 		// TODO send queue and ui queue to designated player
 		io.to(lobby_id).emit('setLobbyInfo', members, messages);
 		io.to(socket.id).emit('addSong', lobbyRef.queue);
+		socket.broadcast.emit('getUserReady');
 
 		const adminData = lobby.getAdminData(data);
 		io.to(adminData.user_id).emit('getPlayerData', socket.id);
@@ -146,16 +143,16 @@ async function handleAddAlbum(io, socket, data) {
 }
 
 // ---------- Handle when someone clicks play ----------
-function handlePlay(io, socket, { lobby_id }) {
-	const lobbyRef = lobby.getLobbyById(lobby_id);
-	const play = lobby.updatePlayStatus(lobby_id);
+function handlePlay(io, socket, { user }) {
+	const lobbyRef = lobby.getLobbyById(user.lobby_id);
+	const play = lobby.updatePlayStatus(user.lobby_id);
 
 	if (lobbyRef.queue.length > 0) {
-		io.to(lobby_id).emit('deactivateButtons');
+		io.to(user.lobby_id).emit('deactivateButtons');
 		if (play) {
-			io.to(lobby_id).emit('play');
+			io.to(user.lobby_id).emit('play');
 		} else {
-			io.to(lobby_id).emit('pause');
+			io.to(user.lobby_id).emit('pause');
 		}
 	} else {
 		console.log('empty queue');
@@ -177,25 +174,27 @@ function handlePlayerData(io, socket, data) {
 }
 
 // ---------- Handle when current song ends ----------
-function handleMediaChange(io, socket, { lobby_id }) {
-	const lobbyRef = lobby.getLobbyById(lobby_id);
+function handleMediaChange(io, socket, { user }) {
+	console.log(user);
+	const lobbyRef = lobby.getLobbyById(user.lobby_id);
 	if (lobbyRef.queue.length > 0) {
-		lobby.popSong(lobby_id);
-		io.to(lobby_id).emit('addSong', lobbyRef.queue);
-		io.to(lobby_id).emit('deactivateButtons');
+		lobby.popSong(user.lobby_id);
+		io.to(user.lobby_id).emit('addSong', lobbyRef.queue);
+		io.to(user.lobby_id).emit('deactivateButtons');
 
 		if (lobbyRef.queue.length === 0) {
-			lobby.setPlayStatusPaused(lobby_id);
-			io.to(lobby_id).emit('emptyQueue', lobbyRef.queue);
+			lobby.setPlayStatusPaused(user.lobby_id);
+			io.to(user.lobby_id).emit('emptyQueue', lobbyRef.queue);
 		} else {
-			lobby.setPlayStatusPlaying(lobby_id);
-			io.to(lobby_id).emit('popped', lobbyRef.queue);
+			lobby.setPlayStatusPlaying(user.lobby_id);
+			io.to(user.lobby_id).emit('popped', lobbyRef.queue);
 		}
 	}
 }
 
 function handleRemove(io, socket, { index, lobby_id }) {
 	const lobbyRef = lobby.getLobbyById(lobby_id);
+	io.to(lobby_id).emit('deactivateButtons');
 
 	if (index === 0) {
 		lobby.popSong(lobby_id);
@@ -207,6 +206,7 @@ function handleRemove(io, socket, { index, lobby_id }) {
 			io.to(lobby_id).emit('removeFirst', lobbyRef.queue, lobbyRef.playing);
 		}
 	} else {
+		io.to(lobby_id).emit('activateButtons');
 		lobby.removeSong(index, lobby_id);
 	}
 	io.to(lobby_id).emit('addSong', lobbyRef.queue);
@@ -220,6 +220,10 @@ function handleUserReady(io, socket, { user }) {
 		io.to(user.lobby_id).emit('activateButtons');
 		lobby.resetReadyCount(user.lobby_id);
 	}
+}
+
+function handleLikeSong(io, socket, data) {
+	helpers.likeSong(data);
 }
 
 module.exports = {
@@ -236,4 +240,5 @@ module.exports = {
 	handleMediaChange,
 	handleRemove,
 	handleUserReady,
+	handleLikeSong,
 };

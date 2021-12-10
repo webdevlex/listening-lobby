@@ -65,6 +65,10 @@ function socketsReciever(io) {
 		socket.on('userReady', (data) => {
 			handlers.handleUserReady(io, socket, data);
 		});
+
+		socket.on('likeSong', (data) => {
+			handlers.handleLikeSong(io, socket, data);
+		});
 	});
 }
 

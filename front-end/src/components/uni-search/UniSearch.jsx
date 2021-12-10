@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import TrackDisplay from '../track-display/TrackDisplay';
 import AlbumDispaly from '../album-display/AlbumDispaly';
 import UniSearchForm from '../uni-search-form/UniSearchForm';
 import './uni-search.scss';
 
-function UniSearch({ user, buttonsClickable }) {
-	const [albums, setAlbums] = useState([]);
-	const [tracks, setTracks] = useState([]);
-
+function UniSearch({
+	user,
+	buttonsClickable,
+	albums,
+	setAlbums,
+	tracks,
+	setTracks,
+}) {
 	return (
 		<>
 			<UniSearchForm setAlbums={setAlbums} setTracks={setTracks} user={user} />

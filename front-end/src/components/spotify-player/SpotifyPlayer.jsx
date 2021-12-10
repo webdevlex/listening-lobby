@@ -43,11 +43,11 @@ function SpotifyPlayer({
 	]);
 
 	async function play() {
-		socket.emit('play', { lobby_id: user.lobby_id });
+		socket.emit('play', { user });
 	}
 
 	function skip() {
-		socket.emit('skip', { lobby_id: user.lobby_id });
+		socket.emit('skip', { user });
 	}
 
 	return (

@@ -3,17 +3,24 @@ import './lobby-queue.scss';
 import { PlayersContext } from '../../context/PlayersContext';
 import { SocketContext } from '../../context/SocketContext';
 
-export default function LobbyQueue({ queue, user }) {
+export default function LobbyQueue({
+	queue,
+	user,
+	buttonsClickable,
+	likedSongs,
+	setLikedSongs,
+}) {
 	const { apple } = useContext(PlayersContext);
 	const [applePlayer] = apple;
 	const queueHasItems = queue[0];
 	const [socket] = useContext(SocketContext);
 
-	async function addSongToLibrary(spotifySong, appleSong) {
+	async function addSongToLibrary(spotifySong, appleSong, id) {
+		setLikedSongs([...likedSongs, id]);
 		if (user.music_provider === 'apple') {
 			await applePlayer.addToLibrary(appleSong);
 		} else {
-			//TODO Spotify add
+			socket.emit('likeSong', { spotifySong, user });
 		}
 	}
 
@@ -38,17 +45,29 @@ export default function LobbyQueue({ queue, user }) {
 							</div>
 						</div>
 
-						<p className='remove-button' onClick={() => remove(index)}>
-							remove
-						</p>
+						{buttonsClickable ? (
+							<p className='remove-button' onClick={() => remove(index)}>
+								remove
+							</p>
+						) : (
+							<p>loading</p>
+						)}
 
-						<p
-							className='add-to-library-button'
-							onClick={() => {
-								addSongToLibrary(spotify, apple);
-							}}>
-							add to library
-						</p>
+						{buttonsClickable ? (
+							likedSongs.includes(ui.uniId) ? (
+								<p>check mark</p>
+							) : (
+								<p
+									className='add-to-library-button'
+									onClick={() => {
+										addSongToLibrary(spotify, apple, ui.uniId);
+									}}>
+									add to library
+								</p>
+							)
+						) : (
+							<p>loading</p>
+						)}
 					</div>
 				))}
 		</div>

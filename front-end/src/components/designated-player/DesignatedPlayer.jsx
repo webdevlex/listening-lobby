@@ -25,7 +25,7 @@ function DesignatedPlayer({
 		/>
 	) : (
 		<ApplePlayer
-			lobby_id={user.lobby_id}
+			user={user}
 			playerStatus={playerStatus}
 			queue={queue}
 			buttonsClickable={buttonsClickable}

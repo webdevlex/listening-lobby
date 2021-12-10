@@ -4,8 +4,8 @@ function LobbyMembers({ members }) {
 	return (
 		<div>
 			<h4>Members</h4>
-			{members.map((member) => {
-				return <p key={member}>{member}</p>;
+			{members.map((member, index) => {
+				return <p key={index}>{member}</p>;
 			})}
 		</div>
 	);

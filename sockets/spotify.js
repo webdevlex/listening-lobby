@@ -231,6 +231,17 @@ async function getAlbumSongsUriByAlbumId(spotifyAlbumId, spotifyToken) {
 	return spotifyAlbumSongData.items.map((track) => track.uri);
 }
 
+async function likeSong({ spotifySong, user }) {
+	const songId = spotifySong.replace('spotify:track:', '');
+	const endPoint = `https://api.spotify.com/v1/me/tracks?ids=${songId}`;
+
+	try {
+		await axios.put(endPoint, {}, defaultHeader(user.token));
+	} catch (err) {
+		console.log(err);
+	}
+}
+
 // Get the users id and create a playlist on their account and return playlist uri
 // async function createTempPlaylist(token) {
 // 	const user = await getUserData(token);
@@ -397,6 +408,7 @@ module.exports = {
 	getTempToken,
 	getAlbumId,
 	getAlbumSongsUriByAlbumId,
+	likeSong,
 	// deletePlaylist,
 	// setPlaylistAndPlay,
 	// setPlaylistAndPlayNext,

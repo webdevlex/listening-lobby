@@ -4,7 +4,7 @@ import { PlayersContext } from '../../context/PlayersContext';
 import './apple-player.scss';
 import { setupSocketRecievers } from '../apple-player/recievers';
 
-function ApplePlayer({ lobby_id, playerStatus, queue, buttonsClickable }) {
+function ApplePlayer({ user, playerStatus, queue, buttonsClickable }) {
 	const [volume, setVolume] = useState(10);
 	const [socket] = useContext(SocketContext);
 	const { apple } = useContext(PlayersContext);
@@ -17,26 +17,26 @@ function ApplePlayer({ lobby_id, playerStatus, queue, buttonsClickable }) {
 			setupSocketRecievers(
 				applePlayer,
 				socket,
-				lobby_id,
+				user,
 				setPlaying,
 				playerStatus,
 				queue
 			);
 			setRan(true);
 		}
-	}, [applePlayer, lobby_id, playerStatus, queue, ran, setRan, socket]);
+	}, [applePlayer, user, playerStatus, queue, ran, setRan, socket]);
 
 	//Emits play to all users
 	let play = () => {
-		socket.emit('play', { lobby_id });
+		socket.emit('play', { user });
 	};
 
 	// TEMP PLAYER CONTROLS --- FOR TESTING
 	let nextSong = async () => {
-		await applePlayer.authorize();
-		socket.emit('skip', { lobby_id });
+		socket.emit('skip', { user });
 		// await applePlayer.skipToNextItem();
 	};
+
 	let getInstance = async () => {
 		console.log(applePlayer);
 	};
@@ -71,7 +71,7 @@ function ApplePlayer({ lobby_id, playerStatus, queue, buttonsClickable }) {
 					type='range'
 					min='0'
 					max='100'
-					value={volume}
+					defaultValue={volume}
 					onChange={updateVolume}
 				/>
 			</div>
