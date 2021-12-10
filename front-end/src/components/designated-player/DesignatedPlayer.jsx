@@ -2,7 +2,13 @@ import React, { useEffect } from 'react';
 import SpotifyPlayer from '../spotify-player/SpotifyPlayer';
 import ApplePlayer from '../../components/apple-player/ApplePlayer';
 
-function DesignatedPlayer({ user, playerStatus, queue, setLoading }) {
+function DesignatedPlayer({
+	user,
+	playerStatus,
+	queue,
+	setLoading,
+	buttonsClickable,
+}) {
 	useEffect(() => {
 		if (user.music_provider === 'apple') {
 			setLoading(false);
@@ -15,12 +21,14 @@ function DesignatedPlayer({ user, playerStatus, queue, setLoading }) {
 			playerStatus={playerStatus}
 			queue={queue}
 			setLoading={setLoading}
+			buttonsClickable={buttonsClickable}
 		/>
 	) : (
 		<ApplePlayer
-			lobby_id={user.lobby_id}
+			user={user}
 			playerStatus={playerStatus}
 			queue={queue}
+			buttonsClickable={buttonsClickable}
 		/>
 	);
 }

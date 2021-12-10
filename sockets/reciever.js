@@ -61,6 +61,14 @@ function socketsReciever(io) {
 		socket.on('remove', (data) => {
 			handlers.handleRemove(io, socket, data);
 		});
+
+		socket.on('userReady', (data) => {
+			handlers.handleUserReady(io, socket, data);
+		});
+
+		socket.on('likeSong', (data) => {
+			handlers.handleLikeSong(io, socket, data);
+		});
 	});
 }
 

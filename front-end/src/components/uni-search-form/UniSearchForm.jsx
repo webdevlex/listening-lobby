@@ -8,10 +8,10 @@ function UniSearchForm({ setTracks, setAlbums, user }) {
 	// const refresh_token = params.get('refresh_token');
 
 	useEffect(() => {
-		socket.on('uniSearchResults', ({ tracks, albums }) => {
-			setAlbums(albums);
-			setTracks(tracks);
-		});
+		return () => {
+			setTracks([]);
+			setAlbums([]);
+		};
 	}, [socket, setAlbums, setTracks]);
 
 	const onSubmit = ({ search: searchValue }) => {

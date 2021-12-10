@@ -22,11 +22,11 @@ export function setupSocketRecievers(
 	);
 
 	socket.on('play', () => {
-		handlers.play(socket, spotifyPlayer, setPlaying);
+		handlers.play(socket, spotifyPlayer, setPlaying, user);
 	});
 
 	socket.on('pause', () => {
-		handlers.pause(socket, spotifyPlayer, setPlaying);
+		handlers.pause(socket, spotifyPlayer, setPlaying, user);
 	});
 
 	// socket.on('skip', () => {
@@ -34,7 +34,7 @@ export function setupSocketRecievers(
 	// });
 
 	socket.on('emptyQueue', () => {
-		handlers.emptyQueue(socket, spotifyPlayer, setPlaying);
+		handlers.emptyQueue(socket, spotifyPlayer, setPlaying, user);
 	});
 
 	socket.on('getPlayerData', (memberId) => {

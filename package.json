@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A web application for listening to music with friends simultaneously via your music provider",
   "main": "index.js",
+  
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",

@@ -9,7 +9,7 @@ const client_secret = config.get('client_secret');
 const redirect_uri = '' || 'http://localhost:8888/spotify/callback';
 const auth_error_url = '' || 'http://localhost:3000';
 const spotify_scope =
-	'user-read-private user-read-email streaming user-read-playback-state user-read-currently-playing playlist-modify-public playlist-modify-private';
+	'user-read-private user-read-email streaming user-read-playback-state user-read-currently-playing playlist-modify-public playlist-modify-private user-library-modify';
 
 var generateRandomString = function (length) {
 	var text = '';

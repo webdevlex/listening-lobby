@@ -289,11 +289,25 @@ async function generateTempToken(musicProvider) {
     : await apple.getTempToken();
 }
 
+function likeSong(data) {
+	spotify.likeSong(data);
+}
+
 module.exports = {
+<<<<<<< HEAD
   formatUniSearchResults,
   getSongDataForPlayers,
   uniAlbumSearch,
   formatMessage,
   uniSearch,
   generateTempToken,
+=======
+	formatUniSearchResults,
+	getSongDataForPlayers,
+	uniAlbumSearch,
+	formatMessage,
+	uniSearch,
+	generateTempToken,
+	likeSong,
+>>>>>>> 04b6517bdacce4bffecff7ba5078a50d21581f08
 };

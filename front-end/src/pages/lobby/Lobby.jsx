@@ -21,32 +21,32 @@ function Lobby() {
 	const [user, setUser] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [centerDisplay, setCenterDisplay] = useState('player');
+	const [likedSongs, setLikedSongs] = useState([]);
+	const [albums, setAlbums] = useState([]);
+	const [tracks, setTracks] = useState([]);
+
+	// Loaders
+	const [buttonsClickable, setButtonsClickable] = useState(true);
 
 	useEffect(() => {
-		const navigations = performance.getEntriesByType('navigation');
-		if (navigations[0].type === 'reload') {
-			window.location.replace('http://localhost:3000');
-		}
-
-		if (!user) {
-			const userData = JSON.parse(localStorage.getItem('user'));
-			setUser(userData);
-		}
-
 		if (!socket) {
 			const url = '' || 'http://localhost:8888';
 			setSocket(socketio.connect(url));
 		}
-	}, [setSocket, socket, user]);
+	}, [setSocket, socket]);
 
 	return socket ? (
 		<div className='lobby'>
 			<SocketHandler
+				user={user}
 				setUser={setUser}
 				setMembers={setMembers}
 				setMessages={setMessages}
 				setQueue={setQueue}
 				setPlayerStatus={setPlayerStatus}
+				setButtonsClickable={setButtonsClickable}
+				setAlbums={setAlbums}
+				setTracks={setTracks}
 			/>
 
 			{!playerStatus ? (
@@ -59,6 +59,7 @@ function Lobby() {
 							playerStatus={playerStatus}
 							queue={queue}
 							setLoading={setLoading}
+							buttonsClickable={buttonsClickable}
 						/>
 					</div>
 					{loading ? (
@@ -83,6 +84,13 @@ function Lobby() {
 									centerDisplay={centerDisplay}
 									queue={queue}
 									user={user}
+									buttonsClickable={buttonsClickable}
+									likedSongs={likedSongs}
+									setLikedSongs={setLikedSongs}
+									albums={albums}
+									setAlbums={setAlbums}
+									tracks={tracks}
+									setTracks={setTracks}
 								/>
 							</div>
 						</>
