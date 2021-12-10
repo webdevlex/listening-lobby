@@ -1,121 +1,128 @@
-const axios = require('axios');
+const axios = require("axios");
 
 // Returns basic headers required by almost every spotify api end point
 function defaultHeader(token) {
-	return {
-		headers: {
-			Accept: 'application/json',
-			'content-type': 'application/json',
-			Authorization: 'Bearer ' + token,
-		},
-	};
+  return {
+    headers: {
+      Accept: "application/json",
+      "content-type": "application/json",
+      Authorization: "Bearer " + token,
+    },
+  };
 }
 
 // Perfoms a basic track and album search on spotify
 async function search(searchValue, token) {
-	const endPoint = '	https://api.spotify.com/v1/search';
-	const config = {
-		headers: defaultHeader(token).headers,
-		params: {
-			q: searchValue,
-			type: 'album,track',
-			limit: 5,
-		},
-	};
+  const endPoint = "	https://api.spotify.com/v1/search";
+  const config = {
+    headers: defaultHeader(token).headers,
+    params: {
+      q: searchValue,
+      type: "album,track",
+      limit: 5,
+    },
+  };
 
-	try {
-		const res = await axios.get(endPoint, config);
-		return res.data;
-	} catch (err) {
-		// TODO
-	}
+  try {
+    const res = await axios.get(endPoint, config);
+    return res.data;
+  } catch (err) {
+    // TODO
+  }
 }
 
 // Perfoms a track search on spotify by query
 async function searchForTrack(searchValue, token) {
-	const endPoint = 'https://api.spotify.com/v1/search';
-	const config = {
-		headers: defaultHeader(token).headers,
-		params: {
-			q: searchValue,
-			type: 'track',
-			limit: 20,
-		},
-	};
+  const endPoint = "https://api.spotify.com/v1/search";
+  const config = {
+    headers: defaultHeader(token).headers,
+    params: {
+      q: searchValue,
+      type: "track",
+      limit: 20,
+    },
+  };
 
-	try {
-		const res = await axios.get(endPoint, config);
-		return res.data;
-	} catch (err) {
-		// TODO
-	}
+  try {
+    const res = await axios.get(endPoint, config);
+    return res.data;
+  } catch (err) {
+    // TODO
+  }
 }
 
 // Perfoms an album search on spotify by query
 async function searchForAlbum(searchValue, token) {
-	const endPoint = '	https://api.spotify.com/v1/search';
-	const config = {
-		headers: defaultHeader(token).headers,
-		params: {
-			q: searchValue,
-			type: 'album',
-			limit: 20,
-		},
-	};
+  const endPoint = "	https://api.spotify.com/v1/search";
+  const config = {
+    headers: defaultHeader(token).headers,
+    params: {
+      q: searchValue,
+      type: "album",
+      limit: 20,
+    },
+  };
 
-	try {
-		const res = await axios.get(endPoint, config);
-		return res.data;
-	} catch (err) {
-		// TODO
-	}
+  try {
+    const res = await axios.get(endPoint, config);
+    return res.data;
+  } catch (err) {
+    // TODO
+  }
 }
 
 // Format song data for spotify player
 function formatSongData(songData) {
-	return songData.uri;
+  return songData.uri;
 }
 
 // Search for a song using apple data and return the id of the result
 async function getAndFormatSongData(
-	{ trackName, artists, uniId },
-	spotifyToken
+  { trackName, artists, uniId, duration },
+  spotifyToken
 ) {
-	// Raw results directly from song and artist search by query
-	const rawResults = await searchForTrack(
-		`${trackName} ${artists}`,
-		spotifyToken
-	);
+  // Raw results directly from song and artist search by query
+  const rawResults = await searchForTrack(
+    `${trackName} ${artists}`,
+    spotifyToken
+  );
+  // Attempt to find a song match by isrc
 
-	// Attempt to find a song match by isrc
-
-	//   rawResults.tracks.items.forEach((song) => {
-	//     console.log(song.external_ids.isrc + " = " + uniId);
-	//   });
-	//
-	const songMatch = rawResults.tracks.items.find(
-		(song) => song.external_ids.isrc === uniId
-	);
-
-	// If found return the songs id
-	if (songMatch) {
-		console.log('FOUND!');
-		return songMatch.uri;
-	}
-	console.log('NOT FOUND');
-	return 0;
+  let songMatch = rawResults.tracks.items.find(
+    (song) =>
+      song.external_ids.isrc === uniId ||
+      (song.external_ids.isrc.substring(0, 7) === uniId.substring(0, 7) &&
+        song.duration_ms + 500 >= duration &&
+        song.duration_ms - 500 <= duration)
+  );
+  // If found return the songs id
+  songMatch = songMatch ? songMatch : { id: "-1" };
+  return songMatch.id;
 }
 
 // Search for an album using apple data and return all the uri's if found
-async function getAlbumId({ albumName, artists }, token) {
-	// Raw results directly from album search by query
-	const rawResults = await searchForAlbum(`${albumName} ${artists}`, token);
+async function getAlbumId(
+  { albumName, artists, releaseDate, songCount },
+  token
+) {
+  // Raw results directly from album search by query
 
-	// Attempt to find an album match by name
-	const albumMatch = rawResults.albums.items.find(
-		(album) => album.name === albumName
-	);
-	return albumMatch.id;
+  const rawResults = await searchForAlbum(`${albumName} ${artists}`, token);
+
+  // Attempt to find an album match by name
+  //Song count must always match and either the name must match or the release date
+  const albumMatch = rawResults.albums.items.find(
+    (album) =>
+      songCount == album.total_tracks &&
+      (album.name.toLowerCase() === albumName.toLowerCase() ||
+        album.release_date == releaseDate)
+  );
+  if (albumMatch) {
+    console.log("Found Album!");
+    return albumMatch.id;
+  }
+  console.log("album not found");
+  return albumMatch;
 }
 
 // Search for an album using apple data and return all the uri's if found
@@ -139,107 +146,96 @@ async function getAlbumId({ albumName, artists }, token) {
 // Just grab the album directly by id and pull out the data for all songs in the albums
 // TODO we dont have to search by id, just save all songs data in the front end when inital search is made
 async function formatAlbumData(albumData, token) {
-	// get album by id
-	const results = await spotifyAlbumSearchById(albumData.id, token);
+  // get album by id
+  const results = await spotifyAlbumSearchById(albumData.id, token);
 
-	// Data that will be used by player and ui
-	let dataForSpotifyPlayer = [];
-	let dataForUi = [];
+  // Data that will be used by player and ui
+  let dataForSpotifyPlayer = [];
+  let dataForUi = [];
 
-	// Iterate through each song and grab necessary data
-	results.items.forEach((track) => {
-		// Data player needs
-		dataForSpotifyPlayer.push(track.uri);
-		// Data ui needs
-		dataForUi.push({
-			trackName: track.name,
-			artists: track.artists.map(({ name }) => name).join(', '),
-			trackCover: albumData.albumCover,
-			id: track.id,
-		});
-	});
+  // Iterate through each song and grab necessary data
+  results.items.forEach((track) => {
+    // Data player needs
+    dataForSpotifyPlayer.push(track.uri);
+    // Data ui needs
+    dataForUi.push({
+      trackName: track.name,
+      artists: track.artists.map(({ name }) => name).join(", "),
+      trackCover: albumData.albumCover,
+      id: track.id,
+    });
+  });
 
-	// Return data required by spotify's player and data used by ui
-	return { dataForSpotifyPlayer, dataForUi };
+  // Return data required by spotify's player and data used by ui
+  return { dataForSpotifyPlayer, dataForUi };
 }
 
 // Get album directly by id
 async function spotifyAlbumSearchById(id, token) {
-	const endPoint = `	https://api.spotify.com/v1/albums/${id}/tracks`;
-	try {
-		const res = await axios.get(endPoint, defaultHeader(token));
-		return res.data;
-	} catch (err) {
-		// TODO
-	}
+  const endPoint = `	https://api.spotify.com/v1/albums/${id}/tracks`;
+  try {
+    const res = await axios.get(endPoint, defaultHeader(token));
+    return res.data;
+  } catch (err) {
+    // TODO
+  }
 }
 
 async function setDevice({ device_id, token }) {
-	const endPoint = `https://api.spotify.com/v1/me/player`;
-	const body = {
-		device_ids: [device_id],
-	};
+  const endPoint = `https://api.spotify.com/v1/me/player`;
+  const body = {
+    device_ids: [device_id],
+  };
 
-	try {
-		await axios.put(endPoint, body, defaultHeader(token));
-	} catch (err) {
-		// TODO
-	}
+  try {
+    await axios.put(endPoint, body, defaultHeader(token));
+  } catch (err) {
+    // TODO
+  }
 }
 
 // Pause active player
 async function pause({ token }) {
-	const endPoint = `https://api.spotify.com/v1/me/player/pause`;
+  const endPoint = `https://api.spotify.com/v1/me/player/pause`;
 
-	try {
-		return await axios.put(endPoint, {}, defaultHeader(token));
-	} catch (err) {
-		// console.log(err);
-	}
+  try {
+    return await axios.put(endPoint, {}, defaultHeader(token));
+  } catch (err) {
+    // console.log(err);
+  }
 }
 
 // Get current player state
 async function playerState(token) {
-	const endPoint = `https://api.spotify.com/v1/me/player`;
+  const endPoint = `https://api.spotify.com/v1/me/player`;
 
-	try {
-		const res = await axios.get(endPoint, defaultHeader(token));
-		return res.data;
-	} catch (err) {
-		// console.log(err);
-	}
+  try {
+    const res = await axios.get(endPoint, defaultHeader(token));
+    return res.data;
+  } catch (err) {
+    // console.log(err);
+  }
 }
 
 async function getTempToken() {
-	const endPoint = 'http://localhost:8888/spotify/temp_token';
+  const endPoint = "http://localhost:8888/spotify/temp_token";
 
-	try {
-		const res = await axios.get(endPoint);
-		return res.data;
-	} catch (err) {
-		// TODO
-	}
+  try {
+    const res = await axios.get(endPoint);
+    return res.data;
+  } catch (err) {
+    // TODO
+  }
 }
 
 async function getAlbumSongsUriByAlbumId(spotifyAlbumId, spotifyToken) {
-	// If we find a match get the album directly by id
-	const spotifyAlbumSongData = await spotifyAlbumSearchById(
-		spotifyAlbumId,
-		spotifyToken
-	);
-	// Return all uris for songs in album
-	return spotifyAlbumSongData.items.map((track) => track.uri);
-}
-
-async function likeSong({ spotifySong, user }) {
-	const songId = spotifySong.replace('spotify:track:', '');
-	const endPoint = `https://api.spotify.com/v1/me/tracks?ids=${songId}`;
-
-	try {
-		await axios.put(endPoint, {}, defaultHeader(user.token));
-	} catch (err) {
-		console.log(err);
-	}
+  // If we find a match get the album directly by id
+  const spotifyAlbumSongData = await spotifyAlbumSearchById(
+    spotifyAlbumId,
+    spotifyToken
+  );
+  // Return all uris for songs in album
+  return spotifyAlbumSongData.items.map((track) => track.uri);
 }
 
 // Get the users id and create a playlist on their account and return playlist uri
@@ -391,25 +387,29 @@ async function likeSong({ spotifySong, user }) {
 // }
 
 module.exports = {
-	// playSong,
-	// pauseSong,
-	// playNext,
-	pause,
-	search,
-	playerState,
-	// setPlaybackToDevice,
-	// createTempPlaylist,
-	// addSongToPlaylist,
-	formatSongData,
-	getAndFormatSongData,
-	formatAlbumData,
-	// addAlbumToPlaylist,
-	setDevice,
-	getTempToken,
-	getAlbumId,
-	getAlbumSongsUriByAlbumId,
-	likeSong,
-	// deletePlaylist,
-	// setPlaylistAndPlay,
-	// setPlaylistAndPlayNext,
+  // playSong,
+  // pauseSong,
+  // playNext,
+  pause,
+  search,
+  playerState,
+  // setPlaybackToDevice,
+  // createTempPlaylist,
+  // addSongToPlaylist,
+  formatSongData,
+  getAndFormatSongData,
+  formatAlbumData,
+  // addAlbumToPlaylist,
+  setDevice,
+  getTempToken,
+  getAlbumId,
+  getAlbumSongsUriByAlbumId,
+  // deletePlaylist,
+  // setPlaylistAndPlay,
+  // setPlaylistAndPlayNext,
 };
+
+//Testing
+// rawResults.tracks.items.forEach((song) => {
+//   console.log(song.duration_ms + " " + duration);
+// });

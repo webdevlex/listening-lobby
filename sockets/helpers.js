@@ -127,6 +127,7 @@ function extractSpotifySongData(searchResults) {
       id: track.id,
       uri: track.uri,
       uniId: track.external_ids.isrc,
+      duration: track.duration_ms,
     };
   });
 }
@@ -160,6 +161,7 @@ function extractAppleSongData(searchResults) {
         trackCover: track.attributes.artwork.url.replace("{w}x{h}", "640x640"),
         id: track.id,
         uniId: track.attributes.isrc,
+        duration: track.attributes.durationInMillis,
       };
     });
   }
@@ -190,7 +192,6 @@ async function getSongDataForPlayers(tokens, { songData, user }) {
   // Tokens that will be used if a search is required
   const spotifyToken = tokens.spotify;
   const appleToken = tokens.apple;
-
   // The data that will be returned to the players
   let dataForSpotifyPlayer;
   let dataForApplePlayer;
@@ -202,8 +203,6 @@ async function getSongDataForPlayers(tokens, { songData, user }) {
   songData.trackName = uniTrackFormatter(songData.trackName);
   songData.artists = uniArtistsFormatter(songData.artists);
 
-  // console.log(songData.trackName);
-  // console.log(songData.artists);
   // If the user that made the request is using spotify
   if (user.music_provider === "spotify") {
     // We already have spotify data just format it
@@ -216,6 +215,7 @@ async function getSongDataForPlayers(tokens, { songData, user }) {
   // If the user that made the request is using apple
   else {
     // We do not have spotify data so search for it then format it
+
     dataForSpotifyPlayer = await spotify.getAndFormatSongData(
       songData,
       spotifyToken
@@ -235,8 +235,8 @@ async function uniAlbumSearch(tokens, { albumData, user }) {
   const appleToken = tokens.apple;
 
   // The data that will be returned to the players
-  let dataForSpotifyPlayer;
-  let dataForApplePlayer;
+  let dataForSpotifyPlayer = [];
+  let dataForApplePlayer = [];
   let dataForUi;
 
   albumData.albumName = uniAlbumNameFormatter(albumData.albumName);
@@ -255,10 +255,16 @@ async function uniAlbumSearch(tokens, { albumData, user }) {
     // Must first format search query for api call
 
     const appleAlbumId = await apple.getAlbumId(albumData, appleToken);
-    dataForApplePlayer = await apple.getAlbumSongsIdByAlbumId(
-      appleAlbumId,
-      appleToken
-    );
+    if (appleAlbumId) {
+      dataForApplePlayer = await apple.getAlbumSongsIdByAlbumId(
+        appleAlbumId,
+        appleToken
+      );
+    } else {
+      for (let i = 0; i < albumData.songCount; ++i) {
+        dataForApplePlayer.push("-1");
+      }
+    }
   } else {
     // We already have spotify album id just request the album with the id and grab all song data
 
@@ -270,13 +276,15 @@ async function uniAlbumSearch(tokens, { albumData, user }) {
     dataForUi = dataForApplePlayerAndUi.dataForUi;
 
     const spotifyAlbumId = await spotify.getAlbumId(albumData, spotifyToken);
-    if (spotifyAlbumId != -1) {
+    if (spotifyAlbumId) {
       dataForSpotifyPlayer = await spotify.getAlbumSongsUriByAlbumId(
         spotifyAlbumId,
         spotifyToken
       );
     } else {
-      dataForSpotifyPlayer = { id: -1 };
+      for (let i = 0; i < albumData.songCount; ++i) {
+        dataForSpotifyPlayer.push("-1");
+      }
     }
   }
 
@@ -290,24 +298,15 @@ async function generateTempToken(musicProvider) {
 }
 
 function likeSong(data) {
-	spotify.likeSong(data);
+  spotify.likeSong(data);
 }
 
 module.exports = {
-<<<<<<< HEAD
   formatUniSearchResults,
   getSongDataForPlayers,
   uniAlbumSearch,
   formatMessage,
   uniSearch,
   generateTempToken,
-=======
-	formatUniSearchResults,
-	getSongDataForPlayers,
-	uniAlbumSearch,
-	formatMessage,
-	uniSearch,
-	generateTempToken,
-	likeSong,
->>>>>>> 04b6517bdacce4bffecff7ba5078a50d21581f08
+  likeSong,
 };
