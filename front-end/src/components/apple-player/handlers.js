@@ -51,7 +51,7 @@ export async function startUp(
 			joinOnPause = true;
 			socket.emit('userReady', { user });
 		}
-	} else {
+	} else if (!user.admin) {
 		socket.emit('userReady', { user });
 	}
 }

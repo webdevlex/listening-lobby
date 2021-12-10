@@ -26,7 +26,7 @@ export async function setupPlayback(
 			}
 		}, 500);
 		setListener(socket, spotifyPlayer, user);
-	} else {
+	} else if (!user.admin) {
 		socket.emit('userReady', { user });
 	}
 	setLoading(false);
