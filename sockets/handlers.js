@@ -214,7 +214,7 @@ function handleRemove(io, socket, { index, lobby_id }) {
 
 function handleUserReady(io, socket, { user }) {
 	const lobbyRef = lobby.getLobbyById(user.lobby_id);
-	lobby.increaseReadyCount(user.lobby_id);
+	lobby.increaseReadyCount(user);
 
 	if (lobbyRef.usersReady === lobbyRef.users.length) {
 		io.to(user.lobby_id).emit('activateButtons');

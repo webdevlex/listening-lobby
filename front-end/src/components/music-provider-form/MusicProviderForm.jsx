@@ -23,6 +23,7 @@ function MusicProviderForm({ handleSubmit, register, errors }) {
 			username: formData.username,
 			music_provider: formData.musicProvider,
 			lobby_id: formData.lobby_id || generateRandomString(6),
+			admin: formData.lobby_id ? false : true,
 			authorized: true,
 		});
 		localStorage.setItem('user', localUserData);

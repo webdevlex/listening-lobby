@@ -210,14 +210,17 @@ function removeSong(index, lobby_id) {
 	lobbies[i].queue.splice(index, 1);
 }
 
-function increaseReadyCount(lobby_id) {
-	const i = getLobbyIndex(lobby_id);
+function increaseReadyCount(user) {
+	console.log(`-------------------- ${user.username} ---------------------`);
+	const i = getLobbyIndex(user.lobby_id);
+	console.log(lobbies[i]);
 	lobbies[i].usersReady += 1;
 }
 
 function decreaseReadyCount(lobby_id) {
 	const i = getLobbyIndex(lobby_id);
-	lobbies[i].usersReady -= 1;
+	let lobby = lobbies[i];
+	usersReady -= 1;
 }
 
 function resetReadyCount(lobby_id) {
