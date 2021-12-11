@@ -42,7 +42,7 @@ export async function startUp(
 	applePlayer.player.volume = 0.1;
 	if (playerStatus && queue.length > 0) {
 		await setMusicKitQueue(applePlayer, queue[0].apple);
-		const timeStampOnJoin = playerStatus.timestamp / 1000;
+		timeStampOnJoin = playerStatus.timestamp / 1000;
 		if (!playerStatus.paused) {
 			await applePlayer.seekToTime(timeStampOnJoin);
 			await handlePlay(applePlayer, socket, user, setPlaying);
