@@ -44,7 +44,7 @@ export async function startUp(
 		await setMusicKitQueue(applePlayer, queue[0].apple);
 		timeStampOnJoin = playerStatus.timestamp / 1000;
 		if (!playerStatus.paused) {
-			await applePlayer.seekToTime(timeStampOnJoin);
+			await applePlayer.seekToTime(1000);
 			await handlePlay(applePlayer, socket, user, setPlaying);
 			setPlaying(true);
 		} else {
@@ -135,6 +135,7 @@ export async function handleRemoveFirst(
 
 // Ready emitters
 function emitReadyWhenPlaying(socket, applePlayer, user) {
+	console.log(applePlayer);
 	socket.emit('userReady', { user });
 }
 

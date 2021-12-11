@@ -47,6 +47,7 @@ function SocketHandler({
 			});
 
 			socket.on('addSong', (queue) => {
+				console.log(queue);
 				setQueue(queue);
 			});
 

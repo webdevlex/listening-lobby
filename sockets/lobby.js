@@ -11,6 +11,7 @@ function generateLobby(data, tempToken) {
 		tokens: generateTokens(data, tempToken),
 		playing: false,
 		usersReady: 0,
+		loading: false,
 	};
 
 	lobbies.push(newLobby);
@@ -228,6 +229,11 @@ function resetReadyCount(lobby_id) {
 	lobbies[i].usersReady = 0;
 }
 
+function setLobbyLoading(lobby_id, value) {
+	const i = getLobbyIndex(lobby_id);
+	lobbies[i].loading = value;
+}
+
 module.exports = {
 	setPlayStatusPlaying,
 	setPlayStatusPaused,
@@ -255,4 +261,5 @@ module.exports = {
 	increaseReadyCount,
 	resetReadyCount,
 	decreaseReadyCount,
+	setLobbyLoading,
 };

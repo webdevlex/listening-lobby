@@ -20,6 +20,7 @@ export async function setupPlayback(
 					emitReadyWhenPaused(socket, spotifyPlayer, user);
 				} else {
 					setPlaying(true);
+					console.log('emitting');
 					socket.emit('userReady', { user });
 				}
 				clearInterval(interval);
@@ -27,6 +28,7 @@ export async function setupPlayback(
 		}, 500);
 		setListener(socket, spotifyPlayer, user);
 	} else if (!user.admin) {
+		console.log('emmiting userREady', user);
 		socket.emit('userReady', { user });
 	}
 	setLoading(false);
@@ -53,17 +55,6 @@ export async function pause(socket, spotifyPlayer, setPlaying, user) {
 		console.log('Not playing on browser');
 	}
 }
-
-// export async function skip(socket, spotifyPlayer, setPlaying) {
-// 	const playingOnBrowser = await spotifyPlayer.getCurrentState();
-// 	if (playingOnBrowser) {
-// 		await spotifyPlayer.nextTrack();
-// 		console.log('skipping');
-// 		setPlaying(true);
-// 	} else {
-// 		console.log('Not playing on browser');
-// 	}
-// }
 
 export async function emptyQueue(socket, spotifyPlayer, setPlaying, user) {
 	setPlaying(false);
@@ -177,7 +168,7 @@ async function setPlaybackTo(device_id, user, song, playerStatus) {
 	try {
 		await axios.put(endPoint, body, config);
 	} catch (err) {
-		console.log(err);
+		console.log('setPlaybackTo', err);
 	}
 }
 
@@ -246,7 +237,8 @@ function setListener(socket, player, user) {
 			player.state &&
 			stateTrack.id === player.state.track_window.current_track.id
 		) {
-			socket.emit('mediaChange', { lobby_id: user.lobby_id });
+			console.log(user);
+			socket.emit('mediaChange', { user });
 			player.removeListener('player_state_changed');
 		}
 		player.state = state;
@@ -281,8 +273,9 @@ async function removeFirstSong(
 
 async function emitReadyVolumeNotZero(socket, spotifyPlayer, user) {
 	let interval = setInterval(async () => {
+		const currentStatus = spotifyPlayer.getCurrentState();
 		const volume = await spotifyPlayer.getVolume();
-		if (volume !== 0) {
+		if (volume !== 0 && !currentStatus.loading) {
 			socket.emit('userReady', { user });
 			clearInterval(interval);
 		}
@@ -292,7 +285,7 @@ async function emitReadyVolumeNotZero(socket, spotifyPlayer, user) {
 async function emitReadyWhenPlaying(socket, spotifyPlayer, user) {
 	let interval = setInterval(async () => {
 		const currentStatus = await spotifyPlayer.getCurrentState();
-		if (!currentStatus.paused) {
+		if (!currentStatus.paused && !currentStatus.loading) {
 			socket.emit('userReady', { user });
 			clearInterval(interval);
 		}
@@ -302,7 +295,7 @@ async function emitReadyWhenPlaying(socket, spotifyPlayer, user) {
 async function emitReadyWhenPaused(socket, spotifyPlayer, user) {
 	let interval = setInterval(async () => {
 		const currentStatus = await spotifyPlayer.getCurrentState();
-		if (currentStatus.paused) {
+		if (currentStatus.paused && !currentStatus.loading) {
 			socket.emit('userReady', { user });
 			clearInterval(interval);
 		}
@@ -312,7 +305,7 @@ async function emitReadyWhenPaused(socket, spotifyPlayer, user) {
 async function emitReadyWhenPlaybackSet(socket, spotifyPlayer, user) {
 	let interval = setInterval(async () => {
 		const currentStatus = await spotifyPlayer.getCurrentState();
-		if (currentStatus) {
+		if (currentStatus && !currentStatus.loading) {
 			socket.emit('userReady', { user });
 			clearInterval(interval);
 		}
