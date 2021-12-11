@@ -1,4 +1,5 @@
 const axios = require("axios");
+
 let defaultSearchResults = {
   songs: {
     data: [],
@@ -30,12 +31,41 @@ async function search(searchName, token) {
   }
 }
 
+function songMatchTesting(rawResults, trackName, artists, uniId, duration) {
+  console.log(trackName, artists);
+  rawResults.songs.data.every((song) => {
+    console.log(
+      "Test 1: ",
+
+      song.attributes.isrc === uniId,
+      song.attributes.isrc,
+      uniId
+    );
+    console.log(
+      "Test 2: ",
+      song.attributes.durationInMillis + 500 >= duration &&
+        song.attributes.durationInMillis - 500 <= duration,
+      duration,
+      song.attributes.durationInMillis
+    );
+    if (
+      song.attributes.isrc === uniId ||
+      (song.attributes.isrc.substring(0, 7) === uniId.substring(0, 7) &&
+        song.attributes.durationInMillis + 500 >= duration &&
+        song.attributes.durationInMillis - 500 <= duration)
+    ) {
+      console.log("Match!");
+      return false;
+    }
+    return true;
+  });
+}
 async function getAndFormatSongData(
   { trackName, artists, duration, uniId },
   token
 ) {
   const searchResult = await search(`${trackName} ${artists}`, token);
-
+  songMatchTesting(searchResult, trackName, artists, uniId, duration);
   let songMatch = searchResult.songs.data.find(
     (song) =>
       song.attributes.isrc === uniId ||
@@ -43,19 +73,69 @@ async function getAndFormatSongData(
         song.attributes.durationInMillis + 500 >= duration &&
         song.attributes.durationInMillis - 500 <= duration)
   );
-
+  if (!songMatch) {
+    console.log("No song match");
+  }
   songMatch = songMatch ? songMatch : { id: "-1" };
   return songMatch.id;
 }
-
+function albumMatchTesting(
+  rawResults,
+  albumName,
+  releaseDate,
+  songCount,
+  uniAlbumNameFormatter
+) {
+  rawResults.every(({ attributes }) => {
+    console.log(
+      "Test 1: ",
+      songCount === attributes.trackCount,
+      songCount,
+      attributes.trackCount
+    );
+    console.log("-------------------------");
+    console.log(
+      "Test 2: ",
+      uniAlbumNameFormatter(attributes.name, true) ===
+        uniAlbumNameFormatter(albumName, true),
+      uniAlbumNameFormatter(attributes.name, true),
+      uniAlbumNameFormatter(albumName, true)
+    );
+    console.log(
+      "Release Date: ",
+      attributes.releaseDate === releaseDate,
+      attributes.releaseDate,
+      releaseDate
+    );
+    if (
+      songCount === attributes.trackCount &&
+      (uniAlbumNameFormatter(attributes.name) === albumName ||
+        attributes.releaseDate === releaseDate)
+    ) {
+      return false;
+    }
+    return true;
+  });
+}
 //Searching from Spotify
-async function getAlbumId({ albumName, releaseDate, songCount }, token) {
+async function getAlbumId(
+  { albumName, releaseDate, songCount },
+  uniAlbumNameFormatter,
+  token
+) {
   const searchResults = await appleAlbumSearch(albumName, token);
-
+  albumMatchTesting(
+    searchResults,
+    albumName,
+    releaseDate,
+    songCount,
+    uniAlbumNameFormatter
+  );
   let albumMatch = searchResults.find(
     ({ attributes }) =>
       songCount === attributes.trackCount &&
-      (attributes.name.toLowerCase() === albumName.toLowerCase() ||
+      (uniAlbumNameFormatter(attributes.name, true) ===
+        uniAlbumNameFormatter(albumName, true) ||
         attributes.releaseDate === releaseDate)
   );
   if (albumMatch) {
