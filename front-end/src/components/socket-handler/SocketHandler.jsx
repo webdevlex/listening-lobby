@@ -25,6 +25,7 @@ function SocketHandler({
 				localStorageData.authorized = false;
 				localStorage.setItem('user', JSON.stringify(localStorageData));
 			} else {
+				socket.disconnect();
 				window.location.replace('http://localhost:3000');
 			}
 			setUser({ ...localStorageData, token, refresh_token });

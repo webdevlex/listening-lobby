@@ -15,8 +15,6 @@ function SpotifyPlayer({
 	const [spotifyPlayer, setSpotifyPlayer] = spotify;
 	const [playing, setPlaying] = useState(false);
 	const [ran, setRan] = spotifyRan;
-	const { apple } = useContext(PlayersContext);
-	const [applePlayer] = spotify;
 
 	useEffect(() => {
 		if (!ran) {

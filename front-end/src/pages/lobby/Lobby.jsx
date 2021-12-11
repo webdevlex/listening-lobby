@@ -42,6 +42,7 @@ function Lobby() {
 		return () => {
 			if (socket) {
 				applePlayer.cleanup();
+				socket.disconnect();
 			}
 		};
 	}, [applePlayer, setSocket, socket]);
