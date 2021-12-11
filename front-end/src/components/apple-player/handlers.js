@@ -2,14 +2,14 @@
 let removeEventListener = (applePlayer) => {
 	applePlayer.removeEventListener('mediaItemDidChange', () => {});
 };
-let addEventListener = (applePlayer, socket, lobby_id, toAdd) => {
+let addEventListener = (applePlayer, socket, user, toAdd) => {
 	applePlayer.addEventListener('mediaItemDidChange', () => {
-		socket.emit('mediaChange', { lobby_id });
+		socket.emit('mediaChange', { user });
 	});
 	if (toAdd) {
 		applePlayer.player.addEventListener('playbackStateDidChange', () => {
 			if (applePlayer.player.playbackState === 10) {
-				socket.emit('mediaChange', { lobby_id });
+				socket.emit('mediaChange', { user });
 			}
 		});
 	}
@@ -38,7 +38,7 @@ export async function startUp(
 	queue,
 	setPlaying
 ) {
-	addEventListener(applePlayer, socket, user.lobby_id, true);
+	addEventListener(applePlayer, socket, user, true);
 	applePlayer.player.volume = 0.1;
 	if (playerStatus && queue.length > 0) {
 		await setMusicKitQueue(applePlayer, queue[0].apple);
@@ -82,7 +82,7 @@ export async function handlePlay(applePlayer, socket, user, setPlaying) {
 	}
 	setPlaying(true);
 	emitReadyWhenPlaying(socket, applePlayer, user);
-	addEventListener(applePlayer, socket, user.lobby_id, false);
+	addEventListener(applePlayer, socket, user, false);
 }
 
 //Handles pause
@@ -92,7 +92,7 @@ export async function handlePause(applePlayer, socket, user, setPlaying) {
 	await applePlayer.pause();
 	setPlaying(false);
 	emitReadyWhenPaused(socket, applePlayer, user);
-	addEventListener(applePlayer, socket, user.lobby_id, false);
+	addEventListener(applePlayer, socket, user, false);
 }
 
 //Handles first song add
