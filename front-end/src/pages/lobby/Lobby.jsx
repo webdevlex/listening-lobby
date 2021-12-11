@@ -44,7 +44,7 @@ function Lobby() {
 				applePlayer.cleanup();
 			}
 		};
-	}, [setSocket, socket]);
+	}, [applePlayer, setSocket, socket]);
 
 	return socket ? (
 		<div className='lobby'>
