@@ -234,6 +234,10 @@ function setLobbyLoading(lobby_id, value) {
 	lobbies[i].loading = value;
 }
 
+function setFirstMemberAsAdmin(i) {
+	lobbies[i].users[0].privilege = 'admin';
+}
+
 module.exports = {
 	setPlayStatusPlaying,
 	setPlayStatusPaused,
@@ -262,4 +266,5 @@ module.exports = {
 	resetReadyCount,
 	decreaseReadyCount,
 	setLobbyLoading,
+	setFirstMemberAsAdmin,
 };

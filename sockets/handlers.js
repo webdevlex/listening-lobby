@@ -65,6 +65,11 @@ async function handleDisconnect(io, socket) {
 		const messages = lobby.getLobbyMessages(lobbyRef.lobby_id);
 		io.to(lobbyRef.lobby_id).emit('setLobbyInfo', members, messages);
 
+		console.log(lobbyRef.users[0].privilege);
+		if (lobbyRef.users[0].privilege !== 'admin') {
+			lobby.setFirstMemberAsAdmin(i);
+		}
+
 		// Check if the person left while buttons were loading
 		if (lobbyRef.usersReady === lobbyRef.users.length) {
 			io.to(user.lobby_id).emit('activateButtons');

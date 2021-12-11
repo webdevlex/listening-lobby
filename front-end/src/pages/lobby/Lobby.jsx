@@ -41,8 +41,7 @@ function Lobby() {
 
 		return () => {
 			if (socket) {
-				applePlayer.cleanup();
-				socket.disconnect();
+				window.location.replace('http://localhost:3000');
 			}
 		};
 	}, [applePlayer, setSocket, socket]);
