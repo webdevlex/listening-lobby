@@ -7,12 +7,16 @@ import LobbyCenter from '../../components/lobby-center/LobbyCenter';
 import SocketHandler from '../../components/socket-handler/SocketHandler';
 import socketio from 'socket.io-client';
 import { SocketContext } from '../../context/SocketContext';
+import { PlayersContext } from '../../context/PlayersContext';
 
 import './lobby.scss';
 
 function Lobby() {
 	// Context
 	const [socket, setSocket] = useContext(SocketContext);
+	const { apple } = useContext(PlayersContext);
+	const [applePlayer] = apple;
+
 	// State managament
 	const [playerStatus, setPlayerStatus] = useState(null);
 	const [members, setMembers] = useState([]);
@@ -29,10 +33,17 @@ function Lobby() {
 	const [buttonsClickable, setButtonsClickable] = useState(true);
 
 	useEffect(() => {
+		console.log('mounting');
 		if (!socket) {
 			const url = '' || 'http://localhost:8888';
 			setSocket(socketio.connect(url));
 		}
+
+		return () => {
+			if (socket) {
+				applePlayer.cleanup();
+			}
+		};
 	}, [setSocket, socket]);
 
 	return socket ? (

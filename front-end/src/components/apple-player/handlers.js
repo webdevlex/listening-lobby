@@ -44,8 +44,8 @@ export async function startUp(
 		await setMusicKitQueue(applePlayer, queue[0].apple);
 		timeStampOnJoin = playerStatus.timestamp / 1000;
 		if (!playerStatus.paused) {
-			await applePlayer.seekToTime(timeStampOnJoin);
 			await handlePlay(applePlayer, socket, user, setPlaying);
+			await applePlayer.seekToTime(timeStampOnJoin);
 			setPlaying(true);
 		} else {
 			joinOnPause = true;
