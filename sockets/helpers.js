@@ -233,6 +233,7 @@ async function getSongDataForPlayers(tokens, { songData, user }) {
       songData,
       spotifyToken
     );
+
     // We already have apple data so just format it
     dataForApplePlayer = apple.formatSongData(songData);
   }

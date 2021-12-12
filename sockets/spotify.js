@@ -128,7 +128,7 @@ async function getAndFormatSongData(
   if (!songMatch) {
     console.log("No song match");
   }
-  songMatch = songMatch ? songMatch : { id: "-1" };
+  songMatch = songMatch ? songMatch : { uri: "-1" };
   return songMatch.uri;
 }
 function albumMatchTesting(
