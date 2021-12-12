@@ -20,7 +20,6 @@ export async function setupPlayback(
 					emitReadyWhenPaused(socket, spotifyPlayer, user);
 				} else {
 					setPlaying(true);
-					console.log('emitting');
 					socket.emit('userReady', { user });
 				}
 				clearInterval(interval);
@@ -31,6 +30,7 @@ export async function setupPlayback(
 		console.log('emmiting userREady', user);
 		socket.emit('userReady', { user });
 	}
+
 	setLoading(false);
 }
 
@@ -152,6 +152,7 @@ export async function removeFirst(
 // Helpers
 async function setPlaybackTo(device_id, user, song, playerStatus) {
 	const endPoint = `https://api.spotify.com/v1/me/player/play?device_id=${device_id}`;
+
 	const body = {
 		uris: [song.spotify],
 		position_ms: playerStatus.timestamp,
@@ -277,6 +278,7 @@ async function emitReadyVolumeNotZero(socket, spotifyPlayer, user) {
 		const volume = await spotifyPlayer.getVolume();
 		if (volume !== 0 && !currentStatus.loading) {
 			socket.emit('userReady', { user });
+
 			clearInterval(interval);
 		}
 	}, 500);

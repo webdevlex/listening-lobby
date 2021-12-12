@@ -5,69 +5,102 @@ function socketsReciever(io) {
 	io.sockets.on('connection', function (socket) {
 		console.log('----- connection -----');
 
-		// Handle when user creates or joins lobby
+		// ========
+		// = Join =
+		// ========
 		socket.on('joinLobby', async (data) => {
-			await handlers.handleJoinLobby(io, socket, data);
+			await handlers.joinLobby(io, socket, data);
 		});
 
-		// Handle when a spotify users player is finished loading, ( Only for spotify users )
-		socket.on('setDeviceId', (data) => {
-			handlers.handleSetDeviceId(io, socket, data);
-		});
-
-		// TODO: make sure used players gets updated on leave
+		// ==============
+		// = Disconnect =
+		// ==============
 		socket.on('disconnect', async () => {
-			await handlers.handleDisconnect(io, socket);
+			await handlers.disconnect(io, socket);
 		});
 
-		// Handle when a user sends a message in their lobby
+		// ===========
+		// = Message =
+		// ===========
 		socket.on('lobbyMessage', (data) => {
-			handlers.handleLobbyMessage(io, socket, data);
+			handlers.lobbyMessage(io, socket, data);
 		});
 
-		// Handle when a user sends a Spotify or apple search request
+		// ==========
+		// = Search =
+		// ==========
 		socket.on('uniSearch', async (data) => {
-			await handlers.handleUniSearch(io, socket, data);
+			await handlers.search(io, socket, data);
 		});
 
-		// Handle when a user attempts to add a song to the queue
+		// ============
+		// = Add Song =
+		// ============
 		socket.on('addSong', async (data) => {
-			await handlers.handleAddSong(io, socket, data);
+			await handlers.addSong(io, socket, data);
 		});
 
-		// Handle wehn a user attempts to add an album to queue
+		// =============
+		// = Add album =
+		// =============
 		socket.on('addAlbum', async (data) => {
-			await handlers.handleAddAlbum(io, socket, data);
+			await handlers.addAlbum(io, socket, data);
 		});
 
-		// Handle when a user hits play
+		// ========
+		// = Play =
+		// ========
 		socket.on('play', (data) => {
-			handlers.handlePlay(io, socket, data);
+			handlers.play(io, socket, data);
 		});
 
-		// Handle when a user hits play next song
+		// ========
+		// = Skip =
+		// ========
 		socket.on('skip', (data) => {
-			handlers.handleSkip(io, socket, data);
+			handlers.skip(io, socket, data);
 		});
 
+		// =========================
+		// = Get Admin Player Data =
+		// =========================
 		socket.on('playerData', (data) => {
-			handlers.handlePlayerData(io, socket, data);
+			handlers.playerData(io, socket, data);
 		});
 
+		// ================
+		// = Media Change =
+		// ================
 		socket.on('mediaChange', (data) => {
-			handlers.handleMediaChange(io, socket, data);
+			handlers.mediaChange(io, socket, data);
 		});
 
+		// ================
+		// = Remove Song =
+		// ================
 		socket.on('remove', (data) => {
-			handlers.handleRemove(io, socket, data);
+			handlers.remove(io, socket, data);
 		});
 
+		// ==============
+		// = User Ready =
+		// ==============
 		socket.on('userReady', (data) => {
-			handlers.handleUserReady(io, socket, data);
+			handlers.userReady(io, socket, data);
 		});
 
+		// ================
+		// = Spotify Like =
+		// ================
 		socket.on('likeSong', (data) => {
-			handlers.handleLikeSong(io, socket, data);
+			handlers.likeSong(io, socket, data);
+		});
+
+		// =========================
+		// = Spotify set device id =
+		// =========================
+		socket.on('setDeviceId', (data) => {
+			handlers.setDeviceId(io, socket, data);
 		});
 	});
 }

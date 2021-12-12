@@ -48,7 +48,6 @@ function SocketHandler({
 			});
 
 			socket.on('addSong', (queue) => {
-				console.log(queue);
 				setQueue(queue);
 			});
 
@@ -65,7 +64,6 @@ function SocketHandler({
 			});
 
 			socket.on('getUserReady', () => {
-				console.log('emitting getUserReady');
 				socket.emit('userReady', { user });
 			});
 
