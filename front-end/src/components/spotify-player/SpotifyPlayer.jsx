@@ -9,6 +9,7 @@ function SpotifyPlayer({
 	playerStatus,
 	setLoading,
 	buttonsClickable,
+	loading,
 }) {
 	const [socket] = useContext(SocketContext);
 	const { spotify, spotifyRan } = useContext(PlayersContext);
@@ -50,7 +51,7 @@ function SpotifyPlayer({
 		socket.emit('skip', { user });
 	}
 
-	return (
+	return loading ? null : (
 		<div>
 			{buttonsClickable ? (
 				<button onClick={() => play()}>

@@ -15,8 +15,10 @@ function UniSearchForm({ setTracks, setAlbums, user }) {
 	}, [socket, setAlbums, setTracks]);
 
 	const onSubmit = ({ search: searchValue }) => {
-		setValue('search', '');
-		socket.emit('uniSearch', { searchValue, user });
+		if (searchValue) {
+			setValue('search', '');
+			socket.emit('uniSearch', { searchValue, user });
+		}
 	};
 
 	return (

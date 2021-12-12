@@ -45,6 +45,11 @@ export default function LobbyQueue({
 							</div>
 						</div>
 
+						{apple === '-1' ? <p style={{ color: 'red' }}>no apple</p> : null}
+						{spotify === '-1' ? (
+							<p style={{ color: 'red' }}>no spotify</p>
+						) : null}
+
 						{buttonsClickable ? (
 							<p className='remove-button' onClick={() => remove(index)}>
 								remove

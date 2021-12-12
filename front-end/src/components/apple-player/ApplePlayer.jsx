@@ -4,7 +4,7 @@ import { PlayersContext } from '../../context/PlayersContext';
 import './apple-player.scss';
 import { setupSocketRecievers } from '../apple-player/recievers';
 
-function ApplePlayer({ user, playerStatus, queue, buttonsClickable }) {
+function ApplePlayer({ user, playerStatus, queue, buttonsClickable, loading }) {
 	const [volume, setVolume] = useState(10);
 	const [socket] = useContext(SocketContext);
 	const { apple } = useContext(PlayersContext);
@@ -48,7 +48,7 @@ function ApplePlayer({ user, playerStatus, queue, buttonsClickable }) {
 
 	// TEMP PLAYER CONTROLS --- FOR TESTING
 
-	return (
+	return loading ? null : (
 		<div className='apple-player'>
 			<div>
 				{buttonsClickable ? (

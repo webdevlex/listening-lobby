@@ -33,7 +33,6 @@ function Lobby() {
 	const [buttonsClickable, setButtonsClickable] = useState(true);
 
 	useEffect(() => {
-		console.log('mounting');
 		if (!socket) {
 			const url = '' || 'http://localhost:8888';
 			setSocket(socketio.connect(url));
@@ -64,13 +63,14 @@ function Lobby() {
 				<h1>LOADING 1</h1>
 			) : (
 				<>
-					<div className='player-grid'>
+					<div className={`player-grid ${loading ? 'hide' : null}`}>
 						<DesignatedPlayer
 							user={user}
 							playerStatus={playerStatus}
 							queue={queue}
 							setLoading={setLoading}
 							buttonsClickable={buttonsClickable}
+							loading={loading}
 						/>
 					</div>
 					{loading ? (
