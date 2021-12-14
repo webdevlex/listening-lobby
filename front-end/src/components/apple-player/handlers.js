@@ -40,11 +40,11 @@ export async function startUp(
 ) {
 	addEventListener(applePlayer, socket, user, true);
 	applePlayer.player.volume = 0.1;
-	if (playerStatus && queue.length > 0) {
+	if (playerStatus && queue.length > 0 && queue[0].apple !== '-1') {
 		await setMusicKitQueue(applePlayer, queue[0].apple);
 		timeStampOnJoin = playerStatus.timestamp / 1000;
 		if (!playerStatus.paused) {
-			await handlePlay(applePlayer, socket, user, setPlaying);
+			await handlePlay(applePlayer, socket, user, setPlaying, queue[0]);
 			await applePlayer.seekToTime(timeStampOnJoin);
 			setPlaying(true);
 		} else {
@@ -53,6 +53,7 @@ export async function startUp(
 		}
 	} else if (!user.admin) {
 		socket.emit('userReady', { user });
+		setPlaying(true);
 	}
 }
 //Sends other players playerData
@@ -71,50 +72,72 @@ export function handleGetPlayerData(
 }
 
 //Handles play
-export async function handlePlay(applePlayer, socket, user, setPlaying) {
+export async function handlePlay(applePlayer, socket, user, setPlaying, song) {
 	await applePlayer.authorize();
 	removeEventListener(applePlayer);
-	await applePlayer.play();
+	if (song.apple !== '-1') {
+		await applePlayer.play();
 
-	if (joinOnPause) {
-		await applePlayer.seekToTime(timeStampOnJoin);
-		joinOnPause = false;
+		if (joinOnPause) {
+			await applePlayer.seekToTime(timeStampOnJoin);
+			joinOnPause = false;
+		}
+		emitReadyWhenPlaying(socket, applePlayer, user);
+	} else {
+		emitUserReady(socket, user);
 	}
+
 	setPlaying(true);
-	emitReadyWhenPlaying(socket, applePlayer, user);
 	addEventListener(applePlayer, socket, user, false);
 }
 
 //Handles pause
-export async function handlePause(applePlayer, socket, user, setPlaying) {
+export async function handlePause(applePlayer, socket, user, setPlaying, song) {
 	await applePlayer.authorize();
 	removeEventListener(applePlayer);
-	await applePlayer.pause();
+
+	if (song.apple !== '-1') {
+		await applePlayer.pause();
+		emitReadyWhenPaused(socket, applePlayer, user);
+	} else {
+		emitUserReady(socket, user);
+	}
+
 	setPlaying(false);
-	emitReadyWhenPaused(socket, applePlayer, user);
 	addEventListener(applePlayer, socket, user, false);
 }
 
 //Handles first song add
-export async function handleFirstSong(applePlayer, queue, socket, user) {
-	await setMusicKitQueue(applePlayer, queue[0].apple);
-	emitReadyWhenQueueSet(socket, applePlayer, user);
+export async function handleFirstSong(applePlayer, song, socket, user) {
+	if (song.apple !== '-1') {
+		await setMusicKitQueue(applePlayer, song.apple);
+		emitReadyWhenQueueSet(socket, applePlayer, user);
+	} else {
+		emitUserReady(socket, user);
+	}
 }
 
 //Handles popping
 export async function handlePopped(
 	applePlayer,
 	socket,
-	queue,
+	song,
 	user,
 	setPlaying
 ) {
-	await setMusicKitQueue(applePlayer, queue[0].apple);
-	handlePlay(applePlayer, socket, user, setPlaying);
+	if (song.apple !== '-1') {
+		await setMusicKitQueue(applePlayer, song.apple);
+		handlePlay(applePlayer, socket, user, setPlaying, song);
+	} else {
+		await applePlayer.pause();
+		emitUserReady(socket, user);
+	}
 }
 //Handles empty queue
 export async function handleEmptyQueue(applePlayer, socket, user, setPlaying) {
-	handlePause(applePlayer, socket, user, setPlaying);
+	await applePlayer.pause();
+	emitUserReady(socket, user);
+	setPlaying(false);
 }
 
 export async function handleRemoveFirst(
@@ -122,14 +145,24 @@ export async function handleRemoveFirst(
 	socket,
 	user,
 	setPlaying,
-	newQueue,
+	song,
 	isPlaying
 ) {
-	await setMusicKitQueue(applePlayer, newQueue[0].apple);
-	if (isPlaying) {
-		handlePlay(applePlayer, socket, user, setPlaying);
+	if (song.apple !== '-1') {
+		await setMusicKitQueue(applePlayer, song.apple);
+		if (isPlaying) {
+			handlePlay(applePlayer, socket, user, setPlaying, song);
+		} else {
+			handlePause(applePlayer, socket, user, setPlaying, song);
+		}
 	} else {
-		handlePause(applePlayer, socket, user, setPlaying);
+		if (isPlaying) {
+			await applePlayer.pause();
+			setPlaying(true);
+		} else {
+			setPlaying(false);
+		}
+		emitUserReady(socket, user);
 	}
 }
 
@@ -144,5 +177,9 @@ function emitReadyWhenPaused(socket, applePlayer, user) {
 }
 
 function emitReadyWhenQueueSet(socket, applePlayer, user) {
+	socket.emit('userReady', { user });
+}
+
+function emitUserReady(socket, user) {
 	socket.emit('userReady', { user });
 }

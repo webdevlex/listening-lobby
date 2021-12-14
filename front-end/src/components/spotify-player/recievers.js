@@ -21,17 +21,13 @@ export function setupSocketRecievers(
 		setPlaying
 	);
 
-	socket.on('play', () => {
-		handlers.play(socket, spotifyPlayer, setPlaying, user);
+	socket.on('play', (song) => {
+		handlers.play(socket, spotifyPlayer, setPlaying, user, song);
 	});
 
-	socket.on('pause', () => {
-		handlers.pause(socket, spotifyPlayer, setPlaying, user);
+	socket.on('pause', (song) => {
+		handlers.pause(socket, spotifyPlayer, setPlaying, user, song);
 	});
-
-	// socket.on('skip', () => {
-	// 	handlers.skip(socket, spotifyPlayer, setPlaying);
-	// });
 
 	socket.on('emptyQueue', () => {
 		handlers.emptyQueue(socket, spotifyPlayer, setPlaying, user);

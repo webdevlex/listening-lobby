@@ -18,6 +18,7 @@ async function joinLobby(io, socket, data) {
 		lobby.generateLobby(data, tempToken);
 		const members = [username];
 		const messages = [];
+
 		// Send new lobby data back to members
 		io.to(lobby_id).emit('setLobbyInfo', members, messages);
 		io.to(lobby_id).emit('doneLoading', {});
@@ -34,6 +35,7 @@ async function joinLobby(io, socket, data) {
 		// TODO send queue and ui queue to designated player
 		io.to(lobby_id).emit('setLobbyInfo', members, messages);
 		io.to(socket.id).emit('addSong', lobbyRef.queue);
+
 		if (!lobbyRef.loading) {
 			lobby.setLobbyLoading(lobby_id, true);
 			socket.broadcast.emit('getUserReady');
@@ -65,7 +67,6 @@ async function disconnect(io, socket) {
 		const messages = lobby.getLobbyMessages(lobbyRef.lobby_id);
 		io.to(lobbyRef.lobby_id).emit('setLobbyInfo', members, messages);
 
-		console.log(lobbyRef.users[0].privilege);
 		if (lobbyRef.users[0].privilege !== 'admin') {
 			lobby.setFirstMemberAsAdmin(i);
 		}
@@ -126,6 +127,7 @@ async function addSong(io, socket, data) {
 	if (lobbyRef.queue.length === 1) {
 		io.to(data.user.lobby_id).emit('firstSong', lobbyRef.queue);
 	} else {
+		lobby.setLobbyLoading(data.user.lobby_id, false);
 		io.to(data.user.lobby_id).emit('activateButtons');
 	}
 }
@@ -148,7 +150,6 @@ async function addAlbum(io, socket, data) {
 	// Perform the necessary searches and return an object containing display for ui and song data for each player
 	const allSongData = await helpers.uniAlbumSearch(lobbyRef.tokens, data);
 	// add all album songs to queue
-	//console.log(allSongData);
 	lobby.addAlbumToLobby(data.user.lobby_id, allSongData);
 
 	// Send front end the data for ui, spotify player, and apple player
@@ -157,6 +158,7 @@ async function addAlbum(io, socket, data) {
 	if (firstSong) {
 		io.to(data.user.lobby_id).emit('firstSong', lobbyRef.queue);
 	} else {
+		lobby.setLobbyLoading(data.user.lobby_id, false);
 		io.to(data.user.lobby_id).emit('activateButtons');
 	}
 }
@@ -173,9 +175,9 @@ function play(io, socket, { user }) {
 		lobby.setLobbyLoading(user.lobby_id, true);
 
 		if (play) {
-			io.to(user.lobby_id).emit('play');
+			io.to(user.lobby_id).emit('play', lobbyRef.queue[0]);
 		} else {
-			io.to(user.lobby_id).emit('pause');
+			io.to(user.lobby_id).emit('pause', lobbyRef.queue[0]);
 		}
 	} else {
 		console.log('empty queue');
@@ -204,7 +206,6 @@ function playerData(io, socket, data) {
 // = Media Change =
 // ================
 function mediaChange(io, socket, { user }) {
-	console.log(user);
 	const lobbyRef = lobby.getLobbyById(user.lobby_id);
 	if (lobbyRef.queue.length > 0) {
 		lobby.popSong(user.lobby_id);
