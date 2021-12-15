@@ -9,7 +9,7 @@
 
 .playing__bar {
 	display: inline-block;
-	background: white;
+	background: var(--gray-600);
 	width: 30%;
 	height: 100%;
 	animation: up-and-down 1.3s ease infinite alternate;

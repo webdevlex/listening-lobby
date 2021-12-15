@@ -1,0 +1,86 @@
+.search-form {
+	display: flex;
+	flex-direction: column;
+}
+
+.search-bar {
+	margin-bottom: 20px;
+	padding: 5px;
+	background-color: var(--gray-100);
+	width: fit-content;
+	border-radius: 50px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	input {
+		background-color: transparent;
+		border: none;
+		outline: none;
+		color: var(--gray-600);
+	}
+
+	.submit-button {
+		cursor: pointer;
+		outline: none;
+		border: none;
+		padding: 0;
+		background-color: transparent;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.arrrow-icon {
+		width: 25px;
+		height: 25px;
+		color: var(--gray-400);
+		margin-inline: 5px;
+	}
+
+	.search-icon {
+		width: 20px;
+		height: 20px;
+		color: var(--gray-400);
+		margin-inline: 10px;
+	}
+}
+
+.search-header {
+	display: flex;
+	padding-bottom: 8px;
+	border-bottom: var(--gray-400) 1px solid;
+	height: 10%;
+	width: 100%;
+	margin-inline: auto;
+
+	.header-text {
+		text-transform: uppercase;
+		font-size: 14px;
+		color: var(--gray-600);
+	}
+
+	.track-index {
+		width: 4%;
+		text-align: center;
+	}
+
+	.track-title {
+		width: 39.2%;
+	}
+
+	.track-user {
+		width: 20%;
+	}
+
+	.track-duration {
+		width: 16.5%;
+	}
+
+	.track-like {
+		width: 11%;
+	}
+
+	.track-remove {
+	}
+}
