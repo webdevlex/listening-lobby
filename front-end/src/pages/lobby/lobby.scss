@@ -19,6 +19,7 @@
 	grid-area: members;
 	background-color: var(--gray-100);
 	color: white;
+	padding: 8px;
 }
 
 .messages-grid {
@@ -31,6 +32,7 @@
 	grid-area: settings;
 	color: white;
 	background-color: var(--gray-100);
+	padding: 8px;
 }
 
 .center-grid {

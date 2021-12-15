@@ -16,6 +16,7 @@ export default function LobbyCenter({
 	tracks,
 	setTracks,
 	playing,
+	lobbyId,
 }) {
 	switch (centerDisplay) {
 		case 'player':
@@ -46,7 +47,7 @@ export default function LobbyCenter({
 				/>
 			);
 		case 'invite':
-			return <h1>invite</h1>;
+			return <h1>{lobbyId}</h1>;
 		case 'settings':
 			return <h1>settings</h1>;
 		default:

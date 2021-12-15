@@ -81,12 +81,7 @@ function Lobby() {
 					) : (
 						<>
 							<div className='settings-grid'>
-								<LobbySettings
-									lobbyId={user.lobby_id}
-									centerDisplay={centerDisplay}
-									setCenterDisplay={setCenterDisplay}
-									playing={playing}
-								/>
+								<LobbySettings setCenterDisplay={setCenterDisplay} />
 							</div>
 							<div className='members-grid'>
 								<LobbyMembers members={members} />
@@ -107,6 +102,7 @@ function Lobby() {
 									tracks={tracks}
 									setTracks={setTracks}
 									playing={playing}
+									lobbyId={user.lobby_id}
 								/>
 							</div>
 						</>

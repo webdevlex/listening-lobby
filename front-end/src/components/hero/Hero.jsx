@@ -7,8 +7,8 @@ export default function Hero() {
 		<div className='hero'>
 			<div className='hero-heading-container'>
 				<div className='text-container'>
-					<h1>Listening Party</h1>
-					<p>Listen to music with friends!</p>
+					<h1>Listening Lobby</h1>
+					<p>Relax and listen to music with friends!</p>
 					<div className='button-container'>
 						<Link className='link' to='/choose-service?action=create'>
 							New Lobby

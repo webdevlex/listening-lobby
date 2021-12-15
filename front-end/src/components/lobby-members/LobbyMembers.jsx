@@ -10,7 +10,7 @@ function LobbyMembers({ members }) {
 			{members.map((member, index) => {
 				return (
 					<div className='member-display'>
-						<FontAwesomeIcon className='action-icon' icon={faUser} />
+						<FontAwesomeIcon className='member-icon' icon={faUser} />
 						<p key={index}>{member}</p>
 					</div>
 				);
