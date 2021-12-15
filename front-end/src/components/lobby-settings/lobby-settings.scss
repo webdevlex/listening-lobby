@@ -1,8 +1,34 @@
 .lobby-settings {
+	.section-title {
+		margin-bottom: 10px;
+	}
 }
 
 .settings-button {
 	font-size: 20px;
 	font-weight: bold;
 	cursor: pointer;
+	display: flex;
+	align-items: center;
+	padding: 6px 0;
+
+	margin-bottom: 6px;
+	border-radius: 5px;
+	color: var(--gray-500);
+
+	&:hover {
+		background-color: var(--gray-300);
+	}
+
+	.simple-text {
+		font-size: 14px;
+		font-weight: 400;
+		text-transform: uppercase;
+	}
+}
+
+.settings-icon {
+	margin-right: 20px;
+	height: 20px;
+	width: 20px !important;
 }

@@ -8,6 +8,7 @@ export default function LobbyQueue({
 	buttonsClickable,
 	likedSongs,
 	setLikedSongs,
+	playing,
 }) {
 	const queueHasItems = queue[0];
 
@@ -22,6 +23,7 @@ export default function LobbyQueue({
 						setLikedSongs={setLikedSongs}
 						likedSongs={likedSongs}
 						user={user}
+						playing={playing}
 					/>
 				))}
 		</div>

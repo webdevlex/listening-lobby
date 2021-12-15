@@ -9,6 +9,8 @@ function DesignatedPlayer({
 	setLoading,
 	buttonsClickable,
 	loading,
+	setPlaying,
+	playing,
 }) {
 	useEffect(() => {
 		if (user.music_provider === 'apple') {
@@ -24,6 +26,8 @@ function DesignatedPlayer({
 			setLoading={setLoading}
 			buttonsClickable={buttonsClickable}
 			loading={loading}
+			setPlaying={setPlaying}
+			playing={playing}
 		/>
 	) : (
 		<ApplePlayer

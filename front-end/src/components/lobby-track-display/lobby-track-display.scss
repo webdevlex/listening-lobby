@@ -28,26 +28,28 @@
 	position: relative;
 	justify-content: center;
 	flex-direction: column;
-	font-family: 'Poppins', sans-serif;
+
 	overflow: hidden;
 
 	.track-title {
+		font-weight: 400;
 		font-size: 80px;
 		white-space: nowrap;
 		width: 100%;
-		font-weight: 600;
+		font-weight: 700;
 		line-height: 90px;
 	}
 
 	.artists {
 		font-size: 30px;
+		color: var(--gray-600);
 	}
 }
 
 .queue-header {
 	display: flex;
 	padding-bottom: 8px;
-	border-bottom: #585b61 1px solid;
+	border-bottom: var(--gray-400) 1px solid;
 	height: 10%;
 	width: 97%;
 	margin-inline: auto;
@@ -55,6 +57,7 @@
 	.header-text {
 		text-transform: uppercase;
 		font-size: 14px;
+		color: var(--gray-600);
 	}
 
 	.track-index {
@@ -67,10 +70,17 @@
 	}
 
 	.track-user {
-		width: 24.5%;
+		width: 20%;
 	}
 
 	.track-duration {
-		width: 15%;
+		width: 16.5%;
+	}
+
+	.track-like {
+		width: 11%;
+	}
+
+	.track-remove {
 	}
 }

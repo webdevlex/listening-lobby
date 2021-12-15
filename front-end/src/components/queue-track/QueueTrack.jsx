@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faHeart } from '@fortawesome/free-solid-svg-icons';
 import appleLogo from '../../assets/images/apple-music-logo.svg';
 import spotifyLogo from '../../assets/images/spotify-logo.svg';
+import PlayingAnimation from '../playing-animation/PlayingAnimation';
 import './queue-track.scss';
 
 export default function QueueTrack({
@@ -14,6 +15,7 @@ export default function QueueTrack({
 	setLikedSongs,
 	likedSongs,
 	user,
+	playing,
 }) {
 	const { ui, apple, spotify } = song;
 	const { apple: appleContext } = useContext(PlayersContext);
@@ -35,15 +37,21 @@ export default function QueueTrack({
 
 	return (
 		<div className='queue-track' key={index}>
-			<p className='index'>{index + 1}</p>
+			<div className='index-wrapper'>
+				{playing && index === 0 ? (
+					<PlayingAnimation />
+				) : (
+					<p className='index'>{index + 1}</p>
+				)}
+			</div>
 
 			<div className='primary-info'>
 				<div className='album-cover-container'>
 					<img src={ui.trackCover} alt='' />
 				</div>
 				<div className='text'>
-					<p className='primary-text'>{ui.trackName}</p>
-					<p>{ui.artists}</p>
+					<p className='track-title'>{ui.trackName}</p>
+					<p className='simple-text track-artists'>{ui.artists}</p>
 				</div>
 				<div className='availability'>
 					{apple === '-1' ? (
@@ -56,11 +64,11 @@ export default function QueueTrack({
 			</div>
 
 			<div className='added-by'>
-				<p>{ui.addedBy}</p>
+				<p className='simple-text'>{ui.addedBy}</p>
 			</div>
 
 			<div className='duration'>
-				<p>{ui.formattedDuration}</p>
+				<p className='simple-text'>{ui.formattedDuration}</p>
 			</div>
 
 			<div className='action-buttons'>

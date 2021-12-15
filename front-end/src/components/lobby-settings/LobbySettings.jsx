@@ -1,5 +1,12 @@
 import React from 'react';
 import './lobby-settings.scss';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+	faHome,
+	faSearch,
+	faUsers,
+	faTools,
+} from '@fortawesome/free-solid-svg-icons';
 
 export default function LobbySettings({
 	lobbyId,
@@ -8,21 +15,31 @@ export default function LobbySettings({
 }) {
 	return (
 		<div className='lobby-settings'>
-			<p>{lobbyId}</p>
-			<p className='settings-button' onClick={() => setCenterDisplay('player')}>
-				Home
-			</p>
-			<p className='settings-button' onClick={() => setCenterDisplay('search')}>
-				Search
-			</p>
-			<p className='settings-button' onClick={() => setCenterDisplay('invite')}>
-				Invite Friends
-			</p>
-			<p
+			<h4 className='section-title'>Menu</h4>
+			<div
+				className='settings-button'
+				onClick={() => setCenterDisplay('player')}>
+				<FontAwesomeIcon className='settings-icon' icon={faHome} />
+				<p className='simple-text'>Home</p>
+			</div>
+			<div
+				className='settings-button'
+				onClick={() => setCenterDisplay('search')}>
+				<FontAwesomeIcon className='settings-icon' icon={faSearch} />
+				<p className='simple-text'>Search</p>
+			</div>
+			<div
+				className='settings-button'
+				onClick={() => setCenterDisplay('invite')}>
+				<FontAwesomeIcon className='settings-icon' icon={faUsers} />
+				<p className='simple-text'>Invite Friends</p>
+			</div>
+			<div
 				className='settings-button'
 				onClick={() => setCenterDisplay('settings')}>
-				Settings
-			</p>
+				<FontAwesomeIcon className='settings-icon' icon={faTools} />
+				<p className='simple-text'>Settings</p>
+			</div>
 		</div>
 	);
 }
