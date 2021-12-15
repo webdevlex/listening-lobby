@@ -1,7 +1,15 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { setupPlayer } from './playerSetup';
 import { SocketContext } from '../../context/SocketContext';
 import { PlayersContext } from '../../context/PlayersContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+	faPlay,
+	faPause,
+	faStepBackward,
+	faStepForward,
+} from '@fortawesome/free-solid-svg-icons';
+import './spotify-player.scss';
 
 function SpotifyPlayer({
 	user,
@@ -10,11 +18,13 @@ function SpotifyPlayer({
 	setLoading,
 	buttonsClickable,
 	loading,
+	setPlaying,
+	playing,
 }) {
 	const [socket] = useContext(SocketContext);
 	const { spotify, spotifyRan } = useContext(PlayersContext);
 	const [spotifyPlayer, setSpotifyPlayer] = spotify;
-	const [playing, setPlaying] = useState(false);
+
 	const [ran, setRan] = spotifyRan;
 
 	useEffect(() => {
@@ -52,21 +62,31 @@ function SpotifyPlayer({
 	}
 
 	return loading ? null : (
-		<div>
-			{buttonsClickable ? (
-				<button onClick={() => play()}>
-					<p>{playing ? 'PAUSE' : 'PLAY'}</p>
-				</button>
-			) : (
-				<p>loading</p>
-			)}
-			{buttonsClickable ? (
-				<button onClick={() => skip()}>
-					<p>SKIP</p>
-				</button>
-			) : (
-				<p>loading</p>
-			)}
+		<div className='player-bar'>
+			<div className='player-center'>
+				{buttonsClickable ? (
+					<>
+						<div className='player-controls'>
+							<FontAwesomeIcon className='action-icon' icon={faStepBackward} />
+							<button className='play-button' onClick={() => play()}>
+								{playing ? (
+									<FontAwesomeIcon className='action-icon' icon={faPause} />
+								) : (
+									<FontAwesomeIcon className='action-icon' icon={faPlay} />
+								)}
+							</button>
+							<FontAwesomeIcon
+								className='action-icon'
+								onClick={() => skip()}
+								icon={faStepForward}
+							/>
+						</div>
+					</>
+				) : (
+					<p>loading</p>
+				)}
+				<div className='time-bar'></div>
+			</div>
 		</div>
 	);
 }

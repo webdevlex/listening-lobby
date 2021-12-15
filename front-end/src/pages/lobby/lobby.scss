@@ -11,32 +11,31 @@
 
 .player-grid {
 	grid-area: player;
-	background-color: #40444b;
+	background-color: var(--gray-300);
 	color: white;
 }
 
 .members-grid {
 	grid-area: members;
-	background-color: #2f3136;
-	border-top: #3b3d42 1px solid;
+	background-color: var(--gray-100);
 	color: white;
 }
 
 .messages-grid {
 	grid-area: messages;
-	background-color: #2f3136;
+	background-color: var(--gray-100);
 	color: white;
 }
 
 .settings-grid {
 	grid-area: settings;
 	color: white;
-	background-color: #2f3136;
+	background-color: var(--gray-100);
 }
 
 .center-grid {
 	grid-area: center;
-	background-color: #36393f;
+	background-color: var(--gray-200);
 	color: white;
 	position: relative;
 	width: 100%;

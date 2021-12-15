@@ -28,6 +28,7 @@ function Lobby() {
 	const [likedSongs, setLikedSongs] = useState([]);
 	const [albums, setAlbums] = useState([]);
 	const [tracks, setTracks] = useState([]);
+	const [playing, setPlaying] = useState(false);
 
 	// Loaders
 	const [buttonsClickable, setButtonsClickable] = useState(true);
@@ -71,6 +72,8 @@ function Lobby() {
 							setLoading={setLoading}
 							buttonsClickable={buttonsClickable}
 							loading={loading}
+							setPlaying={setPlaying}
+							playing={playing}
 						/>
 					</div>
 					{loading ? (
@@ -82,6 +85,7 @@ function Lobby() {
 									lobbyId={user.lobby_id}
 									centerDisplay={centerDisplay}
 									setCenterDisplay={setCenterDisplay}
+									playing={playing}
 								/>
 							</div>
 							<div className='members-grid'>
@@ -102,6 +106,7 @@ function Lobby() {
 									setAlbums={setAlbums}
 									tracks={tracks}
 									setTracks={setTracks}
+									playing={playing}
 								/>
 							</div>
 						</>

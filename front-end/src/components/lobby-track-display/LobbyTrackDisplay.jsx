@@ -21,6 +21,8 @@ export default function LobbyTrackDisplay({ queue }) {
 				<p className='header-text track-title'>Title</p>
 				<p className='header-text track-user'>Added By</p>
 				<p className='header-text track-duration'>duration</p>
+				<p className='header-text track-like'>Like</p>
+				<p className='header-text track-remove'>Remove</p>
 			</div>
 		</div>
 	) : null;

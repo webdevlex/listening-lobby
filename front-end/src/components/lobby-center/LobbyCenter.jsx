@@ -15,6 +15,7 @@ export default function LobbyCenter({
 	setAlbums,
 	tracks,
 	setTracks,
+	playing,
 }) {
 	switch (centerDisplay) {
 		case 'player':
@@ -28,6 +29,7 @@ export default function LobbyCenter({
 							buttonsClickable={buttonsClickable}
 							likedSongs={likedSongs}
 							setLikedSongs={setLikedSongs}
+							playing={playing}
 						/>
 					</div>
 				</>

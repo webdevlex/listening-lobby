@@ -15,9 +15,14 @@
 	background-color: rgba(255, 255, 255, 0.1);
 }
 
+.index-wrapper {
+	width: 4%;
+	display: flex;
+	justify-content: center;
+}
+
 .index {
 	text-align: center;
-	width: 4%;
 }
 
 .primary-info {
@@ -39,6 +44,14 @@
 		overflow: hidden;
 	}
 
+	.track-title {
+		color: white;
+	}
+
+	.track-artists {
+		color: var(--gray-600);
+	}
+
 	.availability {
 		padding-left: 30px;
 
@@ -55,20 +68,23 @@
 }
 
 .added-by {
-	width: 25%;
+	width: 20%;
+	color: var(--gray-600);
 }
 
 .duration {
-	width: 15%;
+	width: 16%;
+	color: var(--gray-600);
 }
 
 .action-buttons {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	width: 8%;
+	width: 14%;
 	height: 40px;
 	display: flex;
+	color: var(--gray-600);
 }
 
 .action-icon {
