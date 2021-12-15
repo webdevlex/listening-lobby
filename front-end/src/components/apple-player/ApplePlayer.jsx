@@ -3,6 +3,14 @@ import { SocketContext } from '../../context/SocketContext';
 import { PlayersContext } from '../../context/PlayersContext';
 import './apple-player.scss';
 import { setupSocketRecievers } from '../apple-player/recievers';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+	faPlay,
+	faPause,
+	faStepBackward,
+	faStepForward,
+	faVolumeUp,
+} from '@fortawesome/free-solid-svg-icons';
 
 function ApplePlayer({ user, playerStatus, queue, buttonsClickable, loading }) {
 	const [volume, setVolume] = useState(10);
@@ -32,7 +40,7 @@ function ApplePlayer({ user, playerStatus, queue, buttonsClickable, loading }) {
 	};
 
 	// TEMP PLAYER CONTROLS --- FOR TESTING
-	let nextSong = async () => {
+	let skip = async () => {
 		socket.emit('skip', { user });
 		// await applePlayer.skipToNextItem();
 	};
@@ -44,28 +52,51 @@ function ApplePlayer({ user, playerStatus, queue, buttonsClickable, loading }) {
 	let updateVolume = (e, data) => {
 		applePlayer.player.volume = e.target.value / 100;
 		setVolume(data);
+
+		// Animation
+		let target = e.target;
+		if (e.target.type !== 'range') {
+			target = document.getElementById('range');
+		}
+		const min = target.min;
+		const max = target.max;
+		const val = target.value;
+
+		target.style.backgroundSize = ((val - min) * 100) / (max - min) + '% 100%';
 	};
 
-	// TEMP PLAYER CONTROLS --- FOR TESTING
-
 	return loading ? null : (
-		<div className='apple-player'>
-			<div>
+		<div className='player-bar'>
+			<div className='player-center'>
 				{buttonsClickable ? (
-					<button onClick={() => play()}>
-						<p>{playing ? 'PAUSE' : 'PLAY'}</p>
-					</button>
+					<>
+						<div className='player-controls'>
+							<FontAwesomeIcon
+								className='prev-button player-icon'
+								icon={faStepBackward}
+							/>
+							<button className='play-button' onClick={() => play()}>
+								{playing ? (
+									<FontAwesomeIcon className='player-icon' icon={faPause} />
+								) : (
+									<FontAwesomeIcon className='player-icon' icon={faPlay} />
+								)}
+							</button>
+							<FontAwesomeIcon
+								className='player-icon'
+								onClick={() => skip()}
+								icon={faStepForward}
+							/>
+						</div>
+					</>
 				) : (
 					<p>loading</p>
 				)}
-				{buttonsClickable ? (
-					<button onClick={() => nextSong()}>Next</button>
-				) : (
-					<p>loading</p>
-				)}
-
-				<button onClick={() => getInstance()}>Get Instance</button>
-
+				<div className='time-bar'></div>
+			</div>
+			<div className='player-right'>
+				{/* <button onClick={() => getInstance()}>Get Instance</button> */}
+				<FontAwesomeIcon className='action-icon' icon={faVolumeUp} />
 				<input
 					className='volume-slider'
 					type='range'

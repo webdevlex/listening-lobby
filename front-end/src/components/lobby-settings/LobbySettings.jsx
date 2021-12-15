@@ -8,11 +8,7 @@ import {
 	faTools,
 } from '@fortawesome/free-solid-svg-icons';
 
-export default function LobbySettings({
-	lobbyId,
-	centerDisplay,
-	setCenterDisplay,
-}) {
+export default function LobbySettings({ setCenterDisplay }) {
 	return (
 		<div className='lobby-settings'>
 			<h4 className='section-title'>Menu</h4>
