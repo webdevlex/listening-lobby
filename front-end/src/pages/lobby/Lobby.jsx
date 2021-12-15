@@ -38,11 +38,11 @@ function Lobby() {
 			setSocket(socketio.connect(url));
 		}
 
-		return () => {
-			if (socket) {
-				window.location.replace('http://localhost:3000');
-			}
-		};
+		// return () => {
+		// 	if (socket) {
+		// 		window.location.replace('http://localhost:3000');
+		// 	}
+		// };
 	}, [applePlayer, setSocket, socket]);
 
 	return socket ? (

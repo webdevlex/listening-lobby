@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "A web application for listening to music with friends simultaneously via your music provider",
   "main": "index.js",
-  
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
@@ -22,6 +21,8 @@
   },
   "homepage": "https://github.com/alex-is-martin/listening-party#readme",
   "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/react-fontawesome": "^0.1.16",
     "axios": "^0.22.0",
     "config": "^3.3.6",
     "cookie-parser": "^1.4.5",

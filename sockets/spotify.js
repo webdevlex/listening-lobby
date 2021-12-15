@@ -205,7 +205,7 @@ async function getAlbumId(
 
 // When this is called we already have the albums id
 // Just grab the album directly by id and pull out the data for all songs in the albums
-async function formatAlbumData(albumData, token) {
+async function formatAlbumData(albumData, token, formatDuration, { username }) {
 	// get album by id
 	const results = await spotifyAlbumSearchById(albumData.id, token);
 
@@ -223,6 +223,8 @@ async function formatAlbumData(albumData, token) {
 			artists: track.artists.map(({ name }) => name).join(', '),
 			trackCover: albumData.albumCover,
 			id: track.id,
+			addedBy: username,
+			formattedDuration: formatDuration(track.duration_ms),
 		});
 	});
 

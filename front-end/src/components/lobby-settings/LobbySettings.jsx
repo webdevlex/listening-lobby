@@ -9,15 +9,19 @@ export default function LobbySettings({
 	return (
 		<div className='lobby-settings'>
 			<p>{lobbyId}</p>
-			<p
-				className='settings-button'
-				onClick={() => setCenterDisplay('player')}>
-				Player
+			<p className='settings-button' onClick={() => setCenterDisplay('player')}>
+				Home
+			</p>
+			<p className='settings-button' onClick={() => setCenterDisplay('search')}>
+				Search
+			</p>
+			<p className='settings-button' onClick={() => setCenterDisplay('invite')}>
+				Invite Friends
 			</p>
 			<p
 				className='settings-button'
-				onClick={() => setCenterDisplay('search')}>
-				Search
+				onClick={() => setCenterDisplay('settings')}>
+				Settings
 			</p>
 		</div>
 	);

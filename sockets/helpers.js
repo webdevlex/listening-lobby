@@ -141,6 +141,7 @@ function extractSpotifySongData(searchResults) {
 			uri: track.uri,
 			uniId: track.external_ids.isrc,
 			duration: track.duration_ms,
+			formattedDuration: formatDuration(track.duration_ms),
 		};
 	});
 }
@@ -175,6 +176,7 @@ function extractAppleSongData(searchResults) {
 				id: track.id,
 				uniId: track.attributes.isrc,
 				duration: track.attributes.durationInMillis,
+				formattedDuration: formatDuration(track.attributes.durationInMillis),
 			};
 		});
 	}
@@ -260,7 +262,9 @@ async function uniAlbumSearch(tokens, { albumData, user }) {
 		// We already have spotify album id just request the album with the id and grab all song data
 		dataForSpotifyPlayerAndUi = await spotify.formatAlbumData(
 			albumData,
-			spotifyToken
+			spotifyToken,
+			formatDuration,
+			user
 		);
 		dataForSpotifyPlayer = dataForSpotifyPlayerAndUi.dataForSpotifyPlayer;
 		dataForUi = dataForSpotifyPlayerAndUi.dataForUi;
@@ -288,7 +292,9 @@ async function uniAlbumSearch(tokens, { albumData, user }) {
 
 		dataForApplePlayerAndUi = await apple.formatAlbumData(
 			albumData,
-			appleToken
+			appleToken,
+			formatDuration,
+			user
 		);
 		dataForApplePlayer = dataForApplePlayerAndUi.dataForApplePlayer;
 		dataForUi = dataForApplePlayerAndUi.dataForUi;
@@ -321,6 +327,12 @@ async function generateTempToken(musicProvider) {
 
 function likeSong(data) {
 	spotify.likeSong(data);
+}
+
+function formatDuration(millis) {
+	var minutes = Math.floor(millis / 60000);
+	var seconds = ((millis % 60000) / 1000).toFixed(0);
+	return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 }
 
 module.exports = {

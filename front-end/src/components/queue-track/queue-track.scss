@@ -1,0 +1,79 @@
+.queue-track {
+	padding-block: 7px;
+	margin-inline: 20px;
+	display: flex;
+	align-items: center;
+	position: relative;
+	border-radius: 5px;
+
+	.text {
+		margin-left: 20px;
+	}
+}
+
+.queue-track:hover {
+	background-color: rgba(255, 255, 255, 0.1);
+}
+
+.index {
+	text-align: center;
+	width: 4%;
+}
+
+.primary-info {
+	display: flex;
+	width: 40%;
+	white-space: nowrap;
+
+	.album-cover-container {
+		width: 50px;
+		height: 50px;
+
+		img {
+			height: 100%;
+		}
+	}
+
+	.text {
+		width: 250px;
+		overflow: hidden;
+	}
+
+	.availability {
+		padding-left: 30px;
+
+		.apple-logo {
+			width: 25px;
+			height: 25px;
+		}
+
+		.spotify-logo {
+			width: 25px;
+			height: 25px;
+		}
+	}
+}
+
+.added-by {
+	width: 25%;
+}
+
+.duration {
+	width: 15%;
+}
+
+.action-buttons {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 8%;
+	height: 40px;
+	display: flex;
+}
+
+.action-icon {
+	cursor: pointer;
+	padding: 10px;
+	height: 35px;
+	width: 35px !important;
+}

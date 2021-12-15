@@ -1,4 +1,76 @@
-.track-display {
-	height: 300px;
-	background-color: blanchedalmond;
+.track-display-wrapper {
+	height: 38%;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
+}
+
+.track-display-top {
+	height: 90%;
+	display: flex;
+}
+
+.track-display-left {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 25%;
+
+	.track-cover {
+		transform: scale(1.2);
+	}
+}
+
+.track-display-right {
+	width: 80%;
+	display: flex;
+	position: relative;
+	justify-content: center;
+	flex-direction: column;
+	font-family: 'Poppins', sans-serif;
+	overflow: hidden;
+
+	.track-title {
+		font-size: 80px;
+		white-space: nowrap;
+		width: 100%;
+		font-weight: 600;
+		line-height: 90px;
+	}
+
+	.artists {
+		font-size: 30px;
+	}
+}
+
+.queue-header {
+	display: flex;
+	padding-bottom: 8px;
+	border-bottom: #585b61 1px solid;
+	height: 10%;
+	width: 97%;
+	margin-inline: auto;
+
+	.header-text {
+		text-transform: uppercase;
+		font-size: 14px;
+	}
+
+	.track-index {
+		width: 4%;
+		text-align: center;
+	}
+
+	.track-title {
+		width: 39.2%;
+	}
+
+	.track-user {
+		width: 24.5%;
+	}
+
+	.track-duration {
+		width: 15%;
+	}
 }

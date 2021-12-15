@@ -1,7 +1,7 @@
 .lobby {
 	height: 100vh;
 	display: grid;
-	grid-template-columns: 2fr 10fr 3fr;
+	grid-template-columns: 2fr 12fr 3fr;
 	grid-template-rows: 3fr 6fr 1fr;
 	grid-template-areas:
 		'settings center messages'
@@ -11,26 +11,36 @@
 
 .player-grid {
 	grid-area: player;
-	background-color: red;
+	background-color: #40444b;
+	color: white;
 }
 
 .members-grid {
 	grid-area: members;
-	background-color: green;
+	background-color: #2f3136;
+	border-top: #3b3d42 1px solid;
+	color: white;
 }
 
 .messages-grid {
 	grid-area: messages;
-	background-color: yellow;
+	background-color: #2f3136;
+	color: white;
 }
 
 .settings-grid {
 	grid-area: settings;
-	background-color: blue;
+	color: white;
+	background-color: #2f3136;
 }
 
 .center-grid {
 	grid-area: center;
+	background-color: #36393f;
+	color: white;
+	position: relative;
+	width: 100%;
+	overflow: hidden;
 }
 
 .hide {

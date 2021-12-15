@@ -95,11 +95,11 @@ function lobbyMessage(io, socket, { user, message }) {
 // = Search =
 // ==========
 async function search(io, socket, data) {
-	// Perform search on users music provider
+	// Perform search using the music provider of user that made the request
 	let searchResults = await helpers.uniSearch(data);
 	// Format search results for front-end
 	const formattedResults = helpers.formatUniSearchResults(searchResults, data);
-	// Send results back to user who performed search
+	// Send results back to user who made the request
 	io.to(socket.id).emit('uniSearchResults', formattedResults);
 }
 
@@ -114,10 +114,9 @@ async function addSong(io, socket, data) {
 
 	// Perform the necessary searches and return an object containing display for ui and data for each player
 
-	const allSongData = await helpers.getSongDataForPlayers(
-		lobbyRef.tokens,
-		data
-	);
+	let allSongData = await helpers.getSongDataForPlayers(lobbyRef.tokens, data);
+	// Make sure the ui knows who added the song
+	allSongData.dataForUi.addedBy = data.user.username;
 
 	// Add song to lobby
 	lobby.addSongToLobby(data.user.lobby_id, allSongData);
