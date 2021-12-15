@@ -11768,13 +11768,20 @@
                     resolve();
                   } else if (this.currentBufferedProgress === 100) {
                     // console.log("fully loaded");
-                    this.seekToTime(seekTime);
+                    await this.seekToTime(seekTime);
                     clearInterval(progressChecker);
                     if (!playAfter) MusicKit.getInstance().player.pause();
                     this._currentPlayer.volume = savedVolume;
                     resolve();
                   }
                 }, 10);
+                if (this._currentPlayer.volume != savedVolume) {
+                  this._currentPlayer.volume = savedVolume;
+                  console.log(
+                    "Volume wasn't the same on reset",
+                    this._currentPlayer.volume
+                  );
+                }
               } catch (e) {
                 return reject(e);
               }
