@@ -1344,6 +1344,11 @@
           return new this(Z[t] || "NETWORK_ERROR", r || "" + t);
         }),
         (MKError.serverError = function (e) {
+          if (e.failureType) {
+            //LL
+            var instance = MusicKit.getInstance();
+            instance.bitrate = -1;
+          }
           var t = e.status,
             r = e.dialog,
             i = e.failureType,
@@ -1353,6 +1358,7 @@
           r && (a = r.message || r.customerMessage || r.errorMessage);
           var s = X[i] || X[t] || $,
             u = new this(s, a || n || o);
+
           return (
             "STREAM_UPSELL" === s &&
               r.okButtonAction &&
@@ -10235,6 +10241,7 @@
               console.log("applemusic recreateFix", " id ", id);
 
               var instance = MusicKit.getInstance();
+
               if (
                 instance.player._currentPlayer.extension.session._session
                   .sessionId !== id
@@ -11777,10 +11784,6 @@
                 }, 10);
                 if (this._currentPlayer.volume != savedVolume) {
                   this._currentPlayer.volume = savedVolume;
-                  console.log(
-                    "Volume wasn't the same on reset",
-                    this._currentPlayer.volume
-                  );
                 }
               } catch (e) {
                 return reject(e);

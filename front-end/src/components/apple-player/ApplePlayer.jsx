@@ -27,6 +27,7 @@ function ApplePlayer({ user, playerStatus, queue, buttonsClickable, loading }) {
   }, [applePlayer, user, playerStatus, queue, ran, setRan, socket]);
 
   //Emits play to all users
+
   let play = () => {
     socket.emit("play", { user });
   };
@@ -44,6 +45,10 @@ function ApplePlayer({ user, playerStatus, queue, buttonsClickable, loading }) {
   let updateVolume = (e, data) => {
     applePlayer.player.volume = e.target.value / 100;
     setVolume(data);
+  };
+
+  let test = () => {
+    applePlayer.bitrate = -1;
   };
 
   // TEMP PLAYER CONTROLS --- FOR TESTING
@@ -65,6 +70,7 @@ function ApplePlayer({ user, playerStatus, queue, buttonsClickable, loading }) {
         )}
 
         <button onClick={() => getInstance()}>Get Instance</button>
+        <button onClick={() => test()}>test</button>
 
         <input
           className='volume-slider'
