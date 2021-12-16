@@ -11,6 +11,8 @@ function DesignatedPlayer({
 	loading,
 	setPlaying,
 	playing,
+	likedSongs,
+	setLikedSongs,
 }) {
 	useEffect(() => {
 		if (user.music_provider === 'apple') {
@@ -28,6 +30,8 @@ function DesignatedPlayer({
 			loading={loading}
 			setPlaying={setPlaying}
 			playing={playing}
+			likedSongs={likedSongs}
+			setLikedSongs={setLikedSongs}
 		/>
 	) : (
 		<ApplePlayer
@@ -36,6 +40,8 @@ function DesignatedPlayer({
 			queue={queue}
 			buttonsClickable={buttonsClickable}
 			loading={loading}
+			likedSongs={likedSongs}
+			setLikedSongs={setLikedSongs}
 		/>
 	);
 }

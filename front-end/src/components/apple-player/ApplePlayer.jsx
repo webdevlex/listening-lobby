@@ -10,15 +10,26 @@ import {
 	faStepBackward,
 	faStepForward,
 	faVolumeUp,
+	faHeart,
 } from '@fortawesome/free-solid-svg-icons';
 
-function ApplePlayer({ user, playerStatus, queue, buttonsClickable, loading }) {
+function ApplePlayer({
+	user,
+	playerStatus,
+	queue,
+	buttonsClickable,
+	loading,
+	likedSongs,
+	setLikedSongs,
+}) {
 	const [volume, setVolume] = useState(10);
 	const [socket] = useContext(SocketContext);
 	const { apple } = useContext(PlayersContext);
 	const [applePlayer] = apple;
+
 	const [playing, setPlaying] = useState(false);
 	const [ran, setRan] = useState(false);
+	const song = queue[0];
 
 	useEffect(() => {
 		if (!ran) {
@@ -65,8 +76,49 @@ function ApplePlayer({ user, playerStatus, queue, buttonsClickable, loading }) {
 		target.style.backgroundSize = ((val - min) * 100) / (max - min) + '% 100%';
 	};
 
+	async function addSongToLibrary(spotifySong, appleSong, id) {
+		setLikedSongs([...likedSongs, id]);
+		if (user.music_provider === 'apple') {
+			await applePlayer.addToLibrary(appleSong);
+		} else {
+			socket.emit('likeSong', { spotifySong, user });
+		}
+	}
+
 	return loading ? null : (
 		<div className='player-bar'>
+			<div className='player-left'>
+				{song ? (
+					<>
+						<div className='album-cover-container'>
+							<img className='album-cover' src={song.ui.trackCover} alt='' />
+						</div>
+						<div className='text'>
+							<p className='simple-text track-title'>{song.ui.trackName}</p>
+							<p className='simple-text track-artists'>{song.ui.artists}</p>
+						</div>
+						<FontAwesomeIcon
+							className='like-icon'
+							icon={faHeart}
+							onClick={() => {
+								addSongToLibrary(song.spotify, song.apple, song.ui.uniId);
+							}}
+						/>
+					</>
+				) : (
+					<>
+						<div className='album-cover-container'>
+							<p className='default-album-cover'>?</p>
+						</div>
+						<div className='text'>
+							<p className='simple-text track-title'>No Songs Added</p>
+							<p className='simple-text track-artists'>
+								Search and add songs to queue!
+							</p>
+						</div>
+					</>
+				)}
+			</div>
 			<div className='player-center'>
 				{buttonsClickable ? (
 					<>

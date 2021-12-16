@@ -12,8 +12,7 @@ export default function TrackDisplay({ tracks, user, buttonsClickable }) {
 	const hasTracks = tracks[0];
 
 	return (
-		<div className='tracks'>
-			<h1>Tracks</h1>
+		<div className='search-tracks-display'>
 			{hasTracks
 				? tracks.map((track) => (
 						<div key={track.id} className='results-display'>
@@ -21,8 +20,8 @@ export default function TrackDisplay({ tracks, user, buttonsClickable }) {
 								<img src={track.trackCover} alt='' />
 							</div>
 							<div className='text'>
-								<p className='primary'>{track.trackName}</p>
-								<p>{track.artists}</p>
+								<p className='title'>{track.trackName}</p>
+								<p className='simple-text artists'>{track.artists}</p>
 							</div>
 							{buttonsClickable ? (
 								<div

@@ -11,7 +11,8 @@ let defaultSearchResults = {
 let serachResults;
 
 async function search(searchName, token) {
-	const endPoint = `https://api.music.apple.com/v1/catalog/us/search?term=${searchName}&limit=5&types=songs,albums`;
+	const LIMIT = 10;
+	const endPoint = `https://api.music.apple.com/v1/catalog/us/search?term=${searchName}&limit=${LIMIT}&types=songs,albums`;
 	const config = {
 		headers: {
 			Authorization: 'Bearer ' + token,

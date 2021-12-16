@@ -4,7 +4,8 @@
 }
 
 .search-bar {
-	margin-bottom: 20px;
+	margin-left: 20px;
+	margin-bottom: 22px;
 	padding: 5px;
 	background-color: var(--gray-100);
 	width: fit-content;
@@ -51,36 +52,24 @@
 	padding-bottom: 8px;
 	border-bottom: var(--gray-400) 1px solid;
 	height: 10%;
-	width: 100%;
+	width: 97%;
 	margin-inline: auto;
+	margin-bottom: 5px;
 
-	.header-text {
+	.search-header-text {
 		text-transform: uppercase;
 		font-size: 14px;
 		color: var(--gray-600);
-	}
-
-	.track-index {
-		width: 4%;
-		text-align: center;
+		position: relative;
+		width: 100%;
+		padding-left: 10px;
 	}
 
 	.track-title {
-		width: 39.2%;
+		width: 50%;
 	}
 
-	.track-user {
-		width: 20%;
-	}
-
-	.track-duration {
-		width: 16.5%;
-	}
-
-	.track-like {
-		width: 11%;
-	}
-
-	.track-remove {
+	.album-title {
+		width: 50%;
 	}
 }

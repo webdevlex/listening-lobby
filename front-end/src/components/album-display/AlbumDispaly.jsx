@@ -12,8 +12,7 @@ export default function AlbumDispaly({ albums, user, buttonsClickable }) {
 	let hasAlbum = albums === undefined ? false : albums[0];
 
 	return (
-		<div className='albums'>
-			<h1>Albums</h1>
+		<div className='search-albums-display'>
 			{hasAlbum
 				? albums.map((album) => (
 						<div key={album.id} className='results-display'>
@@ -21,8 +20,8 @@ export default function AlbumDispaly({ albums, user, buttonsClickable }) {
 								<img src={album.albumCover} alt='' />
 							</div>
 							<div className='text'>
-								<p className='primary'>{album.albumName}</p>
-								<p>{album.artists}</p>
+								<p className='title'>{album.albumName}</p>
+								<p className='simple-text artists'>{album.artists}</p>
 							</div>
 							{buttonsClickable ? (
 								<div

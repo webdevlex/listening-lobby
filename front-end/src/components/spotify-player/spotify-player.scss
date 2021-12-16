@@ -8,6 +8,53 @@
 	color: var(--gray-500);
 }
 
+.player-left {
+	position: absolute;
+	left: 20px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	.album-cover-container {
+		width: 60px;
+		height: 60px;
+	}
+
+	.default-album-cover {
+		width: 60px;
+		height: 60px;
+		background-color: var(--gray-400);
+		color: var(--gray-600);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 25px;
+		font-weight: 700;
+	}
+
+	.album-cover {
+		width: 60px;
+		height: 60px;
+	}
+
+	.text {
+		margin-left: 15px;
+	}
+
+	.track-title {
+		font-weight: 500;
+		color: white;
+	}
+
+	.track-artists {
+		font-size: 14px;
+	}
+
+	.like-icon {
+		margin-left: 40px;
+	}
+}
+
 .player-center {
 	width: 35%;
 	display: flex;
@@ -31,8 +78,13 @@
 	height: 40px;
 	width: 40px;
 	border-radius: 50px;
-	color: var(--gray-100);
-	background-color: var(--gray-500);
+	color: var(--gray-200);
+	background-color: white;
+}
+
+.skip-icon {
+	margin-inline: 10px;
+	color: white;
 }
 
 .time-bar {

@@ -29,7 +29,10 @@ function UniSearchForm({ setTracks, setAlbums, user }) {
 	};
 
 	const handleFocus = () => {
-		setValue('search', '');
+		const value = getValues('search');
+		if (value === 'Search') {
+			setValue('search', '');
+		}
 	};
 
 	const handleBlur = () => {
@@ -53,8 +56,8 @@ function UniSearchForm({ setTracks, setAlbums, user }) {
 				</button>
 			</div>
 			<div className='search-header'>
-				<p className='header-text tracks'>Tracks</p>
-				<p className='header-text albums'>Albums</p>
+				<p className='search-header-text track-title'>Tracks</p>
+				<p className='search-header-text album-title'>Albums</p>
 			</div>
 		</form>
 	);
