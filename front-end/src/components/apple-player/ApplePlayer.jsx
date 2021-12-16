@@ -123,10 +123,7 @@ function ApplePlayer({
 				{buttonsClickable ? (
 					<>
 						<div className='player-controls'>
-							<FontAwesomeIcon
-								className='prev-button player-icon'
-								icon={faStepBackward}
-							/>
+							<FontAwesomeIcon className='skip-icon' icon={faStepBackward} />
 							<button className='play-button' onClick={() => play()}>
 								{playing ? (
 									<FontAwesomeIcon className='player-icon' icon={faPause} />
@@ -135,7 +132,7 @@ function ApplePlayer({
 								)}
 							</button>
 							<FontAwesomeIcon
-								className='player-icon'
+								className='skip-icon'
 								onClick={() => skip()}
 								icon={faStepForward}
 							/>
