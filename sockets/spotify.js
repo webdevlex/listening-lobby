@@ -19,7 +19,7 @@ async function search(searchValue, token) {
 		params: {
 			q: searchValue,
 			type: 'album,track',
-			limit: 5,
+			limit: 10,
 		},
 	};
 

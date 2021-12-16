@@ -1,6 +1,5 @@
 .lobby-settings {
 	.section-title {
-		margin-bottom: 10px;
 	}
 }
 
@@ -11,13 +10,12 @@
 	display: flex;
 	align-items: center;
 	padding: 6px 0;
-
 	margin-bottom: 6px;
 	border-radius: 5px;
 	color: var(--gray-500);
 
 	&:hover {
-		background-color: var(--gray-300);
+		color: var(--gray-600);
 	}
 
 	.simple-text {

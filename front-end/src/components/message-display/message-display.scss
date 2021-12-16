@@ -1,0 +1,31 @@
+.message-display {
+	width: 100%;
+	padding: 5px 10px;
+	margin-bottom: 5px;
+	border-radius: 5px;
+
+	.username-and-timestamp {
+		display: flex;
+		align-items: center;
+	}
+
+	.username {
+		color: white;
+		font-weight: 500;
+		margin-right: 10px;
+	}
+
+	.timestamp {
+		color: var(--gray-500);
+		font-size: 12px;
+	}
+
+	.message {
+		color: var(--gray-600);
+		font-size: 14px;
+	}
+
+	&:hover {
+		background-color: var(--gray-200);
+	}
+}

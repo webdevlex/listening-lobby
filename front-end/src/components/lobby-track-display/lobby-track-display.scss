@@ -17,6 +17,18 @@
 	justify-content: center;
 	width: 25%;
 
+	.default-album {
+		width: 250px;
+		height: 250px;
+		background-color: var(--gray-400);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 150px;
+		font-weight: 600;
+		color: var(--gray-600);
+	}
+
 	.track-cover {
 		transform: scale(1.2);
 	}

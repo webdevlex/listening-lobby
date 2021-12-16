@@ -2,19 +2,31 @@ import React from 'react';
 import './lobby-track-display.scss';
 
 export default function LobbyTrackDisplay({ queue }) {
-	const song = queue[0] || { ui: {} };
-	const { trackCover, trackName, artists } = song.ui;
-	console.log(song);
-	return song ? (
+	const song = queue[0];
+	return (
 		<div className='track-display-wrapper'>
 			<div className='track-display-top'>
-				<div className='track-display-left'>
-					<img className='track-cover' src={trackCover} alt='' />
-				</div>
-				<div className='track-display-right'>
-					<p className='track-title'>{trackName}</p>
-					<p className='artists'>{artists}</p>
-				</div>
+				{song ? (
+					<>
+						<div className='track-display-left'>
+							<img className='track-cover' src={song.ui.trackCover} alt='' />
+						</div>
+						<div className='track-display-right'>
+							<p className='track-title'>{song.ui.trackName}</p>
+							<p className='artists'>{song.ui.artists}</p>
+						</div>
+					</>
+				) : (
+					<>
+						<div className='track-display-left'>
+							<p className='default-album'>?</p>
+						</div>
+						<div className='track-display-right'>
+							<p className='track-title'>No Songs Added</p>
+							<p className='artists'>Search and add songs to queue!</p>
+						</div>
+					</>
+				)}
 			</div>
 			<div className='queue-header'>
 				<p className='header-text track-index'>#</p>
@@ -25,5 +37,5 @@ export default function LobbyTrackDisplay({ queue }) {
 				<p className='header-text track-remove'>Remove</p>
 			</div>
 		</div>
-	) : null;
+	);
 }

@@ -1,14 +1,20 @@
 import React from 'react';
 import MessagesForm from '../messages-form/MessagesForm';
+import MessageDisplay from '../message-display/MessageDisplay';
+import './lobby-messages.scss';
 
 function LobbyMessages({ messages, user }) {
+	const hasMessages = messages[0];
 	return (
-		<div>
-			<h4>Messages</h4>
-			{messages[0] &&
-				messages.map(({ username, message }) => {
-					return <p key={username}>{`${username}: ${message}`}</p>;
-				})}
+		<div className='lobby-messages'>
+			<h4 className='section-title'>Messages</h4>
+			<div className='messages-container'>
+				{hasMessages &&
+					messages.map((messageData) => (
+						<MessageDisplay messageData={messageData} />
+					))}
+			</div>
+
 			<MessagesForm user={user} />
 		</div>
 	);

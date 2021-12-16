@@ -74,6 +74,8 @@ function Lobby() {
 							loading={loading}
 							setPlaying={setPlaying}
 							playing={playing}
+							likedSongs={likedSongs}
+							setLikedSongs={setLikedSongs}
 						/>
 					</div>
 					{loading ? (
