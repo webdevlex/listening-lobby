@@ -42,6 +42,8 @@ function DesignatedPlayer({
 			loading={loading}
 			likedSongs={likedSongs}
 			setLikedSongs={setLikedSongs}
+			setPlaying={setPlaying}
+			playing={playing}
 		/>
 	);
 }
