@@ -12,6 +12,8 @@ export async function setupPlayback(
 	setLoading,
 	setPlaying
 ) {
+	setPlaybackChangeListener(spotifyPlayer);
+
 	// Make sure player status isnt an empty object
 	const validPlayerStatus = Object.keys(playerStatus).length !== 0;
 
@@ -68,31 +70,24 @@ export async function setupPlayback(
 }
 
 export async function play(socket, spotifyPlayer, setPlaying, user, song) {
-	console.log(song);
-	const playingOnBrowser = await spotifyPlayer.getCurrentState();
-	if (playingOnBrowser && song.spotify !== '-1') {
+	if (song.spotify !== '-1') {
 		setPlaying(true);
 		await spotifyPlayer.resume();
 		emitReadyWhenPlaying(socket, spotifyPlayer, user);
-	} else if (song.spotify === '-1') {
+	} else {
 		setPlaying(true);
 		emitUserReady(socket, user);
-	} else {
-		console.log('Not playing on browser');
 	}
 }
 
 export async function pause(socket, spotifyPlayer, setPlaying, user, song) {
-	const playingOnBrowser = await spotifyPlayer.getCurrentState();
-	if (playingOnBrowser) {
+	if (song.spotify !== '-1') {
 		await spotifyPlayer.pause();
 		setPlaying(false);
 		emitReadyWhenPaused(socket, spotifyPlayer, user);
-	} else if (song.spotify === '-1') {
+	} else {
 		setPlaying(false);
 		emitUserReady(socket, user);
-	} else {
-		console.log('Not playing on browser');
 	}
 }
 
@@ -222,7 +217,7 @@ async function setPlaybackTo(device_id, user, song, playerStatus) {
 	try {
 		await axios.put(endPoint, body, config);
 	} catch (err) {
-		console.log('setPlaybackTo', err);
+		// TODO
 	}
 }
 
@@ -377,4 +372,12 @@ async function emitReadyWhenPlaybackSet(socket, spotifyPlayer, user) {
 			clearInterval(interval);
 		}
 	}, INTERVAL);
+}
+
+function setPlaybackChangeListener(spotifyPlayer) {
+	spotifyPlayer.addListener('player_state_changed', (state) => {
+		if (!state) {
+			window.location.replace('http://localhost:3000');
+		}
+	});
 }

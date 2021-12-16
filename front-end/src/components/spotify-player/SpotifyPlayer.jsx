@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { setupPlayer } from './playerSetup';
+import { playerSetup } from './playerSetup';
 import { SocketContext } from '../../context/SocketContext';
 import { PlayersContext } from '../../context/PlayersContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -38,7 +38,7 @@ function SpotifyPlayer({
 	useEffect(() => {
 		if (!ran) {
 			setRan(true);
-			setupPlayer(
+			playerSetup(
 				socket,
 				setSpotifyPlayer,
 				user,

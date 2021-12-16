@@ -1,6 +1,6 @@
 import { setupSocketRecievers } from './recievers.js';
 
-export function setupPlayer(
+export function playerSetup(
 	socket,
 	setSpotifyPlayer,
 	user,
