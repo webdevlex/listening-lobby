@@ -31,11 +31,19 @@ function ApplePlayer({
   const [ran, setRan] = useState(false);
   const song = queue[0];
 
-  //Emits play to all users
-
-  let play = () => {
-    socket.emit("play", { user });
-  };
+  useEffect(() => {
+    if (!ran) {
+      setupSocketRecievers(
+        applePlayer,
+        socket,
+        user,
+        setPlaying,
+        playerStatus,
+        queue
+      );
+      setRan(true);
+    }
+  }, [applePlayer, user, playerStatus, queue, ran, setRan, socket]);
 
   //Emits play to all users
   let play = () => {

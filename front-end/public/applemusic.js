@@ -1346,8 +1346,11 @@
         (MKError.serverError = function (e) {
           if (e.failureType) {
             //LL
-            var instance = MusicKit.getInstance();
-            instance.bitrate = -1;
+            console.log(e.failureType);
+            if (e.failureType === "3084") {
+              var instance = MusicKit.getInstance();
+              instance.bitrate = -1;
+            }
           }
           var t = e.status,
             r = e.dialog,
