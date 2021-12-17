@@ -129,7 +129,7 @@ async function getAlbumId(
   token
 ) {
   const searchResults = await appleAlbumSearch(albumName, token);
-  if (!searchResult) return searchResult;
+  if (!searchResults) return searchResults;
   albumMatchTesting(
     searchResults,
     albumName,

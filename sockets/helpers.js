@@ -255,8 +255,8 @@ async function uniAlbumSearch(tokens, { albumData, user }) {
   const appleToken = tokens.apple;
 
   // The data that will be returned to the players
-  let dataForSpotifyPlayer = [];
-  let dataForApplePlayer = [];
+  let dataForSpotifyPlayer;
+  let dataForApplePlayer;
   let dataForUi;
 
   albumData.albumName = uniAlbumNameFormatter(albumData.albumName);
@@ -286,10 +286,10 @@ async function uniAlbumSearch(tokens, { albumData, user }) {
         appleAlbumId,
         appleToken
       );
-    } else {
-      for (let i = 0; i < albumData.songCount; ++i) {
-        dataForApplePlayer.push("-1");
-      }
+      // } else {
+      //   for (let i = 0; i < albumData.songCount; ++i) {
+      //     dataForApplePlayer.push("-1");
+      //   }
     }
   } else {
     // We already have spotify album id just request the album with the id and grab all song data
@@ -313,10 +313,10 @@ async function uniAlbumSearch(tokens, { albumData, user }) {
         spotifyAlbumId,
         spotifyToken
       );
-    } else {
-      for (let i = 0; i < albumData.songCount; ++i) {
-        dataForSpotifyPlayer.push("-1");
-      }
+      // } else {
+      //   for (let i = 0; i < albumData.songCount; ++i) {
+      //     dataForSpotifyPlayer.push("-1");
+      //   }
     }
   }
 
