@@ -23,8 +23,8 @@ export default function TrackDisplay({
 	return (
 		<div className='search-tracks-display'>
 			{hasTracks
-				? tracks.map((track) => (
-						<div key={track.uniId} className='results-display'>
+				? tracks.map((track, index) => (
+						<div key={index} className='results-display'>
 							<p>{addedToQueue.includes(track.isrc)}</p>
 							<div className='album-cover-container'>
 								<img src={track.trackCover} alt='' />

@@ -23,8 +23,8 @@ export default function AlbumDispaly({
 	return (
 		<div className='search-albums-display'>
 			{hasAlbum
-				? albums.map((album) => (
-						<div key={album.id} className='results-display'>
+				? albums.map((album, index) => (
+						<div key={index} className='results-display'>
 							<div className='album-cover-container'>
 								<img src={album.albumCover} alt='' />
 							</div>

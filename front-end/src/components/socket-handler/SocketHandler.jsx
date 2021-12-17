@@ -68,6 +68,7 @@ function SocketHandler({
 			});
 
 			socket.on('uniSearchResults', ({ tracks, albums }) => {
+				console.log(tracks, albums);
 				setAlbums(albums);
 				setTracks(tracks);
 			});
