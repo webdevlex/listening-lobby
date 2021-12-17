@@ -2,7 +2,11 @@ import React, { useContext } from 'react';
 import { SocketContext } from '../../context/SocketContext';
 import { PlayersContext } from '../../context/PlayersContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faHeart } from '@fortawesome/free-solid-svg-icons';
+import { faHeart } from '@fortawesome/free-solid-svg-icons';
+import {
+	faHeart as heartOutline,
+	faTrashAlt,
+} from '@fortawesome/free-regular-svg-icons';
 import appleLogo from '../../assets/images/apple-music-logo.svg';
 import spotifyLogo from '../../assets/images/spotify-logo.svg';
 import PlayingAnimation from '../playing-animation/PlayingAnimation';
@@ -70,27 +74,28 @@ export default function QueueTrack({
 			<div className='duration'>
 				<p className='simple-text'>{ui.formattedDuration}</p>
 			</div>
-
-			<div className='action-buttons'>
+			<div className='like-button'>
 				{buttonsClickable ? (
-					likedSongs.includes(ui.uniId) ? (
+					likedSongs.includes(ui.id) ? (
 						<FontAwesomeIcon className='action-icon' icon={faHeart} />
 					) : (
 						<FontAwesomeIcon
 							className='action-icon'
-							icon={faHeart}
+							icon={heartOutline}
 							onClick={() => {
-								addSongToLibrary(spotify, apple, ui.uniId);
+								addSongToLibrary(spotify, apple, ui.id);
 							}}
 						/>
 					)
 				) : (
 					<p>loading</p>
 				)}
+			</div>
+			<div className='remove-button'>
 				{buttonsClickable ? (
 					<FontAwesomeIcon
 						className='action-icon'
-						icon={faTrash}
+						icon={faTrashAlt}
 						onClick={() => remove(index)}
 					/>
 				) : (

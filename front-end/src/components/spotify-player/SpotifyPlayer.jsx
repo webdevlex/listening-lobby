@@ -11,6 +11,7 @@ import {
 	faVolumeUp,
 	faHeart,
 } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as heartOutline } from '@fortawesome/free-regular-svg-icons';
 
 import './spotify-player.scss';
 
@@ -106,13 +107,21 @@ function SpotifyPlayer({
 							<p className='simple-text track-title'>{song.ui.trackName}</p>
 							<p className='simple-text track-artists'>{song.ui.artists}</p>
 						</div>
-						<FontAwesomeIcon
-							className='like-icon'
-							icon={faHeart}
-							onClick={() => {
-								addSongToLibrary(song.spotify, song.apple, song.ui.uniId);
-							}}
-						/>
+						{likedSongs.includes(queue[0].ui.id) ? (
+							<FontAwesomeIcon className='like-icon' icon={faHeart} />
+						) : (
+							<FontAwesomeIcon
+								className='like-icon'
+								icon={heartOutline}
+								onClick={() => {
+									addSongToLibrary(
+										queue[0].spotify,
+										queue[0].apple,
+										queue[0].ui.id
+									);
+								}}
+							/>
+						)}
 					</>
 				) : (
 					<>

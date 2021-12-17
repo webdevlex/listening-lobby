@@ -1,7 +1,7 @@
 .player-bar {
 	height: 100%;
 	display: flex;
-	justify-content: center;
+	justify-content: space-between;
 	align-items: center;
 	padding: 10px;
 	position: relative;
@@ -9,11 +9,10 @@
 }
 
 .player-left {
-	position: absolute;
-	left: 20px;
 	display: flex;
-	justify-content: center;
+	width: 35%;
 	align-items: center;
+	overflow: hidden;
 
 	.album-cover-container {
 		width: 60px;
@@ -44,10 +43,12 @@
 	.track-title {
 		font-weight: 500;
 		color: white;
+		white-space: nowrap;
 	}
 
 	.track-artists {
 		font-size: 14px;
+		white-space: nowrap;
 	}
 
 	.like-icon {
@@ -56,7 +57,7 @@
 }
 
 .player-center {
-	width: 35%;
+	width: 40%;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -89,17 +90,16 @@
 
 .time-bar {
 	margin-top: 16px;
-	width: 100%;
+	width: 80%;
 	height: 4px;
 	background-color: var(--gray-400);
 }
 
 .player-right {
-	position: absolute;
-	right: 20px;
 	display: flex;
-	justify-content: center;
+	justify-content: flex-end;
 	align-items: center;
+	width: 35%;
 }
 
 .volume-slider {
