@@ -44,7 +44,7 @@ function ApplePlayer({
 			);
 			setRan(true);
 		}
-	}, [applePlayer, user, playerStatus, queue, ran, setRan, socket]);
+	}, [applePlayer, user, playerStatus, queue, ran, setRan, socket, setPlaying]);
 
 	//Emits play to all users
 	let play = () => {
@@ -57,9 +57,9 @@ function ApplePlayer({
 		// await applePlayer.skipToNextItem();
 	};
 
-	let getInstance = async () => {
-		console.log(applePlayer);
-	};
+	// let getInstance = async () => {
+	// 	console.log(applePlayer);
+	// };
 
 	let updateVolume = (e, data) => {
 		applePlayer.player.volume = e.target.value / 100;

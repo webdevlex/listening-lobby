@@ -36,7 +36,7 @@ export default function QueueTrack({
 	}
 
 	return (
-		<div className='queue-track' key={index}>
+		<>
 			<div className='index-wrapper'>
 				{playing && index === 0 ? (
 					<PlayingAnimation />
@@ -97,6 +97,6 @@ export default function QueueTrack({
 					<p>loading</p>
 				)}
 			</div>
-		</div>
+		</>
 	);
 }

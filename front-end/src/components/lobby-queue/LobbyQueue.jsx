@@ -16,15 +16,17 @@ export default function LobbyQueue({
 		<div className='lobby-queue'>
 			{queueHasItems &&
 				queue.map((song, index) => (
-					<QueueTrack
-						song={song}
-						index={index}
-						buttonsClickable={buttonsClickable}
-						setLikedSongs={setLikedSongs}
-						likedSongs={likedSongs}
-						user={user}
-						playing={playing}
-					/>
+					<div className='queue-track' key={index}>
+						<QueueTrack
+							song={song}
+							index={index}
+							buttonsClickable={buttonsClickable}
+							setLikedSongs={setLikedSongs}
+							likedSongs={likedSongs}
+							user={user}
+							playing={playing}
+						/>
+					</div>
 				))}
 		</div>
 	);

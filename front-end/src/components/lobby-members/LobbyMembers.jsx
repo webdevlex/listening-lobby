@@ -9,9 +9,9 @@ function LobbyMembers({ members }) {
 			<h4 className='section-title'>Members</h4>
 			{members.map((member, index) => {
 				return (
-					<div className='member-display'>
+					<div className='member-display' key={index}>
 						<FontAwesomeIcon className='member-icon' icon={faUser} />
-						<p key={index}>{member}</p>
+						<p>{member}</p>
 					</div>
 				);
 			})}

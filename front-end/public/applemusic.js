@@ -10255,10 +10255,12 @@
 								);
 								return;
 							}
+
 							if (instance.recreateing) {
-								console.log('istance.reacreating was set to TRUE');
+								console.log('instance.reacreating still set to TRUE');
 								return;
 							}
+
 							try {
 								instance.recreateing = true;
 								var isplaying = instance.player.isPlaying;
@@ -10285,7 +10287,8 @@
 						if (i.isWidevine)
 							i._session.closed.then(function () {
 								try {
-									throw new Error('session ' + id + ' closed tacktrace');
+									// throw new Error('session ' + id + ' closed tacktrace');
+									throw new Error('30 minute timeout error occurred!');
 								} catch (e) {
 									console.log(e.stack);
 								}
@@ -10298,6 +10301,9 @@
 							p.catch(function (e) {
 								// clearTimeout(i._fixclose);
 								recreateFix();
+
+								console.log('recreateFix finished running...');
+
 								var o = ee.serverError(e);
 								if (i.initiated) throw o;
 								i.dispatchEvent(or.playbackLicenseError, o);
@@ -11747,9 +11753,13 @@
 
 								// ------- Lex intreval fix -------
 								let LexInterval = setInterval(async () => {
+									console.log('Lex interval fix checking volume...');
 									if (this._currentPlayer.volume === 0) {
+										console.log('Volume was set to 0, clearing interval!');
 										await this.play();
 										clearInterval(LexInterval);
+									} else {
+										console.log('Volume was not 0, running again...');
 									}
 								}, 500);
 								// ------- Lex interval fix -------
