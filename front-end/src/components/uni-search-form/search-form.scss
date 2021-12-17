@@ -1,6 +1,7 @@
 .search-form {
 	display: flex;
 	flex-direction: column;
+	height: 100px;
 }
 
 .search-bar {
@@ -51,7 +52,6 @@
 	display: flex;
 	padding-bottom: 8px;
 	border-bottom: var(--gray-400) 1px solid;
-	height: 10%;
 	width: 97%;
 	margin-inline: auto;
 	margin-bottom: 5px;

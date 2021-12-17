@@ -1,5 +1,5 @@
 .track-display-wrapper {
-	height: 38%;
+	height: 330px;
 	position: relative;
 	display: flex;
 	flex-direction: column;
@@ -15,7 +15,6 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 25%;
 
 	.default-album {
 		width: 250px;
@@ -30,12 +29,13 @@
 	}
 
 	.track-cover {
-		transform: scale(1.2);
+		width: 250px;
+		height: 250px;
 	}
 }
 
 .track-display-right {
-	width: 80%;
+	margin-left: 40px;
 	display: flex;
 	position: relative;
 	justify-content: center;
@@ -64,7 +64,7 @@
 	border-bottom: var(--gray-400) 1px solid;
 	height: 10%;
 	width: 97%;
-	margin-inline: auto;
+	margin: 20px auto 0 auto;
 
 	.header-text {
 		text-transform: uppercase;

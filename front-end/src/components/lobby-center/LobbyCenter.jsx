@@ -23,16 +23,14 @@ export default function LobbyCenter({
 			return (
 				<>
 					<LobbyTrackDisplay queue={queue} />
-					<div className='lobby-queue-wrapper'>
-						<LobbyQueue
-							queue={queue}
-							user={user}
-							buttonsClickable={buttonsClickable}
-							likedSongs={likedSongs}
-							setLikedSongs={setLikedSongs}
-							playing={playing}
-						/>
-					</div>
+					<LobbyQueue
+						queue={queue}
+						user={user}
+						buttonsClickable={buttonsClickable}
+						likedSongs={likedSongs}
+						setLikedSongs={setLikedSongs}
+						playing={playing}
+					/>
 				</>
 			);
 		case 'search':

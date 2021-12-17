@@ -1,5 +1,6 @@
 import React from 'react';
 import UniSearch from '../uni-search/UniSearch';
+import UniSearchForm from '../uni-search-form/UniSearchForm';
 import './lobby-search.scss';
 
 export default function LobbySearch({
@@ -11,7 +12,8 @@ export default function LobbySearch({
 	setTracks,
 }) {
 	return (
-		<div className='lobby-search'>
+		<div className='search-section'>
+			<UniSearchForm setAlbums={setAlbums} setTracks={setTracks} user={user} />
 			<UniSearch
 				user={user}
 				buttonsClickable={buttonsClickable}
