@@ -8,9 +8,9 @@ let defaultSearchResults = {
     data: [],
   },
 };
-let serachResults;
 
 async function search(searchName, token) {
+  let searchResults;
   const LIMIT = 10;
   const endPoint = `https://api.music.apple.com/v1/catalog/us/search?term=${searchName}&limit=${LIMIT}&types=songs,albums`;
   const config = {
@@ -21,11 +21,12 @@ async function search(searchName, token) {
 
   try {
     const res = await axios.get(endPoint, config);
-    serachResults =
+    searchResults =
       res.data.meta.results.order.length > 0
         ? res.data.results
         : defaultSearchResults;
-    return serachResults;
+
+    return searchResults;
   } catch (err) {
     console.log(
       "Apple Api Error:",
@@ -122,6 +123,15 @@ function albumMatchTesting(
     return true;
   });
 }
+
+async function removeMusicVideosFromCount(album, token) {
+  let allAlbumTracks = await getAlbumSongsData(album.id, token);
+  allAlbumTracks.forEach((track) => {
+    if (track.type != "songs") {
+      --album.attributes.trackCount;
+    }
+  });
+}
 //Searching from Spotify
 async function getAlbumId(
   { albumName, releaseDate, songCount },
@@ -130,6 +140,9 @@ async function getAlbumId(
 ) {
   const searchResults = await appleAlbumSearch(albumName, token);
   if (!searchResults) return searchResults;
+  //I have album IDS,
+  //I need updated song count,
+
   albumMatchTesting(
     searchResults,
     albumName,
@@ -137,13 +150,26 @@ async function getAlbumId(
     songCount,
     uniAlbumNameFormatter
   );
-  let albumMatch = searchResults.find(
-    ({ attributes }) =>
-      songCount === attributes.trackCount &&
-      (uniAlbumNameFormatter(attributes.name, true) ===
+
+  let albumMatch;
+  for (let i = 0; i < searchResults.length; ++i) {
+    if (
+      uniAlbumNameFormatter(searchResults[i].attributes.name, true) ===
         uniAlbumNameFormatter(albumName, true) ||
-        attributes.releaseDate === releaseDate)
-  );
+      searchResults[i].attributes.releaseDate === releaseDate
+    ) {
+      if (songCount === searchResults[i].attributes.trackCount) {
+        albumMatch = searchResults[i];
+        break;
+      }
+      await removeMusicVideosFromCount(searchResults[i], token);
+      if (songCount === searchResults[i].attributes.trackCount) {
+        albumMatch = searchResults[i];
+        break;
+      }
+    }
+  }
+
   if (albumMatch) {
     console.log("Match!");
     return albumMatch.id;
@@ -163,6 +189,7 @@ async function appleAlbumSearch(albumName, token) {
 
   try {
     const res = await axios.get(endPoint, config);
+
     return res.data.results.albums.data;
   } catch (err) {
     console.log(
@@ -172,10 +199,44 @@ async function appleAlbumSearch(albumName, token) {
     );
   }
 }
+function compareSongsInAlbumByDuration(dataForApple, dataForSpotify) {
+  let appleDuration = 0;
+  let spotifyDuration = 0;
+  let songCount = 0;
 
-async function getAlbumSongsIdByAlbumId(appleAlbumId, appleToken) {
-  const allAlbumSongData = await getAlbumSongsData(appleAlbumId, appleToken);
-  return allAlbumSongData.map((track) => track.id);
+  dataForApple.forEach((track) => {
+    appleDuration += track.attributes.durationInMillis;
+    songCount++;
+  });
+  const threshold = songCount * 1000;
+  dataForSpotify.forEach((track) => {
+    spotifyDuration += track.duration;
+  });
+  console.log(appleDuration, spotifyDuration);
+  return (
+    appleDuration >= spotifyDuration - threshold &&
+    appleDuration <= spotifyDuration + threshold
+  );
+}
+function removeMusicVideosFromAlbum(album) {
+  let newSongData = [];
+  album.forEach((track) => {
+    track.type === "songs" ? newSongData.push(track) : null;
+  });
+  return newSongData;
+}
+async function getAlbumSongsIdByAlbumId(
+  appleAlbumId,
+  appleToken,
+  dataForSpotify
+) {
+  let allAlbumSongData = await getAlbumSongsData(appleAlbumId, appleToken);
+  allAlbumSongData = removeMusicVideosFromAlbum(allAlbumSongData);
+  if (compareSongsInAlbumByDuration(allAlbumSongData, dataForSpotify)) {
+    return allAlbumSongData.map((track) => track.id);
+  } else {
+    return undefined;
+  }
 }
 
 async function getAlbumSongsData(id, token) {
@@ -209,16 +270,20 @@ async function formatAlbumData(
   let dataForUi = [];
 
   allAlbumSongData.forEach((track) => {
-    dataForApplePlayer.push(track.id);
-
-    dataForUi.push({
-      trackName: track.attributes.name,
-      artists: track.attributes.artistName,
-      trackCover: albumData.albumCover,
-      id: track.id,
-      addedBy: username,
-      formattedDuration: formatDuration(track.attributes.durationInMillis),
-    });
+    if (track.type === "songs") {
+      dataForApplePlayer.push(track.id);
+      dataForUi.push({
+        trackName: track.attributes.name,
+        artists: track.attributes.artistName,
+        trackCover: albumData.albumCover,
+        id: track.id,
+        addedBy: username,
+        formattedDuration: formatDuration(track.attributes.durationInMillis),
+        duration: track.attributes.durationInMillis,
+      });
+    } else {
+      --albumData.songCount;
+    }
   });
 
   return { dataForApplePlayer, dataForUi };

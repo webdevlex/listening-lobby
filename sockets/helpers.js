@@ -28,9 +28,14 @@ function uniTrackFormatter(query) {
   query = replaceAll(query, "feat.", "");
   query = replaceAll(query, "feat", "");
   query = replaceAll(query, "’", "");
-  let indexFirst = query.indexOf("(");
-  let indexLast = query.indexOf(")");
-  if (indexFirst != -1 || indexLast != -1) {
+  let paraFirst = query.indexOf("(");
+  let paraLast = query.indexOf(")");
+  let bracketFirst = query.indexOf("[");
+  let bracketLast = query.indexOf("]");
+  if (paraFirst != -1 || paraLast != -1) {
+    query = query.substr(0, indexFirst) + query.substr(indexLast + 1);
+  }
+  if (bracketFirst != -1 || bracketLast != -1) {
     query = query.substr(0, indexFirst) + query.substr(indexLast + 1);
   }
   return query;
@@ -52,15 +57,21 @@ function uniAlbumNameFormatter(query, deleteWhiteSpaces) {
   query = replaceAll(query, "feat.", "");
   query = replaceAll(query, "feat", "");
   query = replaceAll(query, "’", "");
-  let indexFirst = query.indexOf("(");
-  let indexLast = query.indexOf(")");
-  if (indexFirst != -1 || indexLast != -1) {
-    query = query.substr(0, indexFirst) + query.substr(indexLast + 1);
+  let paraFirst = query.indexOf("(");
+  let paraLast = query.indexOf(")");
+  let bracketFirst = query.indexOf("[");
+  let bracketLast = query.indexOf("]");
+  if (paraFirst != -1 || paraLast != -1) {
+    query = query.substr(0, paraFirst) + query.substr(paraLast + 1);
   }
+  if (bracketFirst != -1 || bracketLast != -1) {
+    query = query.substr(0, bracketFirst) + query.substr(bracketLast + 1);
+  }
+
   if (deleteWhiteSpaces) {
     query = replaceAll(query, " ", "");
   }
-  console.log(query);
+
   return query;
 }
 function uniArtistsFormatter(query) {
@@ -284,7 +295,8 @@ async function uniAlbumSearch(tokens, { albumData, user }) {
     if (appleAlbumId) {
       dataForApplePlayer = await apple.getAlbumSongsIdByAlbumId(
         appleAlbumId,
-        appleToken
+        appleToken,
+        dataForUi
       );
       // } else {
       //   for (let i = 0; i < albumData.songCount; ++i) {
@@ -292,7 +304,7 @@ async function uniAlbumSearch(tokens, { albumData, user }) {
       //   }
     }
   } else {
-    // We already have spotify album id just request the album with the id and grab all song data
+    // We already have apple album id just request the album with the id and grab all song data
 
     dataForApplePlayerAndUi = await apple.formatAlbumData(
       albumData,
@@ -300,6 +312,7 @@ async function uniAlbumSearch(tokens, { albumData, user }) {
       formatDuration,
       user
     );
+
     dataForApplePlayer = dataForApplePlayerAndUi.dataForApplePlayer;
     dataForUi = dataForApplePlayerAndUi.dataForUi;
 
@@ -311,12 +324,9 @@ async function uniAlbumSearch(tokens, { albumData, user }) {
     if (spotifyAlbumId) {
       dataForSpotifyPlayer = await spotify.getAlbumSongsUriByAlbumId(
         spotifyAlbumId,
-        spotifyToken
+        spotifyToken,
+        dataForUi
       );
-      // } else {
-      //   for (let i = 0; i < albumData.songCount; ++i) {
-      //     dataForSpotifyPlayer.push("-1");
-      //   }
     }
   }
 

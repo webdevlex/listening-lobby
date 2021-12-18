@@ -213,7 +213,6 @@ async function getAlbumId(
 async function formatAlbumData(albumData, token, formatDuration, { username }) {
   // get album by id
   const results = await spotifyAlbumSearchById(albumData.id, token);
-
   // Data that will be used by player and ui
   let dataForSpotifyPlayer = [];
   let dataForUi = [];
@@ -229,6 +228,7 @@ async function formatAlbumData(albumData, token, formatDuration, { username }) {
       trackCover: albumData.albumCover,
       id: track.id,
       addedBy: username,
+      duration: track.duration_ms,
       formattedDuration: formatDuration(track.duration_ms),
     });
   });
@@ -239,7 +239,7 @@ async function formatAlbumData(albumData, token, formatDuration, { username }) {
 
 // Get album directly by id
 async function spotifyAlbumSearchById(id, token) {
-  const endPoint = `	https://api.spotify.com/v1/albums/${id}/tracks`;
+  const endPoint = `	https://api.spotify.com/v1/albums/${id}/tracks?limit=40`;
   try {
     const res = await axios.get(endPoint, defaultHeader(token));
     return res.data;
@@ -294,15 +294,43 @@ async function getTempToken() {
     // TODO
   }
 }
+function compareSongsInAlbumByDuration({ items }, dataForApple) {
+  let spotifyDuration = 0;
+  let appleDuration = 0;
+  let songCount = 0;
 
-async function getAlbumSongsUriByAlbumId(spotifyAlbumId, spotifyToken) {
+  items.forEach((track) => {
+    spotifyDuration += track.duration_ms;
+    songCount++;
+  });
+  const threshold = songCount * 1000;
+  dataForApple.forEach((track) => {
+    appleDuration += track.duration;
+  });
+
+  console.log(spotifyDuration, appleDuration);
+  return (
+    spotifyDuration >= appleDuration - threshold &&
+    spotifyDuration <= appleDuration + threshold
+  );
+}
+
+async function getAlbumSongsUriByAlbumId(
+  spotifyAlbumId,
+  spotifyToken,
+  dataForApple
+) {
   // If we find a match get the album directly by id
   const spotifyAlbumSongData = await spotifyAlbumSearchById(
     spotifyAlbumId,
     spotifyToken
   );
   // Return all uris for songs in album
-  return spotifyAlbumSongData.items.map((track) => track.uri);
+  if (compareSongsInAlbumByDuration(spotifyAlbumSongData, dataForApple)) {
+    return spotifyAlbumSongData.items.map((track) => track.uri);
+  } else {
+    return undefined;
+  }
 }
 async function likeSong({ spotifySong, user }) {
   const songId = spotifySong.replace("spotify:track:", "");
