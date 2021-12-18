@@ -12,6 +12,7 @@ function generateLobby(data, tempToken) {
 		playing: false,
 		usersReady: 0,
 		loading: false,
+		hold: null,
 	};
 
 	lobbies.push(newLobby);
@@ -166,10 +167,12 @@ function addAlbumToLobby(
 	const i = getLobbyIndex(lobby_id);
 
 	for (let j = 0; j < dataForUi.length; ++j) {
+		const spotify = dataForSpotifyPlayer ? dataForSpotifyPlayer[j] : '-1';
+		const apple = dataForApplePlayer ? dataForApplePlayer[j] : '-1';
 		lobbies[i].queue.push({
 			ui: dataForUi[j],
-			spotify: dataForSpotifyPlayer[j],
-			apple: dataForApplePlayer[j],
+			spotify,
+			apple,
 		});
 	}
 }
@@ -223,6 +226,18 @@ function setFirstMemberAsAdmin(i) {
 	lobbies[i].users[0].privilege = 'admin';
 }
 
+function setAlbumHold(lobby_id, allSongData) {
+	const i = getLobbyIndex(lobby_id);
+	lobbies[i].hold = allSongData;
+}
+
+function getAndRemoveHold(lobby_id) {
+	const i = getLobbyIndex(lobby_id);
+	const albumHold = lobbies[i].hold;
+	lobbies[i].hold = null;
+	return albumHold;
+}
+
 module.exports = {
 	setPlayStatusPlaying,
 	setPlayStatusPaused,
@@ -251,4 +266,6 @@ module.exports = {
 	resetReadyCount,
 	setLobbyLoading,
 	setFirstMemberAsAdmin,
+	setAlbumHold,
+	getAndRemoveHold,
 };

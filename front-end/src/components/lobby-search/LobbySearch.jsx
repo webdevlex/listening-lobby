@@ -10,6 +10,7 @@ export default function LobbySearch({
 	setAlbums,
 	tracks,
 	setTracks,
+	addedToQueue,
 }) {
 	return (
 		<div className='search-section'>
@@ -21,6 +22,7 @@ export default function LobbySearch({
 				setAlbums={setAlbums}
 				tracks={tracks}
 				setTracks={setTracks}
+				addedToQueue={addedToQueue}
 			/>
 		</div>
 	);

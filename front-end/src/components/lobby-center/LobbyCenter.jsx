@@ -17,6 +17,7 @@ export default function LobbyCenter({
 	setTracks,
 	playing,
 	lobbyId,
+	addedToQueue,
 }) {
 	switch (centerDisplay) {
 		case 'player':
@@ -42,6 +43,7 @@ export default function LobbyCenter({
 					setAlbums={setAlbums}
 					tracks={tracks}
 					setTracks={setTracks}
+					addedToQueue={addedToQueue}
 				/>
 			);
 		case 'invite':

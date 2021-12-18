@@ -9,12 +9,10 @@ export default function TrackDisplay({
 	user,
 	buttonsClickable,
 	addedToQueue,
-	setAddedToQueue,
 }) {
 	const [socket] = useContext(SocketContext);
 
 	function handleSongClick(songData) {
-		setAddedToQueue([...addedToQueue, songData.uniId]);
 		socket.emit('addSong', { songData, user });
 	}
 
@@ -25,7 +23,6 @@ export default function TrackDisplay({
 			{hasTracks
 				? tracks.map((track, index) => (
 						<div key={index} className='results-display'>
-							<p>{addedToQueue.includes(track.isrc)}</p>
 							<div className='album-cover-container'>
 								<img src={track.trackCover} alt='' />
 							</div>

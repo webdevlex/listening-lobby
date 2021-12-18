@@ -102,6 +102,13 @@ function socketsReciever(io) {
 		socket.on('setDeviceId', (data) => {
 			handlers.setDeviceId(io, socket, data);
 		});
+
+		// ===============
+		// = Force Album =
+		// ===============
+		socket.on('forceAlbum', (data) => {
+			handlers.forceAlbum(io, socket, data);
+		});
 	});
 }
 

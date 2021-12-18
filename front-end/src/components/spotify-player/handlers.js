@@ -62,7 +62,6 @@ export async function setupPlayback(
 	}
 
 	if (validPlayerStatus && !playerStatus.paused) {
-		console.log(playerStatus);
 		setPlaying(true);
 	}
 	// Let the user see the lobby once they are fully loaded in

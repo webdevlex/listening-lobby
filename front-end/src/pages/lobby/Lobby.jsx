@@ -5,6 +5,7 @@ import LobbyMessages from '../../components/lobby-messages/LobbyMessages';
 import LobbySettings from '../../components/lobby-settings/LobbySettings';
 import LobbyCenter from '../../components/lobby-center/LobbyCenter';
 import SocketHandler from '../../components/socket-handler/SocketHandler';
+import AlbumPopup from '../../components/album-popup/AlbumPopup';
 import socketio from 'socket.io-client';
 import { SocketContext } from '../../context/SocketContext';
 import { PlayersContext } from '../../context/PlayersContext';
@@ -29,6 +30,9 @@ function Lobby() {
 	const [albums, setAlbums] = useState([]);
 	const [tracks, setTracks] = useState([]);
 	const [playing, setPlaying] = useState(false);
+	const [displayAlbumQuestion, setDisplayAlbumQuestion] = useState(false);
+	const [albumMissingOn, setAlbumMissingOn] = useState(null);
+	const [addedToQueue, setAddedToQueue] = useState([]);
 
 	// Loaders
 	const [buttonsClickable, setButtonsClickable] = useState(true);
@@ -58,6 +62,9 @@ function Lobby() {
 				setButtonsClickable={setButtonsClickable}
 				setAlbums={setAlbums}
 				setTracks={setTracks}
+				setDisplayAlbumQuestion={setDisplayAlbumQuestion}
+				setAlbumMissingOn={setAlbumMissingOn}
+				setAddedToQueue={setAddedToQueue}
 			/>
 
 			{!playerStatus ? (
@@ -82,6 +89,13 @@ function Lobby() {
 						<h1>LOADING 2</h1>
 					) : (
 						<>
+							<AlbumPopup
+								displayAlbumQuestion={displayAlbumQuestion}
+								setDisplayAlbumQuestion={setDisplayAlbumQuestion}
+								albumMissingOn={albumMissingOn}
+								user={user}
+								addedToQueue={addedToQueue}
+							/>
 							<div className='settings-grid'>
 								<LobbySettings setCenterDisplay={setCenterDisplay} />
 							</div>
@@ -105,6 +119,7 @@ function Lobby() {
 									setTracks={setTracks}
 									playing={playing}
 									lobbyId={user.lobby_id}
+									addedToQueue={addedToQueue}
 								/>
 							</div>
 						</>
