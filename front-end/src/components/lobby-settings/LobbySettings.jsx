@@ -8,7 +8,10 @@ import {
 	faTools,
 } from '@fortawesome/free-solid-svg-icons';
 
-export default function LobbySettings({ setCenterDisplay }) {
+export default function LobbySettings({
+	setCenterDisplay,
+	setDisplayInvitePopup,
+}) {
 	return (
 		<div className='lobby-settings'>
 			<h4 className='section-title'>Menu</h4>
@@ -26,7 +29,7 @@ export default function LobbySettings({ setCenterDisplay }) {
 			</div>
 			<div
 				className='settings-button'
-				onClick={() => setCenterDisplay('invite')}>
+				onClick={() => setDisplayInvitePopup(true)}>
 				<FontAwesomeIcon className='settings-icon' icon={faUsers} />
 				<p className='simple-text'>Invite Friends</p>
 			</div>

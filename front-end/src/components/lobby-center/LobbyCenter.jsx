@@ -46,8 +46,6 @@ export default function LobbyCenter({
 					addedToQueue={addedToQueue}
 				/>
 			);
-		case 'invite':
-			return <h1>{lobbyId}</h1>;
 		case 'settings':
 			return <h1>settings</h1>;
 		default:

@@ -5,12 +5,18 @@ import MusicProviderForm from '../../components/music-provider-form/MusicProvide
 import './choose-service.scss';
 
 function ChooseService() {
+	const params = new URLSearchParams(window.location.search);
+	const action = params.get('action');
+	const lobby_id = params.get('lobby_id');
+
 	const {
 		register,
 		handleSubmit,
 		setValue,
 		formState: { errors },
-	} = useForm();
+	} = useForm({
+		defaultValues: { lobby_id: lobby_id },
+	});
 
 	return (
 		<div className='choose-service'>
@@ -20,6 +26,8 @@ function ChooseService() {
 				handleSubmit={handleSubmit}
 				register={register}
 				errors={errors}
+				action={action}
+				lobby_id={lobby_id}
 			/>
 		</div>
 	);

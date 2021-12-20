@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import AppleLogin from '../apple-login/AppleLogin';
 
-function MusicProviderForm({ handleSubmit, register, errors }) {
-	const params = new URLSearchParams(window.location.search);
-	const action = params.get('action');
+function MusicProviderForm({
+	handleSubmit,
+	register,
+	errors,
+	action,
+	lobby_id,
+}) {
 	const [displayAppleLogin, setDisplayAppleLogin] = useState(false);
 	const [authorized, setAuthorized] = useState(false);
 
@@ -64,8 +68,10 @@ function MusicProviderForm({ handleSubmit, register, errors }) {
 						<>
 							<label htmlFor='lobby_id'>Lobby Id</label>
 							<input
+								readOnly={lobby_id ? true : false}
 								aria-invalid={errors.lobby_id ? 'true' : 'false'}
-								{...register('lobby_id', { required: true })}
+								maxLength='6'
+								{...register('lobby_id', { required: true, maxLength: 6 })}
 							/>
 						</>
 					) : null}

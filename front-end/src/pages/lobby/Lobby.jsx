@@ -7,6 +7,7 @@ import LobbyCenter from '../../components/lobby-center/LobbyCenter';
 import SocketHandler from '../../components/socket-handler/SocketHandler';
 import AlbumPopup from '../../components/album-popup/AlbumPopup';
 import socketio from 'socket.io-client';
+import InvitePopup from '../../components/invite-popup/InvitePopup';
 import { SocketContext } from '../../context/SocketContext';
 import { PlayersContext } from '../../context/PlayersContext';
 
@@ -31,6 +32,7 @@ function Lobby() {
 	const [tracks, setTracks] = useState([]);
 	const [playing, setPlaying] = useState(false);
 	const [displayAlbumQuestion, setDisplayAlbumQuestion] = useState(false);
+	const [displayInvitePopup, setDisplayInvitePopup] = useState(false);
 	const [albumMissingOn, setAlbumMissingOn] = useState(null);
 	const [addedToQueue, setAddedToQueue] = useState([]);
 
@@ -96,8 +98,16 @@ function Lobby() {
 								user={user}
 								addedToQueue={addedToQueue}
 							/>
+							<InvitePopup
+								displayInvitePopup={displayInvitePopup}
+								setDisplayInvitePopup={setDisplayInvitePopup}
+								user={user}
+							/>
 							<div className='settings-grid'>
-								<LobbySettings setCenterDisplay={setCenterDisplay} />
+								<LobbySettings
+									setCenterDisplay={setCenterDisplay}
+									setDisplayInvitePopup={setDisplayInvitePopup}
+								/>
 							</div>
 							<div className='members-grid'>
 								<LobbyMembers members={members} />
