@@ -1,4 +1,5 @@
 const axios = require("axios");
+const e = require("express");
 
 let defaultSearchResults = {
   songs: {
@@ -124,25 +125,29 @@ function albumMatchTesting(
   });
 }
 
-async function removeMusicVideosFromCount(album, token) {
+async function removeMusicVideosFromCount(album, token, spotifySongCount) {
   let allAlbumTracks = await getAlbumSongsData(album.id, token);
+  let newSongData = [];
   allAlbumTracks.forEach((track) => {
-    if (track.type != "songs") {
-      --album.attributes.trackCount;
+    if (track.type === "songs") {
+      newSongData.push(track);
     }
   });
+  if (newSongData.length === spotifySongCount) {
+    console.log("match count");
+    newSongData.push(1);
+    return newSongData;
+  }
 }
 //Searching from Spotify
 async function getAlbumId(
   { albumName, releaseDate, songCount },
   uniAlbumNameFormatter,
-  token
+  token,
+  spotifyData
 ) {
   const searchResults = await appleAlbumSearch(albumName, token);
   if (!searchResults) return searchResults;
-  //I have album IDS,
-  //I need updated song count,
-
   albumMatchTesting(
     searchResults,
     albumName,
@@ -160,17 +165,23 @@ async function getAlbumId(
     ) {
       if (songCount === searchResults[i].attributes.trackCount) {
         albumMatch = searchResults[i];
-        break;
+      } else {
+        albumMatch = await removeMusicVideosFromCount(
+          searchResults[i],
+          token,
+          songCount,
+          spotifyData
+        );
       }
-      await removeMusicVideosFromCount(searchResults[i], token);
-      if (songCount === searchResults[i].attributes.trackCount) {
-        albumMatch = searchResults[i];
-        break;
-      }
+      if (albumMatch) break;
     }
   }
 
   if (albumMatch) {
+    if (albumMatch[albumMatch.length - 1] === 1) {
+      console.log("found album with music videos");
+      return albumMatch;
+    }
     console.log("Match!");
     return albumMatch.id;
   } else {
@@ -218,20 +229,20 @@ function compareSongsInAlbumByDuration(dataForApple, dataForSpotify) {
     appleDuration <= spotifyDuration + threshold
   );
 }
-function removeMusicVideosFromAlbum(album) {
-  let newSongData = [];
-  album.forEach((track) => {
-    track.type === "songs" ? newSongData.push(track) : null;
-  });
-  return newSongData;
-}
+
 async function getAlbumSongsIdByAlbumId(
   appleAlbumId,
   appleToken,
   dataForSpotify
 ) {
-  let allAlbumSongData = await getAlbumSongsData(appleAlbumId, appleToken);
-  allAlbumSongData = removeMusicVideosFromAlbum(allAlbumSongData);
+  let allAlbumSongData;
+  if (appleAlbumId[appleAlbumId.length - 1] === 1) {
+    appleAlbumId.pop();
+    allAlbumSongData = appleAlbumId;
+  } else {
+    allAlbumSongData = await getAlbumSongsData(appleAlbumId, appleToken);
+  }
+
   if (compareSongsInAlbumByDuration(allAlbumSongData, dataForSpotify)) {
     return allAlbumSongData.map((track) => track.id);
   } else {

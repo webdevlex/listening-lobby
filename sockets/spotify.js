@@ -239,7 +239,7 @@ async function formatAlbumData(albumData, token, formatDuration, { username }) {
 
 // Get album directly by id
 async function spotifyAlbumSearchById(id, token) {
-  const endPoint = `	https://api.spotify.com/v1/albums/${id}/tracks?limit=40`;
+  const endPoint = `	https://api.spotify.com/v1/albums/${id}/tracks?limit=50`;
   try {
     const res = await axios.get(endPoint, defaultHeader(token));
     return res.data;
