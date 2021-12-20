@@ -33,10 +33,10 @@ function uniTrackFormatter(query) {
   let bracketFirst = query.indexOf("[");
   let bracketLast = query.indexOf("]");
   if (paraFirst != -1 || paraLast != -1) {
-    query = query.substr(0, indexFirst) + query.substr(indexLast + 1);
+    query = query.substr(0, paraFirst) + query.substr(paraLast + 1);
   }
   if (bracketFirst != -1 || bracketLast != -1) {
-    query = query.substr(0, indexFirst) + query.substr(indexLast + 1);
+    query = query.substr(0, bracketFirst) + query.substr(bracketLast + 1);
   }
   return query;
 }
