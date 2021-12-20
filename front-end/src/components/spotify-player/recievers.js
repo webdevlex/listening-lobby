@@ -8,7 +8,9 @@ export function setupSocketRecievers(
 	queue,
 	user,
 	setLoading,
-	setPlaying
+	setPlaying,
+	setPercent,
+	setCurrentTime
 ) {
 	handlers.setupPlayback(
 		spotifyPlayer,
@@ -18,11 +20,21 @@ export function setupSocketRecievers(
 		user,
 		socket,
 		setLoading,
-		setPlaying
+		setPlaying,
+		setPercent,
+		setCurrentTime
 	);
 
 	socket.on('play', (song) => {
-		handlers.play(socket, spotifyPlayer, setPlaying, user, song);
+		handlers.play(
+			socket,
+			spotifyPlayer,
+			setPlaying,
+			user,
+			song,
+			setPercent,
+			setCurrentTime
+		);
 	});
 
 	socket.on('pause', (song) => {
@@ -38,11 +50,28 @@ export function setupSocketRecievers(
 	});
 
 	socket.on('firstSong', (queue) => {
-		handlers.firstSong(socket, spotifyPlayer, device_id, queue, user);
+		handlers.firstSong(
+			socket,
+			spotifyPlayer,
+			device_id,
+			queue,
+			user,
+			setPercent,
+			setCurrentTime
+		);
 	});
 
 	socket.on('popped', (queue) => {
-		handlers.popped(socket, spotifyPlayer, device_id, queue, user, setPlaying);
+		handlers.popped(
+			socket,
+			spotifyPlayer,
+			device_id,
+			queue,
+			user,
+			setPlaying,
+			setPercent,
+			setCurrentTime
+		);
 	});
 
 	socket.on('removeFirst', (queue, playing) => {
@@ -52,7 +81,9 @@ export function setupSocketRecievers(
 			device_id,
 			queue,
 			user,
-			playing
+			playing,
+			setPercent,
+			setCurrentTime
 		);
 	});
 }

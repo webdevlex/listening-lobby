@@ -13,6 +13,7 @@ function generateLobby(data, tempToken) {
 		usersReady: 0,
 		loading: false,
 		hold: null,
+		timeout: false,
 	};
 
 	lobbies.push(newLobby);
@@ -238,6 +239,16 @@ function getAndRemoveHold(lobby_id) {
 	return albumHold;
 }
 
+function setTimeoutTo(lobby_id, value) {
+	const i = getLobbyIndex(lobby_id);
+	lobbies[i].timeout = value;
+}
+
+function inTimeout(lobby_id) {
+	const i = getLobbyIndex(lobby_id);
+	return lobbies[i].timeout;
+}
+
 module.exports = {
 	setPlayStatusPlaying,
 	setPlayStatusPaused,
@@ -268,4 +279,6 @@ module.exports = {
 	setFirstMemberAsAdmin,
 	setAlbumHold,
 	getAndRemoveHold,
+	setTimeoutTo,
+	inTimeout,
 };

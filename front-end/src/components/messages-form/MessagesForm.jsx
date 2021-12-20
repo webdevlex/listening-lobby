@@ -12,13 +12,12 @@ function MessagesForm({ user }) {
 	});
 
 	const onSubmit = ({ message }) => {
-		sendMessage(message);
-	};
-
-	function sendMessage(message) {
 		setValue('message', '');
-		socket.emit('lobbyMessage', { user, message });
-	}
+		message = message.trim();
+		if (message && message !== 'Message') {
+			socket.emit('lobbyMessage', { user, message });
+		}
+	};
 
 	const handleFocus = () => {
 		const value = getValues('message');

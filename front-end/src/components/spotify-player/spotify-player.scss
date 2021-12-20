@@ -88,11 +88,32 @@
 	color: white;
 }
 
+.time-bar-container {
+	margin-top: 10px;
+	display: flex;
+	width: 100%;
+	justify-content: center;
+	align-items: center;
+}
+
+.time {
+	margin-inline: 6px;
+	font-size: 14px;
+}
+
 .time-bar {
-	margin-top: 16px;
 	width: 80%;
 	height: 4px;
 	background-color: var(--gray-400);
+	position: relative;
+
+	.time-bar-slider {
+		height: 10px;
+		width: 3px;
+		background-color: var(--gray-600);
+		position: absolute;
+		top: -3px;
+	}
 }
 
 .player-right {

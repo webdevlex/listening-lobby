@@ -7,7 +7,9 @@ export function playerSetup(
 	queue,
 	playerStatus,
 	setLoading,
-	setPlaying
+	setPlaying,
+	setPercent,
+	setCurrentTime
 ) {
 	const params = new URLSearchParams(window.location.search);
 	const token = params.get('token');
@@ -38,7 +40,9 @@ export function playerSetup(
 				queue,
 				user,
 				setLoading,
-				setPlaying
+				setPlaying,
+				setPercent,
+				setCurrentTime
 			);
 		});
 

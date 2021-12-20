@@ -35,7 +35,7 @@ export default function AlbumPopup({
 
 				<div className='album-warning-text'>
 					<h1>{`Album missing on ${albumMissingOn}!`}</h1>
-					<span>{`${albumMissingOn} users wont be able to hear theses songs`}</span>
+					<span>{`${albumMissingOn} users wont be able to hear the songs in this album`}</span>
 				</div>
 
 				<div className='album-warning-buttons'>

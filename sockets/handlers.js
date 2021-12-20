@@ -198,8 +198,22 @@ function play(io, socket, { user }) {
 // ========
 // = Skip =
 // ========
-function skip(io, socket, data) {
-	mediaChange(io, socket, data);
+function skip(io, socket, { user }) {
+	const lobbyRef = lobby.getLobbyById(user.lobby_id);
+	if (lobbyRef.queue.length > 0) {
+		lobby.popSong(user.lobby_id);
+		io.to(user.lobby_id).emit('addSong', lobbyRef.queue);
+		io.to(user.lobby_id).emit('deactivateButtons');
+		lobby.setLobbyLoading(user.lobby_id, true);
+
+		if (lobbyRef.queue.length === 0) {
+			lobby.setPlayStatusPaused(user.lobby_id);
+			io.to(user.lobby_id).emit('emptyQueue', lobbyRef.queue);
+		} else {
+			lobby.setPlayStatusPlaying(user.lobby_id);
+			io.to(user.lobby_id).emit('popped', lobbyRef.queue);
+		}
+	}
 }
 
 // =========================
@@ -217,21 +231,33 @@ function playerData(io, socket, data) {
 // = Media Change =
 // ================
 function mediaChange(io, socket, { user }) {
-	const lobbyRef = lobby.getLobbyById(user.lobby_id);
-	if (lobbyRef.queue.length > 0) {
-		lobby.popSong(user.lobby_id);
-		io.to(user.lobby_id).emit('addSong', lobbyRef.queue);
-		io.to(user.lobby_id).emit('deactivateButtons');
-		lobby.setLobbyLoading(user.lobby_id, true);
+	if (!lobby.inTimeout(user.lobby_id)) {
+		lobby.setTimeoutTo(user.lobby_id, true);
+		startInterval(user.lobby_id);
 
-		if (lobbyRef.queue.length === 0) {
-			lobby.setPlayStatusPaused(user.lobby_id);
-			io.to(user.lobby_id).emit('emptyQueue', lobbyRef.queue);
-		} else {
-			lobby.setPlayStatusPlaying(user.lobby_id);
-			io.to(user.lobby_id).emit('popped', lobbyRef.queue);
+		const lobbyRef = lobby.getLobbyById(user.lobby_id);
+		if (lobbyRef.queue.length > 0) {
+			lobby.popSong(user.lobby_id);
+			io.to(user.lobby_id).emit('addSong', lobbyRef.queue);
+			io.to(user.lobby_id).emit('deactivateButtons');
+			lobby.setLobbyLoading(user.lobby_id, true);
+
+			if (lobbyRef.queue.length === 0) {
+				lobby.setPlayStatusPaused(user.lobby_id);
+				io.to(user.lobby_id).emit('emptyQueue', lobbyRef.queue);
+			} else {
+				lobby.setPlayStatusPlaying(user.lobby_id);
+				io.to(user.lobby_id).emit('popped', lobbyRef.queue);
+			}
 		}
 	}
+}
+
+function startInterval(lobby_id) {
+	setTimeout(() => {
+		lobby.setTimeoutTo(lobby_id, false);
+		console.log('ready');
+	}, 10000);
 }
 
 // ================
@@ -290,11 +316,13 @@ function forceAlbum(io, socket, { user, addedToQueue }) {
 	const lobbyRef = lobby.getLobbyById(user.lobby_id);
 	io.to(user.lobby_id).emit('deactivateButtons');
 	lobby.setLobbyLoading(user.lobby_id, true);
+
 	// Check if first time a song/album is added to the queue
 	let firstSong;
 	if (lobbyRef.queue.length === 0) {
 		firstSong = true;
 	}
+
 	const albumHold = lobby.getAndRemoveHold(user.lobby_id);
 	lobby.addAlbumToLobby(user.lobby_id, albumHold);
 	io.to(user.lobby_id).emit('addSong', lobbyRef.queue);
