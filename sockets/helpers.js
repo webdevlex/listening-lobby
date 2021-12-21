@@ -20,6 +20,7 @@ function appleFormatSearchQuery(query) {
 function uniTrackFormatter(query) {
   query = query.toLowerCase();
   query = replaceAll(query, "&", "and");
+  query = replaceAll(query, "single", "");
   query = query.split("f**k").join("fuck");
   query = query.split("n***a").join("nigga");
   query = replaceAll(query, "EP", "");
@@ -201,7 +202,7 @@ function extractAppleSongData(searchResults) {
 // Pull out necessary album information from all apple search results
 function extractAppleAlbumData(searchResults) {
   // If there are search resutls for album
-  if (!searchResults) return [];
+  if (!searchResults.albums) return [];
   const albums = searchResults.albums.data;
   return albums.map((album) => {
     return {
