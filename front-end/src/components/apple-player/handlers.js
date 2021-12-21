@@ -76,7 +76,15 @@ export function handleGetPlayerData(
 }
 
 //Handles play
-export async function handlePlay(applePlayer, socket, user, setPlaying, song) {
+export async function handlePlay(
+	applePlayer,
+	socket,
+	user,
+	setPlaying,
+	song,
+	setPercent,
+	setCurrentTime
+) {
 	await applePlayer.authorize();
 	removeEventListener(applePlayer);
 	if (song.apple !== '-1') {
@@ -90,7 +98,7 @@ export async function handlePlay(applePlayer, socket, user, setPlaying, song) {
 	} else {
 		emitUserReady(socket, user);
 	}
-
+	moveTimeStamp(song, setPercent, setCurrentTime);
 	setPlaying(true);
 	addEventListener(applePlayer, socket, user, false);
 }
@@ -107,6 +115,7 @@ export async function handlePause(applePlayer, socket, user, setPlaying, song) {
 		emitUserReady(socket, user);
 	}
 
+	pauseTimeStamp();
 	setPlaying(false);
 	addEventListener(applePlayer, socket, user, false);
 }
@@ -127,19 +136,30 @@ export async function handlePopped(
 	socket,
 	song,
 	user,
-	setPlaying
+	setPlaying,
+	setPercent,
+	setCurrentTime
 ) {
 	if (song.apple !== '-1') {
 		await setMusicKitQueue(applePlayer, song.apple);
 		handlePlay(applePlayer, socket, user, setPlaying, song);
 	} else {
-		await applePlayer.pause();
-		emitUserReady(socket, user);
+		handlePause(applePlayer, socket, user, setPlaying, song);
 	}
+	resetTimeStamp(setPercent, setCurrentTime);
 }
 //Handles empty queue
-export async function handleEmptyQueue(applePlayer, socket, user, setPlaying) {
+export async function handleEmptyQueue(
+	applePlayer,
+	socket,
+	user,
+	setPlaying,
+	setPercent,
+	setCurrentTime
+) {
 	await applePlayer.pause();
+	resetTimeStamp(setPercent, setCurrentTime);
+	pauseTimeStamp();
 	emitUserReady(socket, user);
 	setPlaying(false);
 }
@@ -150,7 +170,9 @@ export async function handleRemoveFirst(
 	user,
 	setPlaying,
 	song,
-	isPlaying
+	isPlaying,
+	setPercent,
+	setCurrentTime
 ) {
 	if (song.apple !== '-1') {
 		await setMusicKitQueue(applePlayer, song.apple);
@@ -161,6 +183,7 @@ export async function handleRemoveFirst(
 		}
 	} else {
 		if (isPlaying) {
+			pauseTimeStamp();
 			await applePlayer.pause();
 			setPlaying(true);
 		} else {
@@ -168,11 +191,11 @@ export async function handleRemoveFirst(
 		}
 		emitUserReady(socket, user);
 	}
+	resetTimeStamp(setPercent, setCurrentTime);
 }
 
 // Ready emitters
 function emitReadyWhenPlaying(socket, applePlayer, user) {
-	console.log(applePlayer);
 	socket.emit('userReady', { user });
 }
 
@@ -186,4 +209,34 @@ function emitReadyWhenQueueSet(socket, applePlayer, user) {
 
 function emitUserReady(socket, user) {
 	socket.emit('userReady', { user });
+}
+
+// Timestamp
+let currentTime = 0;
+let percent = 0;
+let interval = null;
+function moveTimeStamp(song, setPercent, setCurrentTime) {
+	if (!interval) {
+		const INTERVAL = song.ui.duration / 100;
+		interval = setInterval(() => {
+			if (percent < 100) {
+				percent += 1;
+				currentTime += INTERVAL;
+				setCurrentTime(currentTime);
+				setPercent(percent);
+			}
+		}, INTERVAL);
+	}
+}
+
+function pauseTimeStamp() {
+	clearInterval(interval);
+	interval = null;
+}
+
+function resetTimeStamp(setPercent, setCurrentTime) {
+	currentTime = 0;
+	percent = 0;
+	setPercent(0);
+	setCurrentTime(0);
 }

@@ -102,7 +102,16 @@ export async function pause(socket, spotifyPlayer, setPlaying, user, song) {
 	pauseTimeStamp();
 }
 
-export async function emptyQueue(socket, spotifyPlayer, setPlaying, user) {
+export async function emptyQueue(
+	socket,
+	spotifyPlayer,
+	setPlaying,
+	user,
+	setPercent,
+	setCurrentTime
+) {
+	resetTimeStamp(setPercent, setCurrentTime);
+	pauseTimeStamp();
 	setPlaying(false);
 	const playerState = await spotifyPlayer.getCurrentState();
 
@@ -190,8 +199,10 @@ export async function popped(
 	setPercent,
 	setCurrentTime
 ) {
+	resetTimeStamp(setPercent, setCurrentTime);
 	if (queue[0].spotify !== '-1') {
 		await setPlaybackTo(device_id, user, queue[0], { timestamp: 0 });
+
 		emitReadyWhenPlaybackSet(
 			socket,
 			spotifyPlayer,
@@ -204,6 +215,7 @@ export async function popped(
 		const playerStatus = await spotifyPlayer.getCurrentState();
 		if (!playerStatus.paused) {
 			await spotifyPlayer.pause();
+			pauseTimeStamp();
 			emitReadyWhenPaused(socket, spotifyPlayer, user);
 		} else {
 			moveTimeStamp(queue[0], setPercent, setCurrentTime);
@@ -224,6 +236,7 @@ export async function removeFirst(
 	setPercent,
 	setCurrentTime
 ) {
+	resetTimeStamp(setPercent, setCurrentTime);
 	if (queue[0].spotify !== '-1') {
 		let volume;
 		if (!playing) {
@@ -235,6 +248,7 @@ export async function removeFirst(
 		if (!playing) {
 			pausePlayer(spotifyPlayer);
 			setVolumeTo(spotifyPlayer, volume);
+			pauseTimeStamp();
 			emitReadyVolumeNotZero(socket, spotifyPlayer, user);
 		} else {
 			emitReadyWhenPlaybackSet(
@@ -349,9 +363,7 @@ function setListener(socket, player, user, setPercent, setCurrentTime) {
 			stateTrack.id === player.state.track_window.current_track.id
 		) {
 			socket.emit('mediaChange', { user });
-			percent = 0;
-			setPercent(0);
-			setCurrentTime(0);
+			resetTimeStamp(setPercent, setCurrentTime);
 			pauseTimeStamp();
 			player.removeListener('player_state_changed');
 		}
@@ -423,19 +435,29 @@ function setPlaybackChangeListener(spotifyPlayer) {
 // Timestamp
 let currentTime = 0;
 let percent = 0;
-let interval;
+let interval = null;
 function moveTimeStamp(song, setPercent, setCurrentTime) {
-	const INTERVAL = song.ui.duration / 100;
-	interval = setInterval(() => {
-		if (percent < 100) {
-			percent += 1;
-			currentTime += INTERVAL;
-			setCurrentTime(currentTime);
-			setPercent(percent);
-		}
-	}, INTERVAL);
+	if (!interval) {
+		const INTERVAL = song.ui.duration / 100;
+		interval = setInterval(() => {
+			if (percent < 100) {
+				percent += 1;
+				currentTime += INTERVAL;
+				setCurrentTime(currentTime);
+				setPercent(percent);
+			}
+		}, INTERVAL);
+	}
 }
 
 function pauseTimeStamp() {
 	clearInterval(interval);
+	interval = null;
+}
+
+function resetTimeStamp(setPercent, setCurrentTime) {
+	currentTime = 0;
+	percent = 0;
+	setPercent(0);
+	setCurrentTime(0);
 }

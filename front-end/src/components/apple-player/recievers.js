@@ -5,7 +5,9 @@ export function setupSocketRecievers(
 	user,
 	setPlaying,
 	playerStatus,
-	queue
+	queue,
+	setPercent,
+	setCurrentTime
 ) {
 	handlers.startUp(applePlayer, socket, user, playerStatus, queue, setPlaying);
 
@@ -13,7 +15,15 @@ export function setupSocketRecievers(
 		handlers.handleGetPlayerData(applePlayer, memberId, user, socket);
 	});
 	socket.on('play', (song) => {
-		handlers.handlePlay(applePlayer, socket, user, setPlaying, song);
+		handlers.handlePlay(
+			applePlayer,
+			socket,
+			user,
+			setPlaying,
+			song,
+			setPercent,
+			setCurrentTime
+		);
 	});
 	socket.on('pause', (song) => {
 		handlers.handlePause(applePlayer, socket, user, setPlaying, song);
@@ -22,10 +32,25 @@ export function setupSocketRecievers(
 		handlers.handleFirstSong(applePlayer, queue[0], socket, user);
 	});
 	socket.on('popped', (queue) => {
-		handlers.handlePopped(applePlayer, socket, queue[0], user, setPlaying);
+		handlers.handlePopped(
+			applePlayer,
+			socket,
+			queue[0],
+			user,
+			setPlaying,
+			setPercent,
+			setCurrentTime
+		);
 	});
 	socket.on('emptyQueue', () => {
-		handlers.handleEmptyQueue(applePlayer, socket, user, setPlaying);
+		handlers.handleEmptyQueue(
+			applePlayer,
+			socket,
+			user,
+			setPlaying,
+			setPercent,
+			setCurrentTime
+		);
 	});
 	socket.on('removeFirst', (queue, isPlaying) => {
 		handlers.handleRemoveFirst(
@@ -34,7 +59,9 @@ export function setupSocketRecievers(
 			user,
 			setPlaying,
 			queue[0],
-			isPlaying
+			isPlaying,
+			setPercent,
+			setCurrentTime
 		);
 	});
 }

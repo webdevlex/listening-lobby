@@ -42,7 +42,14 @@ export function setupSocketRecievers(
 	});
 
 	socket.on('emptyQueue', () => {
-		handlers.emptyQueue(socket, spotifyPlayer, setPlaying, user);
+		handlers.emptyQueue(
+			socket,
+			spotifyPlayer,
+			setPlaying,
+			user,
+			setPercent,
+			setCurrentTime
+		);
 	});
 
 	socket.on('getPlayerData', (memberId) => {
