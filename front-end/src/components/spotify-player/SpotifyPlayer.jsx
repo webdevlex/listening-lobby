@@ -12,7 +12,7 @@ import {
 	faHeart,
 } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as heartOutline } from '@fortawesome/free-regular-svg-icons';
-
+import LoadingSpinner from '../loading-spinner/LoadingSpinner';
 import './spotify-player.scss';
 
 function SpotifyPlayer({
@@ -151,8 +151,8 @@ function SpotifyPlayer({
 				)}
 			</div>
 			<div className='player-center'>
-				{buttonsClickable ? (
-					<>
+				<div className='player-controls-container'>
+					{buttonsClickable ? (
 						<div className='player-controls'>
 							<FontAwesomeIcon className='skip-icon' icon={faStepBackward} />
 							<button className='play-button' onClick={() => play()}>
@@ -168,10 +168,10 @@ function SpotifyPlayer({
 								icon={faStepForward}
 							/>
 						</div>
-					</>
-				) : (
-					<p>loading</p>
-				)}
+					) : (
+						<LoadingSpinner />
+					)}
+				</div>
 				<div className='time-bar-container'>
 					<p className='current-time time'>{formatDuration(currentTime)}</p>
 					<div className='time-bar'>
@@ -185,7 +185,7 @@ function SpotifyPlayer({
 				</div>
 			</div>
 			<div className='player-right'>
-				<FontAwesomeIcon className='action-icon' icon={faVolumeUp} />
+				<FontAwesomeIcon className='volume-icon' icon={faVolumeUp} />
 				<input
 					className='volume-slider'
 					type='range'

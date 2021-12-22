@@ -14,12 +14,14 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	width: fit-content;
 
 	input {
 		background-color: transparent;
 		border: none;
 		outline: none;
 		color: var(--gray-600);
+		width: 100%;
 	}
 
 	.submit-button {
@@ -74,6 +76,9 @@
 }
 
 @media (max-width: 1000px) {
+	.search-bar {
+		margin-left: 0;
+	}
 	.search-header .search-header-text {
 		padding-block: 8px;
 		border-top-left-radius: 10px;

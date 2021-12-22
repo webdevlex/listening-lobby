@@ -12,6 +12,7 @@ import {
 	faVolumeUp,
 	faHeart,
 } from '@fortawesome/free-solid-svg-icons';
+import LoadingSpinner from '../loading-spinner/LoadingSpinner';
 import { faHeart as heartOutline } from '@fortawesome/free-regular-svg-icons';
 
 function ApplePlayer({
@@ -138,15 +139,15 @@ function ApplePlayer({
 				)}
 			</div>
 			<div className='player-center'>
-				{buttonsClickable ? (
-					<>
+				<div className='player-controls-container'>
+					{buttonsClickable ? (
 						<div className='player-controls'>
 							<FontAwesomeIcon className='skip-icon' icon={faStepBackward} />
 							<button className='play-button' onClick={() => play()}>
 								{playing ? (
-									<FontAwesomeIcon className='player-icon' icon={faPause} />
+									<FontAwesomeIcon className='action-icon' icon={faPause} />
 								) : (
-									<FontAwesomeIcon className='player-icon' icon={faPlay} />
+									<FontAwesomeIcon className='action-icon' icon={faPlay} />
 								)}
 							</button>
 							<FontAwesomeIcon
@@ -155,10 +156,10 @@ function ApplePlayer({
 								icon={faStepForward}
 							/>
 						</div>
-					</>
-				) : (
-					<p>loading</p>
-				)}
+					) : (
+						<LoadingSpinner />
+					)}
+				</div>
 				<div className='time-bar-container'>
 					<p className='current-time time'>{formatDuration(currentTime)}</p>
 					<div className='time-bar'>

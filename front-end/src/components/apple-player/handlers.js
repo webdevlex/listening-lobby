@@ -218,19 +218,25 @@ export async function handleRemoveFirst(
 
 // Ready emitters
 function emitReadyWhenPlaying(socket, applePlayer, user) {
-	socket.emit('userReady', { user });
+	delay(() => socket.emit('userReady', { user }));
 }
 
 function emitReadyWhenPaused(socket, applePlayer, user) {
-	socket.emit('userReady', { user });
+	delay(() => socket.emit('userReady', { user }));
 }
 
 function emitReadyWhenQueueSet(socket, applePlayer, user) {
-	socket.emit('userReady', { user });
+	delay(() => socket.emit('userReady', { user }));
 }
 
 function emitUserReady(socket, user) {
-	socket.emit('userReady', { user });
+	delay(() => socket.emit('userReady', { user }));
+}
+
+function delay(func) {
+	setTimeout(() => {
+		func();
+	}, 500);
 }
 
 // Timestamp

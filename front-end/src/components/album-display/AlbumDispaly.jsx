@@ -3,6 +3,7 @@ import { SocketContext } from '../../context/SocketContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import './album-display.scss';
+import LoadingSpinner from '../loading-spinner/LoadingSpinner';
 
 export default function AlbumDispaly({
 	albums,
@@ -43,7 +44,7 @@ export default function AlbumDispaly({
 									</div>
 								)
 							) : (
-								<div className='loading'>loading</div>
+								<LoadingSpinner />
 							)}
 						</div>
 					</div>

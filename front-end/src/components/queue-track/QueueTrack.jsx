@@ -10,6 +10,7 @@ import {
 import appleLogo from '../../assets/images/apple-music-logo-red.svg';
 import spotifyLogo from '../../assets/images/spotify-logo-red.svg';
 import PlayingAnimation from '../playing-animation/PlayingAnimation';
+import LoadingSpinner from '../loading-spinner/LoadingSpinner';
 import './queue-track.scss';
 
 export default function QueueTrack({
@@ -134,7 +135,7 @@ export default function QueueTrack({
 						/>
 					)
 				) : (
-					<p>loading</p>
+					<LoadingSpinner />
 				)}
 			</div>
 			<div className='remove-button'>
@@ -145,7 +146,7 @@ export default function QueueTrack({
 						onClick={() => remove(index)}
 					/>
 				) : (
-					<p>loading</p>
+					<LoadingSpinner />
 				)}
 			</div>
 		</>

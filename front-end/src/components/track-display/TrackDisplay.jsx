@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { SocketContext } from '../../context/SocketContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import LoadingSpinner from '../loading-spinner/LoadingSpinner';
 import './track-display.scss';
 
 export default function TrackDisplay({
@@ -42,7 +43,7 @@ export default function TrackDisplay({
 									</div>
 								)
 							) : (
-								<div className='loading'>loading</div>
+								<LoadingSpinner />
 							)}
 						</div>
 					</div>

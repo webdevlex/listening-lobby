@@ -69,6 +69,14 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	height: 70px;
+}
+
+.player-controls-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 40px;
 }
 
 .player-controls {
@@ -128,6 +136,10 @@
 	justify-content: flex-end;
 	align-items: center;
 	width: 35%;
+}
+
+.volume-icon {
+	margin-right: 10px;
 }
 
 .volume-slider {
