@@ -11,7 +11,7 @@ export default function InvitePopup({
 }) {
 	const [copied, setCopied] = useState(false);
 	const link = `http://localhost:3000/choose-service?action=join&lobby_id=${user.lobby_id}`;
-	const [inputValue, setInputValue] = useState(link);
+	const [inputValue] = useState(link);
 
 	function handleOutsideClick(e) {
 		if (e.target.className === 'popup') {

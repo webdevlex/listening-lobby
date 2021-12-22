@@ -9,12 +9,11 @@ export default function AlbumPopup({
 	setDisplayAlbumQuestion,
 	albumMissingOn,
 	user,
-	addedToQueue,
 }) {
 	const [socket] = useContext(SocketContext);
 
 	function handleYes(user) {
-		socket.emit('forceAlbum', { user, addedToQueue });
+		socket.emit('forceAlbum', { user });
 		setDisplayAlbumQuestion(false);
 	}
 

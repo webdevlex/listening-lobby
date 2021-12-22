@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const INTERVAL = 500;
+let firstPlaybackSet = true;
 
 export async function setupPlayback(
 	spotifyPlayer,
@@ -12,7 +13,8 @@ export async function setupPlayback(
 	setLoading,
 	setPlaying,
 	setPercent,
-	setCurrentTime
+	setCurrentTime,
+	setPlayerActive
 ) {
 	setPlaybackChangeListener(spotifyPlayer);
 
@@ -21,25 +23,25 @@ export async function setupPlayback(
 
 	if (validPlayerStatus && queue.length > 0 && queue[0].spotify !== '-1') {
 		// Turn off volume if lobby play status is paused so we dont here the song when the playback changes
-		let volume;
-		if (playerStatus.paused) {
-			volume = await setVolumeToZero(user, device_id);
-		}
 
 		// Switch playback to web player
 		await setPlaybackTo(device_id, user, queue[0], playerStatus);
+
+		firstPlaybackSet = false;
 
 		// Wait until the playback actually changes before performing actions
 		let interval = setInterval(async () => {
 			// Checks if playback is on web player
 			if (await spotifyPlayer.getCurrentState()) {
+				setPlayerActive(true);
 				// Now playing on web player
+				// Set initial volume
+				setVolumeTo(spotifyPlayer, 0.1);
 				// If lobby player status is paused then pause player
 				if (playerStatus.paused) {
 					// pause player
 					pausePlayer(spotifyPlayer);
-					// Set volume back to original
-					setVolumeTo(spotifyPlayer, volume);
+
 					// let backend know user is ready when their player is offically paused
 					emitReadyWhenPaused(socket, spotifyPlayer, user);
 				}
@@ -160,14 +162,17 @@ export async function firstSong(
 	queue,
 	user,
 	setPercent,
-	setCurrentTime
+	setCurrentTime,
+	setPlayerActive
 ) {
 	if (queue[0].spotify !== '-1') {
-		const volume = await setVolumeToZero(user, device_id);
+		let volume = await setVolumeToZero(user, device_id);
+		volume = firstPlaybackSet ? 0.1 : volume;
 		await setPlaybackTo(device_id, user, queue[0], { timestamp: 0 });
 
 		let interval = setInterval(async () => {
 			if (await spotifyPlayer.getCurrentState()) {
+				setPlayerActive(true);
 				pausePlayer(spotifyPlayer);
 				setVolumeTo(spotifyPlayer, volume);
 				emitReadyVolumeNotZero(socket, spotifyPlayer, user);
@@ -437,8 +442,8 @@ let currentTime = 0;
 let percent = 0;
 let interval = null;
 function moveTimeStamp(song, setPercent, setCurrentTime) {
+	const INTERVAL = song.ui.duration / 100;
 	if (!interval) {
-		const INTERVAL = song.ui.duration / 100;
 		interval = setInterval(() => {
 			if (percent < 100) {
 				percent += 1;

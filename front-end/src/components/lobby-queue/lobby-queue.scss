@@ -1,6 +1,7 @@
 .lobby-queue {
 	margin-block: 10px;
-	overflow-y: auto;
+	overflow-y: scroll;
+	overflow-x: hidden;
 }
 
 .queue-track {

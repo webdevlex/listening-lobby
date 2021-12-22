@@ -123,6 +123,8 @@ async function addSong(io, socket, data) {
 
 	// Send front end the data for ui, spotify player, and apple player
 	io.to(data.user.lobby_id).emit('addSong', lobbyRef.queue);
+	io.to(socket.id).emit('addCheck', data.songData.uniId);
+	console.log(data);
 	if (lobbyRef.queue.length === 1) {
 		io.to(data.user.lobby_id).emit('firstSong', lobbyRef.queue);
 	} else {
@@ -158,6 +160,8 @@ async function addAlbum(io, socket, data) {
 
 		// Send front end the data for ui, spotify player, and apple player
 		io.to(data.user.lobby_id).emit('addSong', lobbyRef.queue);
+		// console.log(data);
+		io.to(socket.id).emit('addCheck', data.albumData.id);
 
 		if (firstSong) {
 			io.to(data.user.lobby_id).emit('firstSong', lobbyRef.queue);
@@ -326,7 +330,7 @@ function forceAlbum(io, socket, { user, addedToQueue }) {
 	const albumHold = lobby.getAndRemoveHold(user.lobby_id);
 	lobby.addAlbumToLobby(user.lobby_id, albumHold);
 	io.to(user.lobby_id).emit('addSong', lobbyRef.queue);
-	io.to(socket.id).emit('addCheckToAlbum', albumHold.albumId, addedToQueue);
+	io.to(socket.id).emit('addCheck', albumHold.albumId);
 
 	if (firstSong) {
 		io.to(user.lobby_id).emit('firstSong', lobbyRef.queue);

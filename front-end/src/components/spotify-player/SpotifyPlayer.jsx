@@ -36,6 +36,7 @@ function SpotifyPlayer({
 	const song = queue[0];
 	const [percent, setPercent] = useState(0);
 	const [currentTime, setCurrentTime] = useState(0);
+	const [playerActive, setPlayerActive] = useState(false);
 
 	useEffect(() => {
 		if (!ran) {
@@ -49,7 +50,8 @@ function SpotifyPlayer({
 				setLoading,
 				setPlaying,
 				setPercent,
-				setCurrentTime
+				setCurrentTime,
+				setPlayerActive
 			);
 		}
 	}, [
@@ -66,7 +68,7 @@ function SpotifyPlayer({
 	]);
 
 	let updateVolume = (e, data) => {
-		// spotifyPlayer.player.volume = e.target.value / 100;
+		spotifyPlayer.setVolume(e.target.value / 100);
 		setVolume(data);
 
 		// Animation
@@ -116,21 +118,23 @@ function SpotifyPlayer({
 							<p className='simple-text track-title'>{song.ui.trackName}</p>
 							<p className='simple-text track-artists'>{song.ui.artists}</p>
 						</div>
-						{likedSongs.includes(queue[0].ui.id) ? (
-							<FontAwesomeIcon className='like-icon' icon={faHeart} />
-						) : (
-							<FontAwesomeIcon
-								className='like-icon'
-								icon={heartOutline}
-								onClick={() => {
-									addSongToLibrary(
-										queue[0].spotify,
-										queue[0].apple,
-										queue[0].ui.id
-									);
-								}}
-							/>
-						)}
+						<div className='like-icon-container'>
+							{likedSongs.includes(queue[0].ui.id) ? (
+								<FontAwesomeIcon className='like-icon' icon={faHeart} />
+							) : (
+								<FontAwesomeIcon
+									className='like-icon'
+									icon={heartOutline}
+									onClick={() => {
+										addSongToLibrary(
+											queue[0].spotify,
+											queue[0].apple,
+											queue[0].ui.id
+										);
+									}}
+								/>
+							)}
+						</div>
 					</>
 				) : (
 					<>
@@ -189,6 +193,7 @@ function SpotifyPlayer({
 					max='100'
 					defaultValue={volume}
 					onChange={updateVolume}
+					disabled={playerActive ? false : true}
 				/>
 			</div>
 		</div>
