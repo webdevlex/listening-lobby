@@ -80,3 +80,10 @@
 		color: rgb(87, 211, 87);
 	}
 }
+
+@media (max-width: 1000px) {
+	.search-tracks-display {
+		width: 100%;
+		padding-left: 10px;
+	}
+}

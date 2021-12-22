@@ -14,6 +14,7 @@ let addEventListener = (applePlayer, socket, user, toAdd) => {
 		});
 		applePlayer.player.addEventListener('playbackBitrateDidChange', () => {
 			if (applePlayer.bitrate === -1) {
+				localStorage.setItem('playback', JSON.stringify({ changed: true }));
 				window.location.replace('http://localhost:3000');
 			}
 		});

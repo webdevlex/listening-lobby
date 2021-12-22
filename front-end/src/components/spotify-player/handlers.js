@@ -360,6 +360,7 @@ async function setVolumeTo(spotifyPlayer, volume) {
 	}, INTERVAL);
 }
 
+// Listener
 function setListener(socket, player, user, setPercent, setCurrentTime) {
 	player.addListener('player_state_changed', (state) => {
 		const stateTrack = state.track_window.previous_tracks[0] || { id: -1 };
@@ -432,6 +433,7 @@ async function emitReadyWhenPlaybackSet(
 function setPlaybackChangeListener(spotifyPlayer) {
 	spotifyPlayer.addListener('player_state_changed', (state) => {
 		if (!state) {
+			localStorage.setItem('playback', JSON.stringify({ changed: true }));
 			window.location.replace('http://localhost:3000');
 		}
 	});

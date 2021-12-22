@@ -20,34 +20,36 @@ export default function TrackDisplay({
 
 	return (
 		<div className='search-tracks-display'>
-			{hasTracks
-				? tracks.map((track, index) => (
-						<div key={index} className='results-display'>
-							<div className='album-cover-container'>
-								<img src={track.trackCover} alt='' />
-							</div>
-							<div className='text'>
-								<p className='title'>{track.trackName}</p>
-								<p className='simple-text artists'>{track.artists}</p>
-							</div>
-							<div className='search-result-action-icon'>
-								{buttonsClickable ? (
-									beenAdded.current.includes(track.uniId) ? (
-										<FontAwesomeIcon className='check-icon' icon={faCheck} />
-									) : (
-										<div
-											className='add-button'
-											onClick={() => handleSongClick(track)}>
-											+
-										</div>
-									)
-								) : (
-									<div className='loading'>loading</div>
-								)}
-							</div>
+			{hasTracks ? (
+				tracks.map((track, index) => (
+					<div key={index} className='results-display'>
+						<div className='album-cover-container'>
+							<img src={track.trackCover} alt='' />
 						</div>
-				  ))
-				: null}
+						<div className='text'>
+							<p className='title'>{track.trackName}</p>
+							<p className='simple-text artists'>{track.artists}</p>
+						</div>
+						<div className='search-result-action-icon'>
+							{buttonsClickable ? (
+								beenAdded.current.includes(track.uniId) ? (
+									<FontAwesomeIcon className='check-icon' icon={faCheck} />
+								) : (
+									<div
+										className='add-button'
+										onClick={() => handleSongClick(track)}>
+										+
+									</div>
+								)
+							) : (
+								<div className='loading'>loading</div>
+							)}
+						</div>
+					</div>
+				))
+			) : (
+				<p className='simple-text'>No Results . . .</p>
+			)}
 		</div>
 	);
 }

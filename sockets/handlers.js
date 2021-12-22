@@ -1,6 +1,8 @@
 const lobby = require('./lobby');
 const helpers = require('./helpers');
 
+const LOBBY_MAX_CAPACITY = 8;
+
 // ========
 // = Join =
 // ========
@@ -24,27 +26,34 @@ async function joinLobby(io, socket, data) {
 		io.to(lobby_id).emit('setLobbyInfo', members, messages);
 		io.to(lobby_id).emit('doneLoading', {});
 		io.to(lobby_id).emit('setAdmin', adminData.user_id);
-	}
-	// Join existing lobby
-	else {
-		lobby.joinLobby(data);
+	} else {
 		const lobbyRef = lobby.getLobbyById(lobby_id);
-		io.to(lobby_id).emit('deactivateButtons');
+		lobby.joinLobby(data);
 
-		const members = lobby.getMembers(lobby_id);
-		const messages = lobby.getLobbyMessages(lobby_id);
-		// Send new lobby data back to members
-		// TODO send queue and ui queue to designated player
-		io.to(lobby_id).emit('setLobbyInfo', members, messages);
-		io.to(socket.id).emit('addSong', lobbyRef.queue);
+		// If not exceeding the limit then join existing lobby
+		if (lobbyRef.users.length < LOBBY_MAX_CAPACITY) {
+			io.to(lobby_id).emit('deactivateButtons');
 
-		if (!lobbyRef.loading) {
-			lobby.setLobbyLoading(lobby_id, true);
-			socket.broadcast.emit('getUserReady');
+			const members = lobby.getMembers(lobby_id);
+			const messages = lobby.getLobbyMessages(lobby_id);
+			// Send new lobby data back to members
+			// TODO send queue and ui queue to designated player
+			io.to(lobby_id).emit('setLobbyInfo', members, messages);
+			io.to(socket.id).emit('addSong', lobbyRef.queue);
+
+			if (!lobbyRef.loading) {
+				lobby.setLobbyLoading(lobby_id, true);
+				socket.broadcast.emit('getUserReady');
+			}
+
+			const adminData = lobby.getAdminData(data);
+			io.to(lobby_id).emit('setAdmin', adminData.user_id);
+			io.to(adminData.user_id).emit('getPlayerData', socket.id);
 		}
-
-		const adminData = lobby.getAdminData(data);
-		io.to(adminData.user_id).emit('getPlayerData', socket.id);
+		// Limit reached dont allow them to join
+		else {
+			io.to(socket.id).emit('lobbyMaxReached');
+		}
 	}
 }
 
@@ -71,6 +80,8 @@ async function disconnect(io, socket) {
 
 		if (lobbyRef.users[0].privilege !== 'admin') {
 			lobby.setFirstMemberAsAdmin(i);
+			const adminData = lobby.getAdminData({ lobby_id: lobbyRef.lobby_id });
+			io.to(lobbyRef.lobby_id).emit('setAdmin', adminData.user_id);
 		}
 
 		// Check if the person left while buttons were loading

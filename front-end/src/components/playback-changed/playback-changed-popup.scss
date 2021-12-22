@@ -1,0 +1,51 @@
+.playback-popup-container {
+	border-radius: 25px;
+	background-color: var(--gray-300);
+	color: white;
+	width: 700px;
+	height: fit-content;
+	display: flex;
+	padding: 30px;
+	align-items: center;
+	flex-direction: column;
+	position: relative;
+}
+
+.warning-icon-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	.warning-icon {
+		width: 80px !important;
+		height: 80px;
+		color: rgb(221, 60, 60);
+		z-index: 1;
+	}
+
+	.exclamation-color {
+		width: 20px;
+		height: 55px;
+		border-radius: 25px;
+		background-color: white;
+		position: absolute;
+	}
+}
+
+.playback-warning-text {
+	text-align: center;
+	margin-top: 10px;
+	margin-bottom: 25px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+
+	.main-text {
+		font-size: 32px;
+		font-weight: 700;
+		margin-bottom: 10px;
+	}
+	.sub-text {
+		font-size: 18px;
+		color: var(--gray-600);
+	}
+}

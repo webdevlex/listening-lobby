@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faSearch } from '@fortawesome/free-solid-svg-icons';
 import './search-form.scss';
 
-function UniSearchForm({ setTracks, setAlbums, user }) {
+function UniSearchForm({ setTracks, setAlbums, user, selected, setSelected }) {
 	const { register, handleSubmit, setValue, getValues } = useForm({
 		defaultValues: {
 			search: 'Search',
@@ -57,8 +57,20 @@ function UniSearchForm({ setTracks, setAlbums, user }) {
 				</button>
 			</div>
 			<div className='search-header'>
-				<p className='search-header-text track-title'>Tracks</p>
-				<p className='search-header-text album-title'>Albums</p>
+				<p
+					className={`search-header-text track-title ${
+						selected === 'tracks' ? 'selected' : null
+					}`}
+					onClick={() => setSelected('tracks')}>
+					Tracks
+				</p>
+				<p
+					className={`search-header-text album-title ${
+						selected === 'albums' ? 'selected' : null
+					}`}
+					onClick={() => setSelected('albums')}>
+					Albums
+				</p>
 			</div>
 		</form>
 	);

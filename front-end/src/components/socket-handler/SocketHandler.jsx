@@ -46,6 +46,11 @@ function SocketHandler({
 				setMessages(lobbyMessages);
 			});
 
+			socket.on('lobbyMaxReached', () => {
+				localStorage.setItem('capacity', JSON.stringify({ maxReached: true }));
+				window.location.replace('http://localhost:3000');
+			});
+
 			socket.on('setLobbyInfo', (members, lobbyMessages) => {
 				setMembers(members);
 				setMessages(lobbyMessages);

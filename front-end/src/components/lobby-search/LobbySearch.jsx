@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import UniSearch from '../uni-search/UniSearch';
 import UniSearchForm from '../uni-search-form/UniSearchForm';
 import './lobby-search.scss';
@@ -12,6 +12,8 @@ export default function LobbySearch({
 	setTracks,
 	beenAdded,
 }) {
+	const [selected, setSelected] = useState('tracks');
+
 	useEffect(() => {
 		return () => {
 			beenAdded.current = [];
@@ -20,7 +22,13 @@ export default function LobbySearch({
 
 	return (
 		<div className='search-section'>
-			<UniSearchForm setAlbums={setAlbums} setTracks={setTracks} user={user} />
+			<UniSearchForm
+				setAlbums={setAlbums}
+				setTracks={setTracks}
+				user={user}
+				selected={selected}
+				setSelected={setSelected}
+			/>
 			<UniSearch
 				user={user}
 				buttonsClickable={buttonsClickable}
@@ -29,6 +37,7 @@ export default function LobbySearch({
 				tracks={tracks}
 				setTracks={setTracks}
 				beenAdded={beenAdded}
+				selected={selected}
 			/>
 		</div>
 	);
