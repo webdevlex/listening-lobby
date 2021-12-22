@@ -11,7 +11,6 @@ let defaultSearchResults = {
 };
 
 async function search(searchName, token) {
-  let searchResults;
   const LIMIT = 10;
   const endPoint = `https://api.music.apple.com/v1/catalog/us/search?term=${searchName}&limit=${LIMIT}&types=songs,albums`;
   const config = {
@@ -22,18 +21,16 @@ async function search(searchName, token) {
 
   try {
     const res = await axios.get(endPoint, config);
-    searchResults =
+    let searchResults =
       res.data.meta.results.order.length > 0
         ? res.data.results
         : defaultSearchResults;
+    !searchResults.albums ? (searchResults.albums = { data: [] }) : null;
+    !searchResults.songs ? (searchResults.songs = { data: [] }) : null;
 
     return searchResults;
   } catch (err) {
-    console.log(
-      "Apple Api Error:",
-      err.response.status,
-      err.response.statusText
-    );
+    return defaultSearchResults;
   }
 }
 
@@ -71,7 +68,7 @@ async function getAndFormatSongData(
   token
 ) {
   const searchResult = await search(`${trackName} ${artists}`, token);
-  if (!searchResult) return searchResult;
+
   songMatchTesting(searchResult, trackName, artists, uniId, duration);
   let songMatch = searchResult.songs.data.find(
     (song) =>
@@ -202,13 +199,7 @@ async function appleAlbumSearch(albumName, token) {
     const res = await axios.get(endPoint, config);
 
     return res.data.results.albums.data;
-  } catch (err) {
-    console.log(
-      "Apple Api Error:",
-      err.response.status,
-      err.response.statusText
-    );
-  }
+  } catch (err) {}
 }
 function compareSongsInAlbumByDuration(dataForApple, dataForSpotify) {
   let appleDuration = 0;
