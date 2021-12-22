@@ -13,7 +13,7 @@ function SocketHandler({
 	setTracks,
 	setDisplayAlbumQuestion,
 	setAlbumMissingOn,
-	setAddedToQueue,
+	beenAdded,
 }) {
 	const params = new URLSearchParams(window.location.search);
 	const token = params.get('token');
@@ -80,8 +80,8 @@ function SocketHandler({
 				setTracks(tracks);
 			});
 
-			socket.on('addCheckToAlbum', (albumId, addedToQueue) => {
-				setAddedToQueue([...addedToQueue, albumId]);
+			socket.on('addCheck', (albumId) => {
+				beenAdded.current = [...beenAdded.current, albumId];
 			});
 		}
 	}, [
@@ -99,7 +99,7 @@ function SocketHandler({
 		setTracks,
 		setDisplayAlbumQuestion,
 		setAlbumMissingOn,
-		setAddedToQueue,
+		beenAdded,
 	]);
 
 	return null;

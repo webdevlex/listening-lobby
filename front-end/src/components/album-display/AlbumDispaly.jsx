@@ -8,7 +8,7 @@ export default function AlbumDispaly({
 	albums,
 	user,
 	buttonsClickable,
-	addedToQueue,
+	beenAdded,
 }) {
 	const [socket] = useContext(SocketContext);
 
@@ -30,9 +30,10 @@ export default function AlbumDispaly({
 								<p className='title'>{album.albumName}</p>
 								<p className='simple-text artists'>{album.artists}</p>
 							</div>
+
 							<div className='search-result-action-icon'>
 								{buttonsClickable ? (
-									addedToQueue.includes(album.id) ? (
+									beenAdded.current.includes(album.id) ? (
 										<FontAwesomeIcon className='check-icon' icon={faCheck} />
 									) : (
 										<div

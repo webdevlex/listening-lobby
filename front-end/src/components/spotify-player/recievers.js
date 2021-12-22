@@ -10,7 +10,8 @@ export function setupSocketRecievers(
 	setLoading,
 	setPlaying,
 	setPercent,
-	setCurrentTime
+	setCurrentTime,
+	setPlayerActive
 ) {
 	handlers.setupPlayback(
 		spotifyPlayer,
@@ -22,7 +23,8 @@ export function setupSocketRecievers(
 		setLoading,
 		setPlaying,
 		setPercent,
-		setCurrentTime
+		setCurrentTime,
+		setPlayerActive
 	);
 
 	socket.on('play', (song) => {
@@ -64,7 +66,8 @@ export function setupSocketRecievers(
 			queue,
 			user,
 			setPercent,
-			setCurrentTime
+			setCurrentTime,
+			setPlayerActive
 		);
 	});
 

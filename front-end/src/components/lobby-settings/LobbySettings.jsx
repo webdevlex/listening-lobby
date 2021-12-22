@@ -33,12 +33,12 @@ export default function LobbySettings({
 				<FontAwesomeIcon className='settings-icon' icon={faUsers} />
 				<p className='simple-text'>Invite Friends</p>
 			</div>
-			<div
+			{/* <div
 				className='settings-button'
 				onClick={() => setCenterDisplay('settings')}>
 				<FontAwesomeIcon className='settings-icon' icon={faTools} />
 				<p className='simple-text'>Settings</p>
-			</div>
+			</div> */}
 		</div>
 	);
 }

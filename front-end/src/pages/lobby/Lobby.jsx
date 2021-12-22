@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import DesignatedPlayer from '../../components/designated-player/DesignatedPlayer';
 import LobbyMembers from '../../components/lobby-members/LobbyMembers';
 import LobbyMessages from '../../components/lobby-messages/LobbyMessages';
@@ -34,7 +34,7 @@ function Lobby() {
 	const [displayAlbumQuestion, setDisplayAlbumQuestion] = useState(false);
 	const [displayInvitePopup, setDisplayInvitePopup] = useState(false);
 	const [albumMissingOn, setAlbumMissingOn] = useState(null);
-	const [addedToQueue, setAddedToQueue] = useState([]);
+	const beenAdded = useRef([]);
 
 	// Loaders
 	const [buttonsClickable, setButtonsClickable] = useState(true);
@@ -66,7 +66,7 @@ function Lobby() {
 				setTracks={setTracks}
 				setDisplayAlbumQuestion={setDisplayAlbumQuestion}
 				setAlbumMissingOn={setAlbumMissingOn}
-				setAddedToQueue={setAddedToQueue}
+				beenAdded={beenAdded}
 			/>
 
 			{!playerStatus ? (
@@ -96,7 +96,6 @@ function Lobby() {
 								setDisplayAlbumQuestion={setDisplayAlbumQuestion}
 								albumMissingOn={albumMissingOn}
 								user={user}
-								addedToQueue={addedToQueue}
 							/>
 							<InvitePopup
 								displayInvitePopup={displayInvitePopup}
@@ -129,7 +128,7 @@ function Lobby() {
 									setTracks={setTracks}
 									playing={playing}
 									lobbyId={user.lobby_id}
-									addedToQueue={addedToQueue}
+									beenAdded={beenAdded}
 								/>
 							</div>
 						</>

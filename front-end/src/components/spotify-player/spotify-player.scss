@@ -12,10 +12,10 @@
 	display: flex;
 	width: 35%;
 	align-items: center;
-	overflow: hidden;
 
 	.album-cover-container {
 		width: 60px;
+		min-width: 60px;
 		height: 60px;
 	}
 
@@ -38,11 +38,13 @@
 
 	.text {
 		margin-left: 15px;
+		overflow: hidden;
 	}
 
 	.track-title {
 		font-weight: 500;
 		color: white;
+		width: fit-content;
 		white-space: nowrap;
 	}
 
@@ -51,8 +53,13 @@
 		white-space: nowrap;
 	}
 
+	.like-icon-container {
+		display: flex;
+		justify-content: flex-end;
+		width: 50px;
+		min-width: 50px;
+	}
 	.like-icon {
-		margin-left: 40px;
 	}
 }
 

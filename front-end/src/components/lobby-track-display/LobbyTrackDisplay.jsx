@@ -1,8 +1,28 @@
-import React from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import './lobby-track-display.scss';
 
 export default function LobbyTrackDisplay({ queue }) {
 	const song = queue[0];
+	const [titleOverflow, setTitleOverflow] = useState(false);
+	const [artistsOverflow, setArtistsOverflow] = useState(false);
+	const parent = useRef();
+	const title = useRef();
+	const artists = useRef();
+
+	useLayoutEffect(() => {
+		function updateSize() {
+			const parentWidth = parent.current.offsetWidth;
+			const titleWidth = title.current.offsetWidth;
+			const artistsWidth = artists.current.offsetWidth;
+
+			setTitleOverflow(parentWidth <= titleWidth);
+			setArtistsOverflow(parentWidth <= artistsWidth);
+		}
+		window.addEventListener('resize', updateSize);
+		updateSize();
+		return () => window.removeEventListener('resize', updateSize);
+	}, [parent, title, artists, queue]);
+
 	return (
 		<div className='track-display-wrapper'>
 			<div className='track-display-top'>
@@ -11,9 +31,31 @@ export default function LobbyTrackDisplay({ queue }) {
 						<div className='track-display-left'>
 							<img className='track-cover' src={song.ui.trackCover} alt='' />
 						</div>
-						<div className='track-display-right'>
-							<p className='track-title'>{song.ui.trackName}</p>
-							<p className='artists'>{song.ui.artists}</p>
+
+						<div ref={parent} className='track-display-right'>
+							<div
+								className={`track-title-container ${
+									titleOverflow ? 'slide' : null
+								}`}>
+								<p ref={title} className='track-title'>
+									{song.ui.trackName}
+								</p>
+								{titleOverflow ? (
+									<p className='track-title'>{song.ui.trackName}</p>
+								) : null}
+							</div>
+
+							<div
+								className={`artists-container ${
+									artistsOverflow ? 'slide' : null
+								}`}>
+								<p ref={artists} className='artists'>
+									{song.ui.artists}
+								</p>
+								{artistsOverflow ? (
+									<p className='artists'>{song.ui.artists}</p>
+								) : null}
+							</div>
 						</div>
 					</>
 				) : (
@@ -21,20 +63,42 @@ export default function LobbyTrackDisplay({ queue }) {
 						<div className='track-display-left'>
 							<p className='default-album'>?</p>
 						</div>
-						<div className='track-display-right'>
-							<p className='track-title'>No Songs Added</p>
-							<p className='artists'>Search and add songs to queue!</p>
+						<div ref={parent} className='track-display-right'>
+							<div
+								className={`track-title-container ${
+									titleOverflow ? 'slide' : null
+								}`}>
+								<p ref={title} className='track-title'>
+									No Songs Added
+								</p>
+								{titleOverflow ? (
+									<p className='track-title'>No Songs Added</p>
+								) : null}
+							</div>
+							<div
+								className={`artists-container ${
+									artistsOverflow ? 'slide' : null
+								}`}>
+								<p ref={artists} className='artists'>
+									Search and add songs to queue!
+								</p>
+								{artistsOverflow ? (
+									<p className='artists'>Search and add songs to queue!</p>
+								) : null}
+							</div>
 						</div>
 					</>
 				)}
 			</div>
-			<div className='queue-header'>
-				<p className='header-text track-index'>#</p>
-				<p className='header-text track-title'>Title</p>
-				<p className='header-text track-user'>Added By</p>
-				<p className='header-text track-duration'>duration</p>
-				<p className='header-text track-like'>Like</p>
-				<p className='header-text track-remove'>Remove</p>
+			<div className='queue-header-wrapper'>
+				<div className='queue-header'>
+					<p className='header-text track-index'>#</p>
+					<p className='header-text track-title'>Title</p>
+					<p className='header-text track-user'>Added By</p>
+					<p className='header-text track-duration'>duration</p>
+					<p className='header-text track-like'>Like</p>
+					<p className='header-text track-remove'>Remove</p>
+				</div>
 			</div>
 		</div>
 	);

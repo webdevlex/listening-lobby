@@ -8,7 +8,7 @@ export default function TrackDisplay({
 	tracks,
 	user,
 	buttonsClickable,
-	addedToQueue,
+	beenAdded,
 }) {
 	const [socket] = useContext(SocketContext);
 
@@ -32,7 +32,7 @@ export default function TrackDisplay({
 							</div>
 							<div className='search-result-action-icon'>
 								{buttonsClickable ? (
-									addedToQueue.includes(track.uniId) ? (
+									beenAdded.current.includes(track.uniId) ? (
 										<FontAwesomeIcon className='check-icon' icon={faCheck} />
 									) : (
 										<div

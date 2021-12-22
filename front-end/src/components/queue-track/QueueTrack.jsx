@@ -7,8 +7,8 @@ import {
 	faHeart as heartOutline,
 	faTrashAlt,
 } from '@fortawesome/free-regular-svg-icons';
-import appleLogo from '../../assets/images/apple-music-logo.svg';
-import spotifyLogo from '../../assets/images/spotify-logo.svg';
+import appleLogo from '../../assets/images/apple-music-logo-red.svg';
+import spotifyLogo from '../../assets/images/spotify-logo-red.svg';
 import PlayingAnimation from '../playing-animation/PlayingAnimation';
 import './queue-track.scss';
 
