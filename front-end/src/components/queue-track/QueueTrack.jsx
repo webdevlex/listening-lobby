@@ -21,6 +21,7 @@ export default function QueueTrack({
 	user,
 	playing,
 	hover,
+	hoverIndex,
 }) {
 	const { ui, apple, spotify } = song;
 	const { apple: appleContext } = useContext(PlayersContext);
@@ -41,7 +42,6 @@ export default function QueueTrack({
 
 			setTitleOverflow(parentWidth <= titleWidth);
 			setArtistsOverflow(parentWidth <= artistsWidth);
-			console.log(parentWidth, titleWidth);
 		}
 		window.addEventListener('resize', updateSize);
 		updateSize();
@@ -81,7 +81,12 @@ export default function QueueTrack({
 							{ui.trackName}
 						</p>
 						{titleOverflow ? (
-							<p className={`three-dots ${hover ? 'hover' : null}`}>...</p>
+							<p
+								className={`three-dots ${
+									hover && hoverIndex === index ? 'hover' : null
+								}`}>
+								...
+							</p>
 						) : null}
 					</div>
 					<div className='artists-title-container'>
@@ -89,7 +94,12 @@ export default function QueueTrack({
 							{ui.artists}
 						</p>
 						{artistsOverflow ? (
-							<p className={`three-dots ${hover ? 'hover' : null}`}>...</p>
+							<p
+								className={`three-dots ${
+									hover && hoverIndex === index ? 'hover' : null
+								}`}>
+								...
+							</p>
 						) : null}
 					</div>
 				</div>

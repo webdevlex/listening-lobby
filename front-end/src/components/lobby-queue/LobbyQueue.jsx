@@ -12,6 +12,12 @@ export default function LobbyQueue({
 }) {
 	const queueHasItems = queue[0];
 	const [hover, setHover] = useState(false);
+	const [hoverIndex, setHoverIndex] = useState(false);
+
+	function handleHover(index) {
+		setHoverIndex(index);
+		setHover(true);
+	}
 
 	return (
 		<div className='lobby-queue'>
@@ -20,7 +26,7 @@ export default function LobbyQueue({
 					<div
 						className='queue-track'
 						key={index}
-						onMouseOver={() => setHover(true)}
+						onMouseOver={() => handleHover(index)}
 						onMouseOut={() => setHover(false)}>
 						<QueueTrack
 							song={song}
@@ -31,6 +37,7 @@ export default function LobbyQueue({
 							user={user}
 							playing={playing}
 							hover={hover}
+							hoverIndex={hoverIndex}
 						/>
 					</div>
 				))}

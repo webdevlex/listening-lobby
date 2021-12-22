@@ -126,7 +126,6 @@ async function addSong(io, socket, data) {
 	// Send front end the data for ui, spotify player, and apple player
 	io.to(data.user.lobby_id).emit('addSong', lobbyRef.queue);
 	io.to(socket.id).emit('addCheck', data.songData.uniId);
-	console.log(data);
 	if (lobbyRef.queue.length === 1) {
 		io.to(data.user.lobby_id).emit('firstSong', lobbyRef.queue);
 	} else {

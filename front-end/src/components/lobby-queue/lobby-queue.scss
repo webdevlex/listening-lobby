@@ -21,3 +21,9 @@
 .queue-track:hover {
 	background-color: var(--gray-250);
 }
+
+@media (max-width: 1000px) {
+	.queue-track {
+		width: 100%;
+	}
+}
