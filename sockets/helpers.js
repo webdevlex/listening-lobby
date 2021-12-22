@@ -183,7 +183,6 @@ function extractSpotifyAlbumData(searchResults) {
 // Pull out necessary song information from all apple search results
 function extractAppleSongData(searchResults) {
 	// If there are search results for songs
-	if (!searchResults) return [];
 
 	const tracks = searchResults.songs.data;
 	return tracks.map((track) => {
@@ -204,7 +203,7 @@ function extractAppleSongData(searchResults) {
 // Pull out necessary album information from all apple search results
 function extractAppleAlbumData(searchResults) {
 	// If there are search resutls for album
-	if (!searchResults.albums) return [];
+	// if (!searchResults.albums) return [];
 	const albums = searchResults.albums.data;
 	return albums.map((album) => {
 		return {
