@@ -138,12 +138,16 @@ async function removeMusicVideosFromCount(album, token, spotifySongCount) {
 }
 //Searching from Spotify
 async function getAlbumId(
-  { albumName, releaseDate, songCount },
+  { albumName, artists, releaseDate, songCount },
   uniAlbumNameFormatter,
   token,
   spotifyData
 ) {
-  const searchResults = await appleAlbumSearch(albumName, token);
+  console.log(artists);
+  const searchResults = await appleAlbumSearch(
+    `${albumName} ${artists}`,
+    token
+  );
   if (!searchResults) return searchResults;
   albumMatchTesting(
     searchResults,
@@ -187,8 +191,8 @@ async function getAlbumId(
   }
 }
 
-async function appleAlbumSearch(albumName, token) {
-  const endPoint = `https://api.music.apple.com/v1/catalog/us/search?term=${albumName}&limit=10&types=albums`;
+async function appleAlbumSearch(searchValue, token) {
+  const endPoint = `https://api.music.apple.com/v1/catalog/us/search?term=${searchValue}&limit=10&types=albums`;
   const config = {
     headers: {
       Authorization: "Bearer " + token,
@@ -210,7 +214,7 @@ function compareSongsInAlbumByDuration(dataForApple, dataForSpotify) {
     appleDuration += track.attributes.durationInMillis;
     songCount++;
   });
-  const threshold = songCount * 1000;
+  const threshold = songCount * 1250;
   dataForSpotify.forEach((track) => {
     spotifyDuration += track.duration;
   });

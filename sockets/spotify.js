@@ -179,8 +179,8 @@ async function getAlbumId(
   token
 ) {
   // Raw results directly from album search by query
-
-  const rawResults = await searchForAlbum(`${albumName}`, token);
+  console.log(albumName, artists);
+  const rawResults = await searchForAlbum(`${albumName} ${artists}`, token);
   if (!rawResults) return rawResults;
 
   albumMatchTesting(
@@ -303,7 +303,7 @@ function compareSongsInAlbumByDuration({ items }, dataForApple) {
     spotifyDuration += track.duration_ms;
     songCount++;
   });
-  const threshold = songCount * 1000;
+  const threshold = songCount * 1250;
   dataForApple.forEach((track) => {
     appleDuration += track.duration;
   });
