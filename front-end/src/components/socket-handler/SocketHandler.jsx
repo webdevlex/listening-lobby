@@ -14,6 +14,7 @@ function SocketHandler({
 	setDisplayAlbumQuestion,
 	setAlbumMissingOn,
 	beenAdded,
+	setAdminId,
 }) {
 	const params = new URLSearchParams(window.location.search);
 	const token = params.get('token');
@@ -83,6 +84,10 @@ function SocketHandler({
 			socket.on('addCheck', (albumId) => {
 				beenAdded.current = [...beenAdded.current, albumId];
 			});
+
+			socket.on('setAdmin', (adminId) => {
+				setAdminId(adminId);
+			});
 		}
 	}, [
 		socket,
@@ -100,6 +105,7 @@ function SocketHandler({
 		setDisplayAlbumQuestion,
 		setAlbumMissingOn,
 		beenAdded,
+		setAdminId,
 	]);
 
 	return null;

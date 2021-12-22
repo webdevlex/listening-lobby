@@ -16,12 +16,14 @@ async function joinLobby(io, socket, data) {
 
 		// Create and join lobby
 		lobby.generateLobby(data, tempToken);
-		const members = [username];
+		const members = lobby.getMembers(lobby_id);
 		const messages = [];
+		const adminData = lobby.getAdminData(data);
 
 		// Send new lobby data back to members
 		io.to(lobby_id).emit('setLobbyInfo', members, messages);
 		io.to(lobby_id).emit('doneLoading', {});
+		io.to(lobby_id).emit('setAdmin', adminData.user_id);
 	}
 	// Join existing lobby
 	else {
@@ -29,7 +31,7 @@ async function joinLobby(io, socket, data) {
 		const lobbyRef = lobby.getLobbyById(lobby_id);
 		io.to(lobby_id).emit('deactivateButtons');
 
-		const members = lobby.getMemberUsernames(lobby_id);
+		const members = lobby.getMembers(lobby_id);
 		const messages = lobby.getLobbyMessages(lobby_id);
 		// Send new lobby data back to members
 		// TODO send queue and ui queue to designated player
@@ -63,7 +65,7 @@ async function disconnect(io, socket) {
 	}
 	// If there is still users in the lobby just remove the person who left and update everyones ui
 	else {
-		const members = lobby.getMemberUsernames(lobbyRef.lobby_id);
+		const members = lobby.getMembers(lobbyRef.lobby_id);
 		const messages = lobby.getLobbyMessages(lobbyRef.lobby_id);
 		io.to(lobbyRef.lobby_id).emit('setLobbyInfo', members, messages);
 

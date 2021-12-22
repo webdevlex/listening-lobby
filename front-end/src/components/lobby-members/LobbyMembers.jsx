@@ -1,9 +1,9 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faCrown } from '@fortawesome/free-solid-svg-icons';
 import './members.scss';
 
-function LobbyMembers({ members }) {
+function LobbyMembers({ members, adminId }) {
 	return (
 		<div>
 			<h4 className='section-title'>Members</h4>
@@ -11,7 +11,10 @@ function LobbyMembers({ members }) {
 				return (
 					<div className='member-display' key={index}>
 						<FontAwesomeIcon className='member-icon' icon={faUser} />
-						<p>{member}</p>
+						<p>{member.username}</p>
+						{adminId === member.user_id ? (
+							<FontAwesomeIcon className='crown-icon' icon={faCrown} />
+						) : null}
 					</div>
 				);
 			})}

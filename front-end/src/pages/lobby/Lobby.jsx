@@ -35,6 +35,7 @@ function Lobby() {
 	const [displayInvitePopup, setDisplayInvitePopup] = useState(false);
 	const [albumMissingOn, setAlbumMissingOn] = useState(null);
 	const beenAdded = useRef([]);
+	const [adminId, setAdminId] = useState(null);
 
 	// Loaders
 	const [buttonsClickable, setButtonsClickable] = useState(true);
@@ -67,6 +68,7 @@ function Lobby() {
 				setDisplayAlbumQuestion={setDisplayAlbumQuestion}
 				setAlbumMissingOn={setAlbumMissingOn}
 				beenAdded={beenAdded}
+				setAdminId={setAdminId}
 			/>
 
 			{!playerStatus ? (
@@ -109,7 +111,7 @@ function Lobby() {
 								/>
 							</div>
 							<div className='members-grid'>
-								<LobbyMembers members={members} />
+								<LobbyMembers members={members} adminId={adminId} />
 							</div>
 							<div className='messages-grid'>
 								<LobbyMessages messages={messages} user={user} />

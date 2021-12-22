@@ -115,6 +115,11 @@ function getMemberUsernames(lobby_id) {
 	return getLobbyById(lobby_id).users.map((user) => user.username);
 }
 
+// Get all members by first finding the lobby by id then iterating through the users
+function getMembers(lobby_id) {
+	return getLobbyById(lobby_id).users.map((user) => user);
+}
+
 // Get lobbies messages by first finding the lobby by id then grabbing the messages
 function getLobbyMessages(lobby_id) {
 	return getLobbyById(lobby_id).messages;
@@ -281,4 +286,5 @@ module.exports = {
 	getAndRemoveHold,
 	setTimeoutTo,
 	inTimeout,
+	getMembers,
 };
