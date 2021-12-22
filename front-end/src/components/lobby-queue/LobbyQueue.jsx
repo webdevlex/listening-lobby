@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import QueueTrack from '../queue-track/QueueTrack';
 import './lobby-queue.scss';
 
@@ -11,12 +11,17 @@ export default function LobbyQueue({
 	playing,
 }) {
 	const queueHasItems = queue[0];
+	const [hover, setHover] = useState(false);
 
 	return (
 		<div className='lobby-queue'>
 			{queueHasItems &&
 				queue.map((song, index) => (
-					<div className='queue-track' key={index}>
+					<div
+						className='queue-track'
+						key={index}
+						onMouseOver={() => setHover(true)}
+						onMouseOut={() => setHover(false)}>
 						<QueueTrack
 							song={song}
 							index={index}
@@ -25,6 +30,7 @@ export default function LobbyQueue({
 							likedSongs={likedSongs}
 							user={user}
 							playing={playing}
+							hover={hover}
 						/>
 					</div>
 				))}

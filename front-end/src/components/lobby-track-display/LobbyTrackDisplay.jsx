@@ -21,7 +21,7 @@ export default function LobbyTrackDisplay({ queue }) {
 		window.addEventListener('resize', updateSize);
 		updateSize();
 		return () => window.removeEventListener('resize', updateSize);
-	}, [parent, title, artists, queue]);
+	}, [parent, title, artists]);
 
 	return (
 		<div className='track-display-wrapper'>
