@@ -16,6 +16,8 @@ function appleFormatSearchQuery(query) {
   query = replaceAll(query, "&", "and");
   query = replaceAll(query, "with", "feat");
   query = replaceAll(query, "’", "");
+  query = replaceAll(query, "$", "");
+  query = query.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   return query;
 }
 //Formats for cross platform searching for optimization - work in progress
@@ -34,6 +36,8 @@ function uniTrackFormatter(query) {
   query = replaceAll(query, "feat.", "");
   query = replaceAll(query, "feat", "");
   query = replaceAll(query, "’", "");
+  query = replaceAll(query, "$", "");
+  query = query.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
   return query;
 }
@@ -57,6 +61,8 @@ function uniAlbumNameFormatter(query, deleteWhiteSpaces) {
   query = replaceAll(query, "feat.", "");
   query = replaceAll(query, "feat", "");
   query = replaceAll(query, "’", "");
+  query = replaceAll(query, "$", "");
+  query = query.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   if (deleteWhiteSpaces) {
     query = replaceAll(query, " ", "");
   }
@@ -70,6 +76,9 @@ function uniArtistsFormatter(query) {
   query = replaceAll(query, "feat.", "");
   query = replaceAll(query, "feat", "");
   query = replaceAll(query, "’", "");
+  query = replaceAll(query, "$", "");
+  query = query.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
   return query;
 }
 function uniAlbumArtistsFormatter(query) {
@@ -93,6 +102,8 @@ function uniAlbumArtistsFormatter(query) {
   query = replaceAll(query, "feat.", "");
   query = replaceAll(query, "feat", "");
   query = replaceAll(query, "’", "");
+  query = replaceAll(query, "$", "");
+  query = query.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
   return query;
 }
