@@ -1,26 +1,21 @@
 //Adds and removes event listeners
-let removeEventListener = (applePlayer) => {
-  // applePlayer.services.removeEventListener("mediaItemDidChange", () => {});
-};
-let addEventListener = (applePlayer, socket, user, toAdd) => {
+let addEventListener = (applePlayer, socket, user) => {
   applePlayer.addEventListener("playbackSkip", () => {
     socket.emit("mediaChange", { user });
   });
 
-  if (toAdd) {
-    applePlayer.addEventListener("playbackStateDidChange", () => {
-      if (applePlayer.playbackState === 10) {
-        socket.emit("mediaChange", { user });
-      }
-    });
-    // applePlayer.player.addEventListener("playbackBitrateDidChange", () => {
-    //   if (applePlayer.bitrate === -1) {
-    //     localStorage.setItem("playback", JSON.stringify({ changed: true }));
-    //     window.location.replace("http://localhost:3000");
-    //   }
-    // });
-  }
+  applePlayer.addEventListener("playbackStateDidChange", () => {
+    if (applePlayer.playbackState === 10) {
+      socket.emit("mediaChange", { user });
+    }
+  });
 };
+// applePlayer.player.addEventListener("playbackBitrateDidChange", () => {
+//   if (applePlayer.bitrate === -1) {
+//     localStorage.setItem("playback", JSON.stringify({ changed: true }));
+//     window.location.replace("http://localhost:3000");
+//   }
+// });
 
 //Variables for joining lobby
 let timeStampOnJoin = 0;
@@ -48,7 +43,8 @@ export async function startUp(
   setCurrentTime
 ) {
   console.log(applePlayer);
-  addEventListener(applePlayer, socket, user, true);
+  //applePlayer.bitrate = 96; High Performance Mode
+  addEventListener(applePlayer, socket, user);
   applePlayer.volume = 0.1;
   if (playerStatus && queue.length > 0 && queue[0].apple !== "-1") {
     await setMusicKitQueue(applePlayer, queue[0].apple);
@@ -99,7 +95,6 @@ export async function handlePlay(
   setCurrentTime
 ) {
   await applePlayer.authorize();
-  removeEventListener(applePlayer);
   if (song.apple !== "-1") {
     await applePlayer.play();
 
@@ -111,7 +106,6 @@ export async function handlePlay(
   } else {
     emitUserReady(socket, user);
   }
-  console.log("play");
   moveTimeStamp(song, setPercent, setCurrentTime);
   setPlaying(true);
   addEventListener(applePlayer, socket, user, false);
@@ -120,7 +114,6 @@ export async function handlePlay(
 //Handles pause
 export async function handlePause(applePlayer, socket, user, setPlaying, song) {
   await applePlayer.authorize();
-  removeEventListener(applePlayer);
 
   if (song.apple !== "-1") {
     await applePlayer.pause();
@@ -131,7 +124,6 @@ export async function handlePause(applePlayer, socket, user, setPlaying, song) {
 
   pauseTimeStamp();
   setPlaying(false);
-  addEventListener(applePlayer, socket, user, false);
 }
 
 //Handles first song add
@@ -154,7 +146,6 @@ export async function handlePopped(
   setPercent,
   setCurrentTime
 ) {
-  console.log("popped");
   resetTimeStamp(setPercent, setCurrentTime);
   pauseTimeStamp(setPercent, setCurrentTime);
   if (song.apple !== "-1") {
@@ -254,7 +245,6 @@ function moveTimeStamp(song, setPercent, setCurrentTime) {
         currentTime += INTERVAL;
         setCurrentTime(currentTime);
         setPercent(percent);
-        console.log(INTERVAL);
       }
     }, INTERVAL);
   }
