@@ -8,10 +8,13 @@ let addEventListener = (applePlayer, socket, user) => {
     } else if (
       applePlayer.playbackState === 3 &&
       appleIsPlaying &&
-      applePlayer.currentPlaybackTimeRemaining
+      applePlayer.currentPlaybackTimeRemaining &&
+      applePlayer.currentPlaybackProgress
     ) {
       localStorage.setItem("playback", JSON.stringify({ changed: true }));
       window.location.replace("http://localhost:3000");
+    } else if (applePlayer.playbackState === 3) {
+      appleIsPlaying = false;
     }
   });
 };
@@ -43,8 +46,7 @@ export async function startUp(
   setCurrentTime
 ) {
   console.log(applePlayer);
-  //applePlayer.bitrate = 96; High Performance Mode
-
+  applePlayer.bitrate = 128;
   addEventListener(applePlayer, socket, user);
   applePlayer.volume = 0.1;
   if (playerStatus && queue.length > 0 && queue[0].apple !== "-1") {
@@ -174,6 +176,7 @@ export async function handleEmptyQueue(
   setPercent,
   setCurrentTime
 ) {
+  appleIsPlaying = false;
   await applePlayer.pause();
   resetTimeStamp(setPercent, setCurrentTime);
   pauseTimeStamp();
