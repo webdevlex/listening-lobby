@@ -1,30 +1,19 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
-import useWindowSize from '../../hooks/hooks';
+import React, { useRef, useEffect } from 'react';
+import useChildParentOverflow from '../../hooks/childParentOverflow';
 import TimeBar from '../time-bar/TimeBar';
 import './lobby-track-display.scss';
 
 export default function LobbyTrackDisplay({ queue, percent, currentTime }) {
 	const song = queue[0];
-	const [titleOverflow, setTitleOverflow] = useState(false);
-	const [artistsOverflow, setArtistsOverflow] = useState(false);
 	const parent = useRef();
 	const title = useRef();
 	const artists = useRef();
-	const [width] = useWindowSize();
 
-	useLayoutEffect(() => {
-		function updateSize() {
-			const parentWidth = parent.current.offsetWidth;
-			const titleWidth = title.current.offsetWidth;
-			const artistsWidth = artists.current.offsetWidth;
-
-			setTitleOverflow(parentWidth <= titleWidth);
-			setArtistsOverflow(parentWidth <= artistsWidth);
-		}
-		window.addEventListener('resize', updateSize);
-		updateSize();
-		return () => window.removeEventListener('resize', updateSize);
-	}, [parent, title, artists]);
+	const { titleOverflow, artistsOverflow } = useChildParentOverflow(
+		parent,
+		title,
+		artists
+	);
 
 	return (
 		<div className='track-display-wrapper'>

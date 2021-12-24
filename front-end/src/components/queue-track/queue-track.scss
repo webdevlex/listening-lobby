@@ -163,3 +163,35 @@
 		min-width: 55px;
 	}
 }
+
+@media (max-width: 600px) {
+	.duration {
+		display: none;
+	}
+
+	.primary-info {
+		width: 100%;
+	}
+}
+
+@media (max-width: 450px) {
+	.lobby-queue {
+		.track-title {
+			font-size: 14px;
+		}
+
+		.track-artists {
+			font-size: 13px;
+		}
+	}
+
+	.index-wrapper {
+		min-width: 40px !important;
+	}
+	.like-button {
+		display: none;
+	}
+	.remove-button {
+		min-width: 35px;
+	}
+}

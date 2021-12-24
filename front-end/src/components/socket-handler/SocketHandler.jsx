@@ -58,6 +58,9 @@ function SocketHandler({
 			});
 
 			socket.on('addSong', (queue) => {
+				var element = window;
+				var event = new Event('resize');
+				element.dispatchEvent(event);
 				setQueue(queue);
 			});
 

@@ -199,6 +199,7 @@
 	}
 
 	.queue-header-wrapper {
+		overflow-y: auto;
 		width: 100%;
 	}
 
@@ -304,6 +305,14 @@
 			margin: 0;
 		}
 	}
+
+	.queue-header .track-title {
+		width: 100%;
+	}
+
+	.track-duration {
+		display: none;
+	}
 }
 
 @media (max-width: 450px) {
@@ -339,5 +348,9 @@
 				font-weight: 300;
 			}
 		}
+	}
+
+	.track-like {
+		display: none;
 	}
 }

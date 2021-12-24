@@ -1,4 +1,4 @@
-import React, { useContext, useState, useLayoutEffect, useRef } from 'react';
+import React, { useContext, useRef, useEffect } from 'react';
 import { SocketContext } from '../../context/SocketContext';
 import { PlayersContext } from '../../context/PlayersContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,6 +7,7 @@ import {
 	faHeart as heartOutline,
 	faTrashAlt,
 } from '@fortawesome/free-regular-svg-icons';
+import useChildParentOverflow from '../../hooks/childParentOverflow';
 import appleLogo from '../../assets/images/apple-music-logo-red.svg';
 import spotifyLogo from '../../assets/images/spotify-logo-red.svg';
 import PlayingAnimation from '../playing-animation/PlayingAnimation';
@@ -29,25 +30,15 @@ export default function QueueTrack({
 	const [applePlayer] = appleContext;
 	const [socket] = useContext(SocketContext);
 
-	const [titleOverflow, setTitleOverflow] = useState(false);
-	const [artistsOverflow, setArtistsOverflow] = useState(false);
 	const parent = useRef();
 	const title = useRef();
 	const artists = useRef();
 
-	useLayoutEffect(() => {
-		function updateSize() {
-			const parentWidth = parent.current.offsetWidth;
-			const titleWidth = title.current.offsetWidth;
-			const artistsWidth = artists.current.offsetWidth;
-
-			setTitleOverflow(parentWidth <= titleWidth);
-			setArtistsOverflow(parentWidth <= artistsWidth);
-		}
-		window.addEventListener('resize', updateSize);
-		updateSize();
-		return () => window.removeEventListener('resize', updateSize);
-	}, [parent, title, artists]);
+	const { titleOverflow, artistsOverflow } = useChildParentOverflow(
+		parent,
+		title,
+		artists
+	);
 
 	async function addSongToLibrary(spotifySong, appleSong, id) {
 		setLikedSongs([...likedSongs, id]);
@@ -61,6 +52,15 @@ export default function QueueTrack({
 	function remove(index) {
 		socket.emit('remove', { lobby_id: user.lobby_id, index });
 	}
+
+	useEffect(() => {
+		function recheckOverflows() {
+			var element = window;
+			var event = new Event('resize');
+			element.dispatchEvent(event);
+		}
+		return () => recheckOverflows();
+	}, []);
 
 	return (
 		<>
