@@ -1,0 +1,19 @@
+.header {
+	width: 100%;
+	background-color: var(--gray-0);
+	padding-top: 20px;
+	display: flex;
+	justify-content: center;
+	position: absolute;
+}
+
+.header-wrapper {
+	max-width: 1600px;
+	width: 100%;
+
+	margin-inline: 20px;
+}
+
+.logo {
+	height: 50px;
+}
