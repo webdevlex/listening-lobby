@@ -11,6 +11,8 @@ export default function LobbySearch({
 	tracks,
 	setTracks,
 	beenAdded,
+	searchLoading,
+	setSearchLoading,
 }) {
 	const [selected, setSelected] = useState('tracks');
 
@@ -28,6 +30,7 @@ export default function LobbySearch({
 				user={user}
 				selected={selected}
 				setSelected={setSelected}
+				setSearchLoading={setSearchLoading}
 			/>
 			<UniSearch
 				user={user}
@@ -38,6 +41,7 @@ export default function LobbySearch({
 				setTracks={setTracks}
 				beenAdded={beenAdded}
 				selected={selected}
+				searchLoading={searchLoading}
 			/>
 		</div>
 	);

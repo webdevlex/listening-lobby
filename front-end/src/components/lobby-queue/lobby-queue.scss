@@ -1,6 +1,5 @@
 .lobby-queue {
-	margin-block: 10px;
-	overflow-y: scroll;
+	overflow-y: auto;
 	overflow-x: hidden;
 }
 
@@ -10,7 +9,6 @@
 	align-items: center;
 	position: relative;
 	border-radius: 5px;
-	width: 97%;
 	margin: auto;
 
 	.text {
@@ -25,5 +23,10 @@
 @media (max-width: 1000px) {
 	.queue-track {
 		width: 100%;
+	}
+
+	.lobby-queue {
+		overflow-y: visible;
+		height: fit-content;
 	}
 }

@@ -30,12 +30,16 @@ function Lobby() {
 	const [likedSongs, setLikedSongs] = useState([]);
 	const [albums, setAlbums] = useState([]);
 	const [tracks, setTracks] = useState([]);
+	const [searchLoading, setSearchLoading] = useState(false);
 	const [playing, setPlaying] = useState(false);
 	const [displayAlbumQuestion, setDisplayAlbumQuestion] = useState(false);
 	const [displayInvitePopup, setDisplayInvitePopup] = useState(false);
 	const [albumMissingOn, setAlbumMissingOn] = useState(null);
 	const beenAdded = useRef([]);
 	const [adminId, setAdminId] = useState(null);
+	// Timebar
+	const [percent, setPercent] = useState(0);
+	const [currentTime, setCurrentTime] = useState(0);
 
 	// Loaders
 	const [buttonsClickable, setButtonsClickable] = useState(true);
@@ -69,6 +73,7 @@ function Lobby() {
 				setAlbumMissingOn={setAlbumMissingOn}
 				beenAdded={beenAdded}
 				setAdminId={setAdminId}
+				setSearchLoading={setSearchLoading}
 			/>
 
 			{!playerStatus ? (
@@ -87,6 +92,10 @@ function Lobby() {
 							playing={playing}
 							likedSongs={likedSongs}
 							setLikedSongs={setLikedSongs}
+							percent={percent}
+							setPercent={setPercent}
+							currentTime={currentTime}
+							setCurrentTime={setCurrentTime}
 						/>
 					</div>
 					{loading ? (
@@ -131,6 +140,10 @@ function Lobby() {
 									playing={playing}
 									lobbyId={user.lobby_id}
 									beenAdded={beenAdded}
+									searchLoading={searchLoading}
+									setSearchLoading={setSearchLoading}
+									percent={percent}
+									currentTime={currentTime}
 								/>
 							</div>
 						</>

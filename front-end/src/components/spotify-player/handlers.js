@@ -16,8 +16,6 @@ export async function setupPlayback(
 	setCurrentTime,
 	setPlayerActive
 ) {
-	setPlaybackChangeListener(spotifyPlayer);
-
 	// Make sure player status isnt an empty object
 	const validPlayerStatus = Object.keys(playerStatus).length !== 0;
 
@@ -363,6 +361,12 @@ async function setVolumeTo(spotifyPlayer, volume) {
 // Listener
 function setListener(socket, player, user, setPercent, setCurrentTime) {
 	player.addListener('player_state_changed', (state) => {
+		// console.log(JSON.stringify(state.track_window, null, 2));
+		if (!state) {
+			localStorage.setItem('playback', JSON.stringify({ changed: true }));
+			window.location.replace('http://localhost:3000');
+		}
+
 		const stateTrack = state.track_window.previous_tracks[0] || { id: -1 };
 		if (
 			player.state &&
@@ -428,15 +432,6 @@ async function emitReadyWhenPlaybackSet(
 			clearInterval(interval);
 		}
 	}, INTERVAL);
-}
-
-function setPlaybackChangeListener(spotifyPlayer) {
-	spotifyPlayer.addListener('player_state_changed', (state) => {
-		if (!state) {
-			localStorage.setItem('playback', JSON.stringify({ changed: true }));
-			window.location.replace('http://localhost:3000');
-		}
-	});
 }
 
 // Timestamp

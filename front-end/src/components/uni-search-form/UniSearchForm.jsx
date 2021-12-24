@@ -5,7 +5,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faSearch } from '@fortawesome/free-solid-svg-icons';
 import './search-form.scss';
 
-function UniSearchForm({ setTracks, setAlbums, user, selected, setSelected }) {
+function UniSearchForm({
+	setTracks,
+	setAlbums,
+	user,
+	selected,
+	setSelected,
+	setSearchLoading,
+}) {
 	const { register, handleSubmit, setValue, getValues } = useForm({
 		defaultValues: {
 			search: 'Search',
@@ -22,9 +29,10 @@ function UniSearchForm({ setTracks, setAlbums, user, selected, setSelected }) {
 	}, [socket, setAlbums, setTracks]);
 
 	const onSubmit = ({ search: searchValue }) => {
-		setValue('search', '');
 		searchValue = searchValue.trim();
 		if (searchValue && searchValue !== 'Search') {
+			setValue('search', 'Search');
+			setSearchLoading(true);
 			socket.emit('uniSearch', { searchValue, user });
 		}
 	};

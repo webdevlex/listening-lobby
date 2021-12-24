@@ -1,13 +1,16 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
+import useWindowSize from '../../hooks/hooks';
+import TimeBar from '../time-bar/TimeBar';
 import './lobby-track-display.scss';
 
-export default function LobbyTrackDisplay({ queue }) {
+export default function LobbyTrackDisplay({ queue, percent, currentTime }) {
 	const song = queue[0];
 	const [titleOverflow, setTitleOverflow] = useState(false);
 	const [artistsOverflow, setArtistsOverflow] = useState(false);
 	const parent = useRef();
 	const title = useRef();
 	const artists = useRef();
+	const [width] = useWindowSize();
 
 	useLayoutEffect(() => {
 		function updateSize() {
@@ -56,6 +59,12 @@ export default function LobbyTrackDisplay({ queue }) {
 									<p className='artists'>{song.ui.artists}</p>
 								) : null}
 							</div>
+
+							<TimeBar
+								percent={percent}
+								currentTime={currentTime}
+								song={song}
+							/>
 						</div>
 					</>
 				) : (

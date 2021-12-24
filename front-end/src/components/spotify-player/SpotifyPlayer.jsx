@@ -14,6 +14,7 @@ import {
 import { faHeart as heartOutline } from '@fortawesome/free-regular-svg-icons';
 import LoadingSpinner from '../loading-spinner/LoadingSpinner';
 import './spotify-player.scss';
+import TimeBar from '../time-bar/TimeBar';
 
 function SpotifyPlayer({
 	user,
@@ -26,6 +27,10 @@ function SpotifyPlayer({
 	playing,
 	likedSongs,
 	setLikedSongs,
+	percent,
+	setPercent,
+	currentTime,
+	setCurrentTime,
 }) {
 	const [socket] = useContext(SocketContext);
 	const { spotify, spotifyRan, apple } = useContext(PlayersContext);
@@ -34,8 +39,8 @@ function SpotifyPlayer({
 	const [volume, setVolume] = useState(10);
 	const [ran, setRan] = spotifyRan;
 	const song = queue[0];
-	const [percent, setPercent] = useState(0);
-	const [currentTime, setCurrentTime] = useState(0);
+	// const [percent, setPercent] = useState(0);
+	// const [currentTime, setCurrentTime] = useState(0);
 	const [playerActive, setPlayerActive] = useState(false);
 
 	useEffect(() => {
@@ -65,6 +70,8 @@ function SpotifyPlayer({
 		setPlaying,
 		ran,
 		setRan,
+		setPercent,
+		setCurrentTime,
 	]);
 
 	let updateVolume = (e, data) => {
@@ -100,11 +107,11 @@ function SpotifyPlayer({
 		socket.emit('skip', { user });
 	}
 
-	function formatDuration(millis) {
-		var minutes = Math.floor(millis / 60000);
-		var seconds = ((millis % 60000) / 1000).toFixed(0);
-		return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-	}
+	// function formatDuration(millis) {
+	// 	var minutes = Math.floor(millis / 60000);
+	// 	var seconds = ((millis % 60000) / 1000).toFixed(0);
+	// 	return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+	// }
 
 	return loading ? null : (
 		<div className='player-bar'>
@@ -172,17 +179,7 @@ function SpotifyPlayer({
 						<LoadingSpinner />
 					)}
 				</div>
-				<div className='time-bar-container'>
-					<p className='current-time time'>{formatDuration(currentTime)}</p>
-					<div className='time-bar'>
-						<div
-							className='time-bar-slider'
-							style={{ left: `${percent}%` }}></div>
-					</div>
-					<p className='total-time time'>
-						{song ? song.ui.formattedDuration : '0:00'}
-					</p>
-				</div>
+				<TimeBar percent={percent} currentTime={currentTime} song={song} />
 			</div>
 			<div className='player-right'>
 				<FontAwesomeIcon className='volume-icon' icon={faVolumeUp} />

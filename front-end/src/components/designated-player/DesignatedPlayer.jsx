@@ -13,6 +13,10 @@ function DesignatedPlayer({
 	playing,
 	likedSongs,
 	setLikedSongs,
+	percent,
+	setPercent,
+	currentTime,
+	setCurrentTime,
 }) {
 	useEffect(() => {
 		if (user.music_provider === 'apple') {
@@ -32,6 +36,10 @@ function DesignatedPlayer({
 			playing={playing}
 			likedSongs={likedSongs}
 			setLikedSongs={setLikedSongs}
+			percent={percent}
+			setPercent={setPercent}
+			currentTime={currentTime}
+			setCurrentTime={setCurrentTime}
 		/>
 	) : (
 		<ApplePlayer
@@ -44,6 +52,10 @@ function DesignatedPlayer({
 			setLikedSongs={setLikedSongs}
 			setPlaying={setPlaying}
 			playing={playing}
+			percent={percent}
+			setPercent={setPercent}
+			currentTime={currentTime}
+			setCurrentTime={setCurrentTime}
 		/>
 	);
 }

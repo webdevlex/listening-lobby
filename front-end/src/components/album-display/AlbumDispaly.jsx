@@ -10,6 +10,7 @@ export default function AlbumDispaly({
 	user,
 	buttonsClickable,
 	beenAdded,
+	searchLoading,
 }) {
 	const [socket] = useContext(SocketContext);
 
@@ -21,36 +22,40 @@ export default function AlbumDispaly({
 
 	return (
 		<div className='search-albums-display'>
-			{hasAlbum ? (
-				albums.map((album, index) => (
-					<div key={index} className='results-display'>
-						<div className='album-cover-container'>
-							<img src={album.albumCover} alt='' />
-						</div>
-						<div className='text'>
-							<p className='title'>{album.albumName}</p>
-							<p className='simple-text artists'>{album.artists}</p>
-						</div>
+			{!searchLoading ? (
+				hasAlbum ? (
+					albums.map((album, index) => (
+						<div key={index} className='results-display'>
+							<div className='album-cover-container'>
+								<img src={album.albumCover} alt='' />
+							</div>
+							<div className='text'>
+								<p className='title'>{album.albumName}</p>
+								<p className='simple-text artists'>{album.artists}</p>
+							</div>
 
-						<div className='search-result-action-icon'>
-							{buttonsClickable ? (
-								beenAdded.current.includes(album.id) ? (
-									<FontAwesomeIcon className='check-icon' icon={faCheck} />
+							<div className='search-result-action-icon'>
+								{buttonsClickable ? (
+									beenAdded.current.includes(album.id) ? (
+										<FontAwesomeIcon className='check-icon' icon={faCheck} />
+									) : (
+										<div
+											className='add-button'
+											onClick={() => handleAlbumClick(album)}>
+											+
+										</div>
+									)
 								) : (
-									<div
-										className='add-button'
-										onClick={() => handleAlbumClick(album)}>
-										+
-									</div>
-								)
-							) : (
-								<LoadingSpinner />
-							)}
+									<LoadingSpinner />
+								)}
+							</div>
 						</div>
-					</div>
-				))
+					))
+				) : (
+					<p className='simple-text'>No Results . . .</p>
+				)
 			) : (
-				<p className='simple-text'>No Results . . .</p>
+				<LoadingSpinner />
 			)}
 		</div>
 	);
