@@ -12,9 +12,9 @@ function MessagesForm({ user }) {
 	});
 
 	const onSubmit = ({ message }) => {
-		setValue('message', '');
 		message = message.trim();
 		if (message && message !== 'Message') {
+			setValue('message', 'Message');
 			socket.emit('lobbyMessage', { user, message });
 		}
 	};

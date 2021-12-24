@@ -4,6 +4,7 @@ import { PlayersContext } from '../../context/PlayersContext';
 import './apple-player.scss';
 import { setupSocketRecievers } from '../apple-player/recievers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import TimeBar from '../time-bar/TimeBar';
 import {
 	faPlay,
 	faPause,
@@ -25,13 +26,15 @@ function ApplePlayer({
 	setLikedSongs,
 	playing,
 	setPlaying,
+	percent,
+	setPercent,
+	currentTime,
+	setCurrentTime,
 }) {
 	const [volume, setVolume] = useState(10);
 	const [socket] = useContext(SocketContext);
 	const { apple } = useContext(PlayersContext);
 	const [applePlayer] = apple;
-	const [percent, setPercent] = useState(0);
-	const [currentTime, setCurrentTime] = useState(0);
 	const [ran, setRan] = useState(false);
 	const song = queue[0] ? queue[0] : null;
 
@@ -49,7 +52,18 @@ function ApplePlayer({
 			);
 			setRan(true);
 		}
-	}, [applePlayer, user, playerStatus, queue, ran, setRan, socket, setPlaying]);
+	}, [
+		applePlayer,
+		user,
+		playerStatus,
+		queue,
+		ran,
+		setRan,
+		socket,
+		setPlaying,
+		setPercent,
+		setCurrentTime,
+	]);
 
 	let play = () => {
 		socket.emit('play', { user });
@@ -160,17 +174,7 @@ function ApplePlayer({
 						<LoadingSpinner />
 					)}
 				</div>
-				<div className='time-bar-container'>
-					<p className='current-time time'>{formatDuration(currentTime)}</p>
-					<div className='time-bar'>
-						<div
-							className='time-bar-slider'
-							style={{ left: `${percent}%` }}></div>
-					</div>
-					<p className='total-time time'>
-						{song ? song.ui.formattedDuration : '0:00'}
-					</p>
-				</div>
+				<TimeBar percent={percent} currentTime={currentTime} song={song} />
 			</div>
 			<div className='player-right'>
 				{/* <button onClick={() => getInstance()}>Get Instance</button> */}

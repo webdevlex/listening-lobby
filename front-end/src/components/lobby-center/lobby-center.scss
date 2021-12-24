@@ -1,0 +1,15 @@
+.lobby-center-queue-wrapper {
+	height: 100%;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	overflow-x: hidden;
+	padding: 30px 30px 0 30px;
+}
+
+@media (max-width: 1000px) {
+	.lobby-center-queue-wrapper {
+		display: block;
+		overflow-y: auto;
+	}
+}

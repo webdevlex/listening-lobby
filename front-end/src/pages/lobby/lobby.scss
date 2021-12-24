@@ -44,11 +44,32 @@
 	position: relative;
 	height: 100%;
 	overflow: hidden;
-	padding: 20px 20px 0 20px;
 	display: flex;
 	flex-direction: column;
 }
 
-.hide {
-	display: none;
+@media (max-width: 1000px) {
+	.center-grid {
+		padding: 0px;
+	}
+}
+
+@media (max-width: 850px) {
+	.lobby {
+		grid-template-columns: 1fr;
+		grid-template-rows: 6fr 60px 70px;
+		grid-template-areas:
+			'center center center'
+			'player player player'
+			'settings settings settings';
+	}
+
+	.messages-grid,
+	.members-grid {
+		display: none;
+	}
+
+	.settings-grid {
+		padding: 0px;
+	}
 }

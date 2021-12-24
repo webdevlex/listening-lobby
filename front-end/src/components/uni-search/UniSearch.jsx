@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import useWindowSize from '../../hooks/hooks';
 import TrackDisplay from '../track-display/TrackDisplay';
 import AlbumDispaly from '../album-display/AlbumDispaly';
@@ -12,8 +12,9 @@ function UniSearch({
 	tracks,
 	beenAdded,
 	selected,
+	searchLoading,
 }) {
-	const [width, height] = useWindowSize();
+	const [width] = useWindowSize();
 
 	return (
 		<div className='results'>
@@ -23,6 +24,7 @@ function UniSearch({
 					user={user}
 					buttonsClickable={buttonsClickable}
 					beenAdded={beenAdded}
+					searchLoading={searchLoading}
 				/>
 			) : null}
 			{(width < 1000 && selected === 'albums') || width > 1000 ? (
@@ -31,6 +33,7 @@ function UniSearch({
 					user={user}
 					buttonsClickable={buttonsClickable}
 					beenAdded={beenAdded}
+					searchLoading={searchLoading}
 				/>
 			) : null}
 		</div>

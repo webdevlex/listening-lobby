@@ -17,12 +17,20 @@ export default function LobbyCenter({
 	setTracks,
 	playing,
 	beenAdded,
+	searchLoading,
+	setSearchLoading,
+	percent,
+	currentTime,
 }) {
 	switch (centerDisplay) {
 		case 'player':
 			return (
-				<>
-					<LobbyTrackDisplay queue={queue} />
+				<div className='lobby-center-queue-wrapper'>
+					<LobbyTrackDisplay
+						queue={queue}
+						percent={percent}
+						currentTime={currentTime}
+					/>
 					<LobbyQueue
 						queue={queue}
 						user={user}
@@ -31,7 +39,7 @@ export default function LobbyCenter({
 						setLikedSongs={setLikedSongs}
 						playing={playing}
 					/>
-				</>
+				</div>
 			);
 		case 'search':
 			return (
@@ -43,6 +51,8 @@ export default function LobbyCenter({
 					tracks={tracks}
 					setTracks={setTracks}
 					beenAdded={beenAdded}
+					searchLoading={searchLoading}
+					setSearchLoading={setSearchLoading}
 				/>
 			);
 		case 'settings':

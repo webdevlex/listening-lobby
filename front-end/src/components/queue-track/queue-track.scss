@@ -126,9 +126,40 @@
 
 @media (max-width: 950px) {
 	.primary-info {
-		width: 55%;
+		width: 100%;
 	}
 	.duration {
 		display: none;
+	}
+
+	.like-button {
+		display: none;
+	}
+
+	.remove-button {
+		min-width: 35px;
+	}
+}
+
+@media (max-width: 850px) {
+	.primary-info {
+		min-width: 45%;
+		width: 45%;
+	}
+
+	.duration {
+		display: block;
+		width: 25%;
+		min-width: 25%;
+	}
+
+	.like-button {
+		display: block;
+		width: 11%;
+		min-width: 42px;
+	}
+
+	.remove-button {
+		min-width: 55px;
 	}
 }

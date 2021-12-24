@@ -15,6 +15,7 @@ function SocketHandler({
 	setAlbumMissingOn,
 	beenAdded,
 	setAdminId,
+	setSearchLoading,
 }) {
 	const params = new URLSearchParams(window.location.search);
 	const token = params.get('token');
@@ -82,6 +83,7 @@ function SocketHandler({
 			});
 
 			socket.on('uniSearchResults', ({ tracks, albums }) => {
+				setSearchLoading(false);
 				setAlbums(albums);
 				setTracks(tracks);
 			});
@@ -111,6 +113,7 @@ function SocketHandler({
 		setAlbumMissingOn,
 		beenAdded,
 		setAdminId,
+		setSearchLoading,
 	]);
 
 	return null;

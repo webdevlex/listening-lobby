@@ -30,3 +30,34 @@
 	height: 20px;
 	width: 20px !important;
 }
+
+@media (max-width: 850px) {
+	.lobby-settings {
+		display: flex;
+		height: 100%;
+
+		.section-title {
+			display: none;
+		}
+
+		.simple-text {
+			margin-top: 4px;
+			font-size: 10px;
+		}
+	}
+
+	.settings-button {
+		flex: 1;
+		justify-content: center;
+		margin: 0;
+		border-radius: 0px;
+		padding: 0;
+		flex-direction: column;
+	}
+
+	.settings-icon {
+		margin: 0px;
+		height: 25px;
+		width: 25px !important;
+	}
+}
