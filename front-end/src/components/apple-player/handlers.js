@@ -1,15 +1,19 @@
-//Adds and removes event listeners
+//Variables for joining lobby
+let timeStampOnJoin = 0;
+let joinOnPause = false;
 let appleIsPlaying = false;
+//Adds and removes event listeners
+
 let addEventListener = (applePlayer, socket, user) => {
   applePlayer.addEventListener("playbackStateDidChange", () => {
+    console.log(applePlayer.playbackState);
     if (applePlayer.playbackState === 10) {
       appleIsPlaying = false;
       socket.emit("mediaChange", { user });
     } else if (
       applePlayer.playbackState === 3 &&
       appleIsPlaying &&
-      applePlayer.currentPlaybackTimeRemaining &&
-      applePlayer.currentPlaybackProgress
+      applePlayer.currentPlaybackTimeRemaining >= 1
     ) {
       localStorage.setItem("playback", JSON.stringify({ changed: true }));
       window.location.replace("http://localhost:3000");
@@ -18,10 +22,6 @@ let addEventListener = (applePlayer, socket, user) => {
     }
   });
 };
-
-//Variables for joining lobby
-let timeStampOnJoin = 0;
-let joinOnPause = false;
 
 //Helpers
 //Sets musicQueue
@@ -45,7 +45,7 @@ export async function startUp(
   setPercent,
   setCurrentTime
 ) {
-  console.log(applePlayer);
+  //console.log(applePlayer);
   applePlayer.bitrate = 128;
   addEventListener(applePlayer, socket, user);
   applePlayer.volume = 0.1;
@@ -266,3 +266,34 @@ function resetTimeStamp(setPercent, setCurrentTime) {
   setPercent(0);
   setCurrentTime(0);
 }
+
+// for testing
+//let printImportant = ({
+//   isPlaying,
+//   isRestricted,
+//   playbackState,
+//   currentPlaybackDuration,
+//   currentPlaybackProgress,
+//   currentPlaybackTime,
+//   currentPlaybackTimeRemaining,
+//   queueIsEmpty,
+// }) => {
+//   console.log(
+//     "Is Playing:",
+//     isPlaying,
+//     "Is restricited:",
+//     isRestricted,
+//     "playback state:",
+//     playbackState,
+//     "Playback duration",
+//     currentPlaybackDuration,
+//     "playback progress",
+//     currentPlaybackProgress,
+//     "playback time",
+//     currentPlaybackTime,
+//     "playback time remaining",
+//     currentPlaybackTimeRemaining,
+//     "queue is empty",
+//     queueIsEmpty
+//   );
+// };
