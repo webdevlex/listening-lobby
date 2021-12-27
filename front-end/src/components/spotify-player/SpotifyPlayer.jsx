@@ -157,6 +157,10 @@ function SpotifyPlayer({
 					</>
 				)}
 			</div>
+			<button
+				onClick={async () => {
+					console.log(await spotifyPlayer.getCurrentState());
+				}}></button>
 			<div className='player-center'>
 				<div className='player-controls-container'>
 					{buttonsClickable ? (
