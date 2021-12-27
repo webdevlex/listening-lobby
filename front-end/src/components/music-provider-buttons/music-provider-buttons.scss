@@ -1,0 +1,25 @@
+.services-container {
+	display: flex;
+	margin-block: 40px;
+	border-radius: 15px;
+}
+
+.logo-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	height: 250px;
+	width: 250px;
+	border: none;
+	background-color: transparent;
+	border-radius: 15px;
+}
+
+.music-provider-button {
+	height: 200px;
+}
+
+.choose-service .selected {
+	background-color: var(--grey-200);
+}

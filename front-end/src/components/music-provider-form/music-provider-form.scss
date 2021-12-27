@@ -1,0 +1,45 @@
+.music-provider-form {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.lobby-id-input {
+	margin-bottom: 20px;
+}
+
+.username-input,
+.lobby-id-input {
+	padding: 10px;
+	background-color: var(--grey-200);
+	width: fit-content;
+	border-radius: 10px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 250px;
+
+	.user-icon {
+		color: var(--grey-500);
+		margin: 0 10px 0 5px;
+	}
+
+	input {
+		background-color: transparent;
+		border: none;
+		outline: none;
+		font-size: 18px;
+		color: var(--grey-500);
+		width: 100%;
+	}
+}
+
+.music-provider-form .default-button {
+	margin-top: 40px;
+	background: linear-gradient(
+		0,
+		rgba(99, 26, 255, 1) 0%,
+		rgba(214, 106, 223, 1) 100%
+	);
+}

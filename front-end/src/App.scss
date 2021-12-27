@@ -7,7 +7,12 @@
 }
 
 :root {
-	--gray-0: #1f2227;
+	--grey-100: #17141e;
+	--grey-200: #211e29;
+	--grey-300: #2a2633;
+	--grey-400: red;
+	--grey-500: #6b6779;
+
 	--gray-100: #2f3136;
 	--gray-200: #36393f;
 	--gray-250: #3b3f46;
@@ -52,4 +57,25 @@
 #musickit-dialog,
 #musickit-dialog-style {
 	display: none !important;
+}
+
+.default-button {
+	width: 160px;
+	text-decoration: none;
+	padding-block: 14px;
+	font-size: 14px;
+	color: white;
+	border-radius: 50px;
+	background-color: red;
+	border: none;
+
+	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transition: all 0.2s ease-in-out;
+
+	&:hover {
+		transform: scale(1.05);
+	}
 }

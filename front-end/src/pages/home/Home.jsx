@@ -47,12 +47,11 @@ function Home() {
 					</div>
 					<div className='section-item right'>
 						<h4 className='home-section-title'>
-							Create an invite-only place where you belong
+							Spotify and Apple Music compatible
 						</h4>
 						<p className='home-section-title-text'>
-							Discord servers are organized into topic-based channels where you
-							can collaborate, share, and just talk about your day without
-							clogging up a group chat.
+							Users can use their premium Apple Music or Spotify account in the
+							same lobby to listen to their favorite music together.
 						</p>
 					</div>
 				</div>
@@ -63,11 +62,10 @@ function Home() {
 						<img className='section-img' src={two} alt='' />
 					</div>
 					<div className='section-item right'>
-						<h4 className='home-section-title'>Where hanging out is easy</h4>
+						<h4 className='home-section-title'>Easily search and add music</h4>
 						<p className='home-section-title-text'>
-							Grab a seat in a voice channel when you’re free. Friends in your
-							server can see you’re around and instantly pop in to talk without
-							having to call.
+							Using our simple search system, easily browse through Apple
+							Music's and Spotify's libraries to add songs/albums to your queue.
 						</p>
 					</div>
 				</div>
@@ -78,11 +76,12 @@ function Home() {
 						<img className='section-img' src={three} alt='' />
 					</div>
 					<div className='section-item right'>
-						<h4 className='home-section-title'>From few to a fandom</h4>
+						<h4 className='home-section-title'>
+							A friendly and interactive music environment
+						</h4>
 						<p className='home-section-title-text'>
-							Get any community running with moderation tools and custom member
-							access. Give members special powers, set up private channels, and
-							more.
+							Add songs or albums to your personal library, send messages
+							between users, and much more
 						</p>
 					</div>
 				</div>

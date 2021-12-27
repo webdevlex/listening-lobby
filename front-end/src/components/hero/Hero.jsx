@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import temp from '../../assets/images/temp.png';
+import illustration from '../../assets/images/hero-illustration.svg';
 import './hero.scss';
 
 export default function Hero() {
@@ -8,18 +8,30 @@ export default function Hero() {
 		<div className='hero'>
 			<div className='hero-heading-container'>
 				<div className='left'>
-					<h1>Listen To Music Width Friends!</h1>
+					<div className='hero-text-container'>
+						<h1 className='heading'>Listen To Music With Friends!</h1>
+						<p className='sub-heading'>
+							Login into your Spotify or Apple Music account, invite friends,
+							and listen to your favorite songs together!
+						</p>
+					</div>
+
 					<div className='button-container'>
-						<Link className='link create' to='/choose-service?action=create'>
+						<Link
+							className='default-button create'
+							to='/choose-service?action=create'>
 							Create Lobby
 						</Link>
-						<Link className='link join' to='/choose-service?action=join'>
+						<Link
+							id='join'
+							className='default-button'
+							to='/choose-service?action=join'>
 							Join Lobby
 						</Link>
 					</div>
 				</div>
 				<div className='right'>
-					<img className='hero-illustration' src={temp} alt='' />
+					<img className='hero-illustration' src={illustration} alt='' />
 				</div>
 			</div>
 		</div>

@@ -26,6 +26,7 @@ async function joinLobby(io, socket, data) {
 		io.to(lobby_id).emit('setLobbyInfo', members, messages);
 		io.to(lobby_id).emit('doneLoading', {});
 		io.to(lobby_id).emit('setAdmin', adminData.user_id);
+		operatorMessage(io, 'Welcome to the listening lobby!', lobby_id);
 	} else {
 		const lobbyRef = lobby.getLobbyById(lobby_id);
 		lobby.joinLobby(data);
@@ -49,6 +50,7 @@ async function joinLobby(io, socket, data) {
 			const adminData = lobby.getAdminData(data);
 			io.to(lobby_id).emit('setAdmin', adminData.user_id);
 			io.to(adminData.user_id).emit('getPlayerData', socket.id);
+			operatorMessage(io, `${data.username} joined the lobby!`, lobby_id);
 		}
 		// Limit reached dont allow them to join
 		else {
@@ -65,6 +67,10 @@ async function disconnect(io, socket) {
 	// Get lobby data
 	const lobbyRef = lobby.getLobbyByUserId(socket.id);
 
+	// Notify the lobby that this user left
+	const member = lobby.getUserById(lobbyRef.lobby_id, socket.id);
+	operatorMessage(io, `${member.username} left the lobby.`, lobbyRef.lobby_id);
+
 	// Remove the member who left from the lobby
 	const i = lobby.leaveLobby(lobbyRef, socket.id);
 
@@ -78,6 +84,7 @@ async function disconnect(io, socket) {
 		const messages = lobby.getLobbyMessages(lobbyRef.lobby_id);
 		io.to(lobbyRef.lobby_id).emit('setLobbyInfo', members, messages);
 
+		// If the admin leaves set the next person in the members array as admin
 		if (lobbyRef.users[0].privilege !== 'admin') {
 			lobby.setFirstMemberAsAdmin(i);
 			const adminData = lobby.getAdminData({ lobby_id: lobbyRef.lobby_id });
@@ -220,6 +227,12 @@ function skip(io, socket, { user }) {
 		lobby.popSong(user.lobby_id);
 		io.to(user.lobby_id).emit('addSong', lobbyRef.queue);
 		io.to(user.lobby_id).emit('deactivateButtons');
+		operatorMessage(
+			io,
+			`${user.username} skipped the song.`,
+			lobbyRef.lobby_id
+		);
+
 		lobby.setLobbyLoading(user.lobby_id, true);
 
 		if (lobbyRef.queue.length === 0) {
@@ -279,18 +292,21 @@ function startInterval(lobby_id) {
 // ================
 // = Remove Song =
 // ================
-function remove(io, socket, { index, lobby_id }) {
+function remove(io, socket, { index, user, songName }) {
+	const lobby_id = user.lobby_id;
 	const lobbyRef = lobby.getLobbyById(lobby_id);
 	io.to(lobby_id).emit('deactivateButtons');
 	lobby.setLobbyLoading(lobby_id, true);
 
-	if (index === 0) {
+	const isFirstSong = index === 0;
+	if (isFirstSong) {
 		lobby.popSong(lobby_id);
 
 		if (lobbyRef.queue.length === 0) {
 			lobby.setPlayStatusPaused(lobby_id);
 			io.to(lobby_id).emit('emptyQueue', lobbyRef.queue);
 		} else {
+			0.33;
 			io.to(lobby_id).emit('removeFirst', lobbyRef.queue, lobbyRef.playing);
 		}
 	} else {
@@ -298,6 +314,7 @@ function remove(io, socket, { index, lobby_id }) {
 		lobby.removeSong(index, lobby_id);
 	}
 	io.to(lobby_id).emit('addSong', lobbyRef.queue);
+	operatorMessage(io, `${user.username} deleted ${songName}.`, lobby_id);
 }
 
 // ==============
@@ -350,6 +367,12 @@ function forceAlbum(io, socket, { user, addedToQueue }) {
 		lobby.setLobbyLoading(user.lobby_id, false);
 		io.to(user.lobby_id).emit('activateButtons');
 	}
+}
+
+function operatorMessage(io, message, lobby_id) {
+	const formattedMessage = helpers.formatMessage('Listening Lobby', message);
+	const messages = lobby.addMessageToLobby(formattedMessage, lobby_id);
+	io.to(lobby_id).emit('lobbyMessage', messages);
 }
 
 module.exports = {

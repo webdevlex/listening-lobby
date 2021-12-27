@@ -50,7 +50,7 @@ export default function QueueTrack({
 	}
 
 	function remove(index) {
-		socket.emit('remove', { lobby_id: user.lobby_id, index });
+		socket.emit('remove', { user, index, songName: ui.trackName });
 	}
 
 	useEffect(() => {

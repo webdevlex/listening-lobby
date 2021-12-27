@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import appleLogo from '../../assets/images/apple-music-logo.svg';
 import spotifyLogo from '../../assets/images/spotify-logo.svg';
+import './music-provider-buttons.scss';
 
 function MusicProviderButtons({ errors, setValue }) {
 	// Used to add the class of "selected" to the designated button
@@ -26,7 +27,7 @@ function MusicProviderButtons({ errors, setValue }) {
 					musicProvider === 'apple' ? 'selected' : null
 				}`}
 				onClick={() => handleAppleClick()}>
-				<img src={appleLogo} alt='' />
+				<img className='music-provider-button' src={appleLogo} alt='' />
 			</button>
 
 			{/* On click set hidden music provider input value to "spotify" and add class of "selected" */}
@@ -35,7 +36,7 @@ function MusicProviderButtons({ errors, setValue }) {
 					musicProvider === 'spotify' ? 'selected' : null
 				}`}
 				onClick={() => handleSpotifyClick()}>
-				<img src={spotifyLogo} alt='' />
+				<img className='music-provider-button' src={spotifyLogo} alt='' />
 			</button>
 		</div>
 	);

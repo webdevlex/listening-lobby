@@ -2,6 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import MusicProviderButtons from '../../components/music-provider-buttons/MusicProviderButtons';
 import MusicProviderForm from '../../components/music-provider-form/MusicProviderForm';
+import Header from '../../components/header/Header';
 import './choose-service.scss';
 
 function ChooseService() {
@@ -13,14 +14,26 @@ function ChooseService() {
 		register,
 		handleSubmit,
 		setValue,
+		getValues,
 		formState: { errors },
 	} = useForm({
-		defaultValues: { lobby_id: lobby_id },
+		defaultValues: {
+			lobby_id: lobby_id,
+			username: 'Username',
+			lobby_id: 'Lobby ID',
+		},
 	});
 
 	return (
 		<div className='choose-service'>
-			<h1>Choose a service</h1>
+			<Header />
+			<div className='choose-service-text'>
+				<h1 className='heading'>Choose your music provider</h1>
+				<p className='sub-heading'>
+					Login into you Apple Music or Spotify premium account
+				</p>
+			</div>
+
 			<MusicProviderButtons errors={errors} setValue={setValue} />
 			<MusicProviderForm
 				handleSubmit={handleSubmit}
@@ -28,6 +41,8 @@ function ChooseService() {
 				errors={errors}
 				action={action}
 				lobby_id={lobby_id}
+				getValues={getValues}
+				setValue={setValue}
 			/>
 		</div>
 	);
