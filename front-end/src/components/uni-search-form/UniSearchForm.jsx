@@ -31,6 +31,7 @@ function UniSearchForm({
 	const onSubmit = ({ search: searchValue }) => {
 		searchValue = searchValue.trim();
 		if (searchValue && searchValue !== 'Search') {
+			document.activeElement.blur();
 			setValue('search', 'Search');
 			setSearchLoading(true);
 			socket.emit('uniSearch', { searchValue, user });

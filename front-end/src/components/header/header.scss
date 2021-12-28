@@ -4,7 +4,6 @@
 	padding-top: 20px;
 	display: flex;
 	justify-content: center;
-	position: absolute;
 	top: 0;
 }
 
@@ -41,6 +40,13 @@
 .nav-link {
 	cursor: pointer;
 	white-space: nowrap;
+	color: white;
+	text-decoration: none;
+	transition: all 0.2s ease;
+
+	&:hover {
+		color: rgb(220, 220, 220);
+	}
 }
 
 .mobile-menu-button {
@@ -49,6 +55,7 @@
 	color: white;
 	border: none;
 	width: fit-content;
+	cursor: pointer;
 }
 
 .menu-icon {
@@ -78,7 +85,8 @@
 
 @media (max-width: 1025px) {
 	.header {
-		position: static;
+		// background-color: red;
+		// padding-bottom: 70px;
 	}
 }
 

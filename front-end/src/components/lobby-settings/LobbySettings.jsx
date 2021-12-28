@@ -19,7 +19,7 @@ export default function LobbySettings({
 				className='settings-button'
 				onClick={() => setCenterDisplay('player')}>
 				<FontAwesomeIcon className='settings-icon' icon={faHome} />
-				<p className='simple-text'>Home</p>
+				<p className='simple-text'>Queue</p>
 			</div>
 			<div
 				className='settings-button'

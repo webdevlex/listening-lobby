@@ -10,10 +10,17 @@ function MessagesForm({ user }) {
 	const { register, handleSubmit, setValue, getValues } = useForm({
 		defaultValues: { message: 'Message' },
 	});
+	const MESSAGE_MAX_LENGTH = 256;
 
 	const onSubmit = ({ message }) => {
 		message = message.trim();
-		if (message && message !== 'Message') {
+		const validMessage =
+			message !== '' &&
+			message !== 'Message' &&
+			message.length <= MESSAGE_MAX_LENGTH;
+
+		if (validMessage) {
+			document.activeElement.blur();
 			setValue('message', 'Message');
 			socket.emit('lobbyMessage', { user, message });
 		}
@@ -37,6 +44,7 @@ function MessagesForm({ user }) {
 		<form className='message-form' onSubmit={handleSubmit(onSubmit)}>
 			<div className='message-input'>
 				<input
+					maxLength={MESSAGE_MAX_LENGTH}
 					{...register('message')}
 					onFocus={() => handleFocus()}
 					onBlur={() => handleBlur()}

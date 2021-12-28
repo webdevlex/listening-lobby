@@ -11,6 +11,11 @@ export default function Header() {
   const [width] = useWindowSize();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  function handleClick(e) {
+    const linkClicked = e.target.className === "nav-link";
+    if (linkClicked) closeMenu();
+  }
+
   function openMenu() {
     setMenuOpen(true);
     document.body.style.overflow = "hidden";
@@ -28,17 +33,24 @@ export default function Header() {
         </Link>
 
         {menuOpen || width > 800 ? (
-          <ul className='nav'>
+          <ul className='nav' onClick={(e) => handleClick(e)}>
             {width < 800 ? (
               <button className='close-menu-button' onClick={() => closeMenu()}>
                 <img className='x-icon' src={xmark} alt='' />
               </button>
             ) : null}
-            <li className='nav-link'>Home</li>
-            <li className='nav-link'>Donate</li>
-            {/* <li className='nav-link'>Contact</li> */}
-            <li className='nav-link'>Create Lobby</li>
-            <li className='nav-link'>Join Lobby</li>
+            <Link className='nav-link' to='/'>
+              Home
+            </Link>
+            <Link className='nav-link' to='/'>
+              Donate
+            </Link>
+            <Link className='nav-link' to='/choose-service?action=create'>
+              Create Lobby
+            </Link>
+            <Link className='nav-link' to='/choose-service?action=join'>
+              Join Lobby
+            </Link>
           </ul>
         ) : (
           <button className='mobile-menu-button' onClick={() => openMenu()}>

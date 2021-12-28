@@ -43,3 +43,7 @@
 		rgba(214, 106, 223, 1) 100%
 	);
 }
+
+[aria-invalid='true'] {
+	border: solid 1px rgb(243, 25, 25) !important;
+}

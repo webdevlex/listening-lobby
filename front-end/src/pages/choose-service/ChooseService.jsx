@@ -15,12 +15,12 @@ function ChooseService() {
 		handleSubmit,
 		setValue,
 		getValues,
+		setError,
 		formState: { errors },
 	} = useForm({
 		defaultValues: {
-			lobby_id: lobby_id,
+			lobby_id: lobby_id || 'Lobby ID',
 			username: 'Username',
-			lobby_id: 'Lobby ID',
 		},
 	});
 
@@ -43,6 +43,7 @@ function ChooseService() {
 				lobby_id={lobby_id}
 				getValues={getValues}
 				setValue={setValue}
+				setError={setError}
 			/>
 		</div>
 	);
