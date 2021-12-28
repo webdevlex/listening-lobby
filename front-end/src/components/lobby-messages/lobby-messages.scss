@@ -1,11 +1,14 @@
 .lobby-messages {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .messages-container {
-	height: 100%;
-	overflow-y: auto;
-	margin-bottom: 10px;
+  height: 100%;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+.to-top {
+  cursor: pointer;
 }

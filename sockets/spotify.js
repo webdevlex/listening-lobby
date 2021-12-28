@@ -116,7 +116,7 @@ async function getAndFormatSongData(
     `${trackName} ${artists}`,
     spotifyToken
   );
-  if (!rawResults) return rawResults;
+  if (!rawResults) return "-1";
 
   // Attempt to find a song match by isrc
   songMatchTesting(rawResults, trackName, artists, uniId, duration);

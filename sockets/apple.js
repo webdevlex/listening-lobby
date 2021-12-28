@@ -68,6 +68,7 @@ async function getAndFormatSongData(
   token
 ) {
   const searchResult = await search(`${trackName} ${artists}`, token);
+  if (!searchResult) return "-1";
 
   songMatchTesting(searchResult, trackName, artists, uniId, duration);
   let songMatch = searchResult.songs.data.find(
