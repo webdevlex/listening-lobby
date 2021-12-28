@@ -28,7 +28,7 @@ function LobbyMessages({ messages, user }) {
   }, [messages, atBottom, numberOfMessages, setNumberOfMessages]);
 
   function handleScroll({ target }) {
-    if (target.scrollTop + target.offsetHeight >= target.scrollHeight) {
+    if (target.scrollTop + target.offsetHeight + 1 >= target.scrollHeight) {
       setAtBottom(true);
       setNewMessages(false);
     } else {
@@ -37,23 +37,25 @@ function LobbyMessages({ messages, user }) {
   }
 
   return (
-    <div className='lobby-messages'>
-      <h4 className='section-title'>Messages</h4>
-      <div className='messages-container' onScroll={(e) => handleScroll(e)}>
+    <div className="lobby-messages">
+      <h4 className="section-title">Messages</h4>
+      <div className="messages-container" onScroll={(e) => handleScroll(e)}>
         {hasMessages &&
           messages.map((messageData) => (
             <MessageDisplay messageData={messageData} />
           ))}
-        <div className='last-message' ref={lastMessage} />
+        <div className="last-message" ref={lastMessage} />
       </div>
       {!atBottom && newMessages ? (
-        <div className='scroll-to-bottom-container'>
-          <p className='new-message-text'>*New Messages*</p>
-          <p className='to-bottom-button' onClick={() => scrollToBottom()}>
+        <div className="scroll-to-bottom-container">
+          <p className="new-message-text">*New Messages*</p>
+          <p className="to-bottom-button" onClick={() => scrollToBottom()}>
             Scroll to bottom
           </p>
         </div>
-      ) : null}
+      ) : (
+        (popupIsPresent = false)
+      )}
       <MessagesForm user={user} isShowing={!atBottom && newMessages} />
     </div>
   );
