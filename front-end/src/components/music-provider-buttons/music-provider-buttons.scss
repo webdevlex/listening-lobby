@@ -2,6 +2,8 @@
 	display: flex;
 	margin-block: 40px;
 	border-radius: 15px;
+	height: fit-content;
+	margin-inline: 20px;
 }
 
 .logo-container {
@@ -9,15 +11,13 @@
 	justify-content: center;
 	align-items: center;
 	cursor: pointer;
-	height: 250px;
-	width: 250px;
+	max-height: 250px;
+	max-width: 250px;
+	padding: 20px;
 	border: none;
 	background-color: transparent;
 	border-radius: 15px;
-}
-
-.music-provider-button {
-	height: 200px;
+	height: fit-content;
 }
 
 .choose-service .selected {

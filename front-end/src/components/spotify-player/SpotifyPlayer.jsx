@@ -107,12 +107,6 @@ function SpotifyPlayer({
 		socket.emit('skip', { user });
 	}
 
-	// function formatDuration(millis) {
-	// 	var minutes = Math.floor(millis / 60000);
-	// 	var seconds = ((millis % 60000) / 1000).toFixed(0);
-	// 	return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-	// }
-
 	return loading ? null : (
 		<div className='player-bar'>
 			<div className='player-left'>
@@ -149,18 +143,14 @@ function SpotifyPlayer({
 							<p className='default-album-cover'>?</p>
 						</div>
 						<div className='text'>
-							<p className='simple-text track-title'>No Songs Added</p>
+							<p className='simple-text track-title'>Listening Lobby</p>
 							<p className='simple-text track-artists'>
-								Search and add songs to queue!
+								Search and add songs to your queue!
 							</p>
 						</div>
 					</>
 				)}
 			</div>
-			<button
-				onClick={async () => {
-					console.log(await spotifyPlayer.getCurrentState());
-				}}></button>
 			<div className='player-center'>
 				<div className='player-controls-container'>
 					{buttonsClickable ? (

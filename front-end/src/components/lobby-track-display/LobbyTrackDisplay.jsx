@@ -67,10 +67,10 @@ export default function LobbyTrackDisplay({ queue, percent, currentTime }) {
 									titleOverflow ? 'slide' : null
 								}`}>
 								<p ref={title} className='track-title'>
-									No Songs Added
+									Listening Lobby
 								</p>
 								{titleOverflow ? (
-									<p className='track-title'>No Songs Added</p>
+									<p className='track-title'>Listening Lobby</p>
 								) : null}
 							</div>
 							<div
@@ -78,10 +78,10 @@ export default function LobbyTrackDisplay({ queue, percent, currentTime }) {
 									artistsOverflow ? 'slide' : null
 								}`}>
 								<p ref={artists} className='artists'>
-									Search and add songs to queue!
+									Search and add songs to your queue!
 								</p>
 								{artistsOverflow ? (
-									<p className='artists'>Search and add songs to queue!</p>
+									<p className='artists'>Search and add songs to your queue!</p>
 								) : null}
 							</div>
 						</div>

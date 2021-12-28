@@ -12,9 +12,12 @@ function MusicProviderForm({
 	lobby_id,
 	getValues,
 	setValue,
+	setError,
 }) {
 	const [displayAppleLogin, setDisplayAppleLogin] = useState(false);
 	const [authorized, setAuthorized] = useState(false);
+	const MAX_USERNAME_CHARACTERS = 10;
+	const LOBBY_ID_CHARACTERS = 6;
 
 	var generateRandomString = function (length) {
 		var text = '';
@@ -28,15 +31,47 @@ function MusicProviderForm({
 	};
 
 	const onSubmit = (formData) => {
-		const localUserData = JSON.stringify({
-			username: formData.username,
-			music_provider: formData.musicProvider,
-			lobby_id: formData.lobby_id || generateRandomString(6),
-			admin: formData.lobby_id ? false : true,
-			authorized: true,
-		});
-		localStorage.setItem('user', localUserData);
-		redirectTo(formData.musicProvider);
+		console.log('submitting');
+		const username = formData.username.trim();
+		const validUsername =
+			username !== '' &&
+			username !== 'Username' &&
+			username.length <= MAX_USERNAME_CHARACTERS;
+		const validProvider =
+			formData.musicProvider === 'apple' ||
+			formData.musicProvider === 'spotify';
+
+		const newLobby = action === 'create';
+		const validLobbyId =
+			formData.lobby_id.trim().length === LOBBY_ID_CHARACTERS || newLobby;
+
+		if (validUsername && validProvider && validLobbyId) {
+			if (newLobby) formData.lobby_id = generateRandomString(6);
+			const localUserData = JSON.stringify({
+				username: username,
+				music_provider: formData.musicProvider,
+				lobby_id: formData.lobby_id,
+				admin: formData.lobby_id ? false : true,
+				authorized: true,
+			});
+			localStorage.setItem('user', localUserData);
+			redirectTo(formData.musicProvider);
+		} else if (!validUsername) {
+			console.log('userbname');
+			setError('username', {
+				type: 'invalid',
+			});
+		} else if (!validProvider) {
+			console.log('musicprovider');
+			setError('musicProvider', {
+				type: 'invalid',
+			});
+		} else if (!validLobbyId) {
+			console.log('lobby id');
+			setError('lobby_id', {
+				type: 'invalid',
+			});
+		}
 	};
 
 	function redirectTo(musicProvider) {
@@ -92,13 +127,17 @@ function MusicProviderForm({
 
 					{/* Only display lobby id input if url contains the action parameter of "join" */}
 					{action === 'join' ? (
-						<div className='lobby-id-input'>
+						<div
+							className='lobby-id-input'
+							aria-invalid={errors.lobby_id ? 'true' : 'false'}>
 							<FontAwesomeIcon className='user-icon' icon={faLock} />
 							<input
 								readOnly={lobby_id ? true : false}
-								aria-invalid={errors.lobby_id ? 'true' : 'false'}
-								maxLength='6'
-								{...register('lobby_id', { required: true, maxLength: 6 })}
+								maxLength={LOBBY_ID_CHARACTERS}
+								{...register('lobby_id', {
+									required: true,
+									maxLength: LOBBY_ID_CHARACTERS,
+								})}
 								onFocus={(e) => handleFocus(e)}
 								onBlur={(e) => handleBlur(e)}
 							/>
@@ -106,11 +145,16 @@ function MusicProviderForm({
 					) : null}
 
 					{/* Input for username */}
-					<div className='username-input'>
+					<div
+						className='username-input'
+						aria-invalid={errors.username ? 'true' : 'false'}>
 						<FontAwesomeIcon className='user-icon' icon={faUser} />
 						<input
-							aria-invalid={errors.username ? 'true' : 'false'}
-							{...register('username', { required: true })}
+							maxLength={MAX_USERNAME_CHARACTERS}
+							{...register('username', {
+								required: true,
+								maxLength: MAX_USERNAME_CHARACTERS,
+							})}
 							onFocus={(e) => handleFocus(e)}
 							onBlur={(e) => handleBlur(e)}
 						/>
