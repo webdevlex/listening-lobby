@@ -28,7 +28,7 @@ function LobbyMessages({ messages, user }) {
 	}, [messages, atBottom, numberOfMessages, setNumberOfMessages, size, user]);
 
 	function handleScroll({ target }) {
-		if (target.scrollTop + target.offsetHeight >= target.scrollHeight) {
+		if (target.scrollTop + target.offsetHeight + 1 >= target.scrollHeight) {
 			setAtBottom(true);
 			setNewMessages(false);
 		} else {
@@ -53,7 +53,9 @@ function LobbyMessages({ messages, user }) {
 						Scroll to bottom
 					</p>
 				</div>
-			) : null}
+			) : (
+				(popupIsPresent = false)
+			)}
 			<MessagesForm user={user} isShowing={!atBottom && newMessages} />
 		</div>
 	);

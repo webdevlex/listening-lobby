@@ -314,7 +314,7 @@ function remove(io, socket, { index, user, songName }) {
 		lobby.removeSong(index, lobby_id);
 	}
 	io.to(lobby_id).emit('addSong', lobbyRef.queue);
-	operatorMessage(io, `${user.username} deleted ${songName}.`, lobby_id);
+	operatorMessage(io, `${user.username} removed ${songName}.`, lobby_id);
 }
 
 // ==============
