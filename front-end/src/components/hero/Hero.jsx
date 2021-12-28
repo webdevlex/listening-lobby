@@ -11,8 +11,8 @@ export default function Hero() {
 					<div className='hero-text-container'>
 						<h1 className='heading'>Listen To Music With Friends!</h1>
 						<p className='sub-heading'>
-							Login into your Spotify or Apple Music account, invite friends,
-							and listen to your favorite songs together!
+							Login into your premium Spotify or Apple Music account, invite
+							friends, and listen to your favorite songs together!
 						</p>
 					</div>
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PlaybackChangedPopup from '../../components/playback-changed/PlaybackChangedPopup';
 import MaxCapPopup from '../../components/max-cap-popup/MaxCapPopup';
 import Header from '../../components/header/Header';
+import Footer from '../../components/footer/Footer';
 import Hero from '../../components/hero/Hero';
 import one from '../../assets/images/1.png';
 import two from '../../assets/images/2.png';
@@ -86,6 +87,7 @@ function Home() {
 					</div>
 				</div>
 			</section>
+			<Footer />
 		</>
 	);
 }
