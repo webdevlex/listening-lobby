@@ -1,40 +1,43 @@
 .message-form {
-	display: flex;
+  display: flex;
 }
 
 .message-input {
-	padding: 5px;
-	background-color: var(--gray-300);
-	width: fit-content;
-	border-radius: 5px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
+  padding: 5px;
+  background-color: var(--gray-300);
+  width: fit-content;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 
-	input {
-		background-color: transparent;
-		border: none;
-		outline: none;
-		color: var(--gray-500);
-		width: 100%;
-	}
+  input {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    color: var(--gray-500);
+    width: 100%;
+  }
 
-	.submit-button {
-		cursor: pointer;
-		outline: none;
-		border: none;
-		padding: 0;
-		background-color: transparent;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
+  .submit-button {
+    cursor: pointer;
+    outline: none;
+    border: none;
+    padding: 0;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
-	.arrrow-icon {
-		width: 25px;
-		height: 25px;
-		color: var(--gray-500);
-		margin-left: 5px;
-	}
+  .arrrow-icon {
+    width: 25px;
+    height: 25px;
+    color: var(--gray-500);
+    margin-left: 5px;
+  }
+}
+.tab-showing {
+  border-top-right-radius: 0px;
 }

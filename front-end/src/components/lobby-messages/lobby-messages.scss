@@ -9,6 +9,19 @@
   overflow-y: auto;
   margin-bottom: 10px;
 }
-.to-top {
+.scroll-to-bottom-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+.new-message-text {
+  color: rgb(253, 74, 74);
+}
+.to-bottom-button {
   cursor: pointer;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  background-color: var(--gray-200);
+  padding: 5px 10px;
 }
