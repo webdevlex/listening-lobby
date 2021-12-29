@@ -210,7 +210,15 @@ export async function handleRemoveFirst(
 	if (song.apple !== '-1') {
 		await setMusicKitQueue(applePlayer, song.apple);
 		if (isPlaying) {
-			handlePlay(applePlayer, socket, user, setPlaying, song);
+			handlePlay(
+				applePlayer,
+				socket,
+				user,
+				setPlaying,
+				song,
+				setPercent,
+				setCurrentTime
+			);
 		} else {
 			handlePause(applePlayer, socket, user, setPlaying, song);
 		}
