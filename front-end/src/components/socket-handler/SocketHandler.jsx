@@ -98,6 +98,14 @@ function SocketHandler({
 			socket.on('setAdmin', (adminId) => {
 				setAdminId(adminId);
 			});
+
+			socket.on('kickUser', () => {
+				localStorage.setItem(
+					'loading',
+					JSON.stringify({ tookTooLongToLoad: true })
+				);
+				window.location.replace('http://localhost:3000');
+			});
 		}
 	}, [
 		socket,

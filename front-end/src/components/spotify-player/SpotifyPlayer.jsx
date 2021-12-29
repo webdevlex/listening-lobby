@@ -158,9 +158,9 @@ function SpotifyPlayer({
 							<FontAwesomeIcon className='skip-icon' icon={faStepBackward} />
 							<button className='play-button' onClick={() => play()}>
 								{playing ? (
-									<FontAwesomeIcon className='action-icon' icon={faPause} />
+									<FontAwesomeIcon className='pause-icon' icon={faPause} />
 								) : (
-									<FontAwesomeIcon className='action-icon' icon={faPlay} />
+									<FontAwesomeIcon className='play-icon' icon={faPlay} />
 								)}
 							</button>
 							<FontAwesomeIcon

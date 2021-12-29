@@ -10,10 +10,11 @@ function generateLobby(data, tempToken) {
 		messages: [],
 		tokens: generateTokens(data, tempToken),
 		playing: false,
-		usersReady: 0,
+		usersReady: [],
 		loading: false,
 		hold: null,
 		timeout: false,
+		usersReadyTimeout: false,
 	};
 
 	lobbies.push(newLobby);
@@ -213,14 +214,9 @@ function removeSong(index, lobby_id) {
 	lobbies[i].queue.splice(index, 1);
 }
 
-function increaseReadyCount(user) {
-	const i = getLobbyIndex(user.lobby_id);
-	lobbies[i].usersReady += 1;
-}
-
-function resetReadyCount(lobby_id) {
+function resetReady(lobby_id) {
 	const i = getLobbyIndex(lobby_id);
-	lobbies[i].usersReady = 0;
+	lobbies[i].usersReady = [];
 }
 
 function setLobbyLoading(lobby_id, value) {
@@ -266,6 +262,21 @@ function setTempToken(lobby_id, newToken) {
 	lobbies[i].tokens.spotify = newToken;
 }
 
+function addUserToReady(user) {
+	const i = getLobbyIndex(user.lobby_id);
+	lobbies[i].usersReady.push(user);
+}
+
+function setUsersReadyTimeoutActive(lobby_id) {
+	const i = getLobbyIndex(lobby_id);
+	lobbies[i].usersReadyTimeout = true;
+}
+
+function setUsersReadyTimeoutOff(lobby_id) {
+	const i = getLobbyIndex(lobby_id);
+	lobbies[i].usersReadyTimeout = false;
+}
+
 module.exports = {
 	setPlayStatusPlaying,
 	setPlayStatusPaused,
@@ -290,8 +301,7 @@ module.exports = {
 	popSong,
 	removeSong,
 	addAlbumToLobby,
-	increaseReadyCount,
-	resetReadyCount,
+	resetReady,
 	setLobbyLoading,
 	setFirstMemberAsAdmin,
 	setAlbumHold,
@@ -301,4 +311,7 @@ module.exports = {
 	getMembers,
 	setUsersToken,
 	setTempToken,
+	addUserToReady,
+	setUsersReadyTimeoutActive,
+	setUsersReadyTimeoutOff,
 };

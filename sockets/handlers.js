@@ -2,6 +2,7 @@ const lobby = require('./lobby');
 const helpers = require('./helpers');
 
 const LOBBY_MAX_CAPACITY = 8;
+const KICK_WAIT_TIME_IN_MILLIS = 30000;
 
 // ========
 // = Join =
@@ -43,7 +44,7 @@ async function joinLobby(io, socket, data) {
 			io.to(socket.id).emit('addSong', lobbyRef.queue);
 
 			if (!lobbyRef.loading) {
-				lobby.setLobbyLoading(lobby_id, true);
+				setLobbyToLoading(io, lobby_id);
 				socket.broadcast.emit('getUserReady');
 			}
 
@@ -131,7 +132,7 @@ async function addSong(io, socket, data) {
 	// Get lobby data
 	const lobbyRef = lobby.getLobbyById(data.user.lobby_id);
 	io.to(data.user.lobby_id).emit('deactivateButtons');
-	lobby.setLobbyLoading(data.user.lobby_id, true);
+	setLobbyToLoading(io, data.user.lobby_id);
 
 	// Perform the necessary searches and return an object containing display for ui and data for each player
 
@@ -148,7 +149,7 @@ async function addSong(io, socket, data) {
 	if (lobbyRef.queue.length === 1) {
 		io.to(data.user.lobby_id).emit('firstSong', lobbyRef.queue);
 	} else {
-		lobby.setLobbyLoading(data.user.lobby_id, false);
+		setLobbyToNotLoading(data.user.lobby_id);
 		io.to(data.user.lobby_id).emit('activateButtons');
 	}
 }
@@ -160,7 +161,7 @@ async function addAlbum(io, socket, data) {
 	// Get lobby data
 	const lobbyRef = lobby.getLobbyById(data.user.lobby_id);
 	io.to(data.user.lobby_id).emit('deactivateButtons');
-	lobby.setLobbyLoading(data.user.lobby_id, true);
+	setLobbyToLoading(io, data.user.lobby_id);
 
 	// Check if first time a song/album is added to the queue
 	let firstSong;
@@ -186,13 +187,13 @@ async function addAlbum(io, socket, data) {
 		if (firstSong) {
 			io.to(data.user.lobby_id).emit('firstSong', lobbyRef.queue);
 		} else {
-			lobby.setLobbyLoading(data.user.lobby_id, false);
+			setLobbyToNotLoading(data.user.lobby_id);
 			io.to(data.user.lobby_id).emit('activateButtons');
 		}
 	} else {
 		allSongData.albumId = data.albumData.id;
 		lobby.setAlbumHold(data.user.lobby_id, allSongData);
-		lobby.setLobbyLoading(data.user.lobby_id, false);
+		setLobbyToNotLoading(data.user.lobby_id);
 		io.to(data.user.lobby_id).emit('activateButtons');
 		io.to(socket.id).emit('questionAlbumAdd', missingOn);
 	}
@@ -207,7 +208,7 @@ function play(io, socket, { user }) {
 
 	if (lobbyRef.queue.length > 0) {
 		io.to(user.lobby_id).emit('deactivateButtons');
-		lobby.setLobbyLoading(user.lobby_id, true);
+		setLobbyToLoading(io, user.lobby_id);
 
 		if (play) {
 			io.to(user.lobby_id).emit('play', lobbyRef.queue[0]);
@@ -233,8 +234,7 @@ function skip(io, socket, { user }) {
 			`${user.username} skipped the song.`,
 			lobbyRef.lobby_id
 		);
-
-		lobby.setLobbyLoading(user.lobby_id, true);
+		setLobbyToLoading(io, user.lobby_id);
 
 		if (lobbyRef.queue.length === 0) {
 			lobby.setPlayStatusPaused(user.lobby_id);
@@ -270,7 +270,7 @@ function mediaChange(io, socket, { user }) {
 			lobby.popSong(user.lobby_id);
 			io.to(user.lobby_id).emit('addSong', lobbyRef.queue);
 			io.to(user.lobby_id).emit('deactivateButtons');
-			lobby.setLobbyLoading(user.lobby_id, true);
+			setLobbyToLoading(io, user.lobby_id);
 
 			if (lobbyRef.queue.length === 0) {
 				lobby.setPlayStatusPaused(user.lobby_id);
@@ -297,7 +297,7 @@ function remove(io, socket, { index, user, songName }) {
 	const lobby_id = user.lobby_id;
 	const lobbyRef = lobby.getLobbyById(lobby_id);
 	io.to(lobby_id).emit('deactivateButtons');
-	lobby.setLobbyLoading(lobby_id, true);
+	setLobbyToLoading(io, lobby_id);
 
 	const isFirstSong = index === 0;
 	if (isFirstSong) {
@@ -307,11 +307,11 @@ function remove(io, socket, { index, user, songName }) {
 			lobby.setPlayStatusPaused(lobby_id);
 			io.to(lobby_id).emit('emptyQueue', lobbyRef.queue);
 		} else {
-			0.33;
 			io.to(lobby_id).emit('removeFirst', lobbyRef.queue, lobbyRef.playing);
 		}
 	} else {
 		io.to(lobby_id).emit('activateButtons');
+		setLobbyToNotLoading(lobby_id);
 		lobby.removeSong(index, lobby_id);
 	}
 	io.to(lobby_id).emit('addSong', lobbyRef.queue);
@@ -323,13 +323,51 @@ function remove(io, socket, { index, user, songName }) {
 // ==============
 function userReady(io, socket, { user }) {
 	const lobbyRef = lobby.getLobbyById(user.lobby_id);
-	lobby.increaseReadyCount(user);
+	lobby.addUserToReady(user);
 
-	if (lobbyRef.usersReady === lobbyRef.users.length) {
+	if (lobbyRef.usersReady.length === lobbyRef.users.length) {
 		io.to(user.lobby_id).emit('activateButtons');
-		lobby.setLobbyLoading(user.lobby_id, false);
-		lobby.resetReadyCount(user.lobby_id);
+		setLobbyToNotLoading(user.lobby_id);
+		lobby.resetReady(user.lobby_id);
 	}
+}
+
+function setLobbyToNotLoading(lobby_id) {
+	lobby.setLobbyLoading(lobby_id, false);
+}
+
+function setLobbyToLoading(io, lobby_id) {
+	lobby.setLobbyLoading(lobby_id, true);
+	kickUsersWhoAreNotReady(io, lobby_id);
+}
+
+function kickUsersWhoAreNotReady(io, lobby_id) {
+	const lobbyRef = lobby.getLobbyById(lobby_id);
+	if (!lobbyRef.usersReadyTimeout) {
+		lobby.setUsersReadyTimeoutActive(lobby_id);
+		setTimeout(() => {
+			const lobbyRef = lobby.getLobbyById(lobby_id);
+			lobby.setUsersReadyTimeoutOff(lobby_id);
+			if (lobbyRef.loading) {
+				const usersWhoAreReady = lobbyRef.usersReady;
+				const allUsers = lobbyRef.users;
+				const usersWhoWillBeKicked = allUsers.filter(
+					({ user_id }) => !containMatch(usersWhoAreReady, user_id)
+				);
+				kickUsers(io, usersWhoWillBeKicked);
+			}
+		}, KICK_WAIT_TIME_IN_MILLIS);
+	}
+}
+
+function containMatch(arrayToCheck, idWeAreLookingFor) {
+	return arrayToCheck.some(({ user_id }) => user_id === idWeAreLookingFor);
+}
+
+function kickUsers(io, users) {
+	users.forEach(({ user_id }) => {
+		io.to(user_id).emit('kickUser');
+	});
 }
 
 // ================
@@ -349,7 +387,7 @@ async function setDeviceId(io, socket, data) {
 function forceAlbum(io, socket, { user, addedToQueue }) {
 	const lobbyRef = lobby.getLobbyById(user.lobby_id);
 	io.to(user.lobby_id).emit('deactivateButtons');
-	lobby.setLobbyLoading(user.lobby_id, true);
+	setLobbyToLoading(io, user.lobby_id);
 
 	// Check if first time a song/album is added to the queue
 	let firstSong;
@@ -365,7 +403,7 @@ function forceAlbum(io, socket, { user, addedToQueue }) {
 	if (firstSong) {
 		io.to(user.lobby_id).emit('firstSong', lobbyRef.queue);
 	} else {
-		lobby.setLobbyLoading(user.lobby_id, false);
+		setLobbyToNotLoading(user.lobby_id);
 		io.to(user.lobby_id).emit('activateButtons');
 	}
 }

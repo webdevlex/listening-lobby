@@ -27,7 +27,7 @@ function MusicProviderButtons({ errors, setValue }) {
 					musicProvider === 'apple' ? 'selected' : null
 				}`}
 				onClick={() => handleAppleClick()}>
-				<img className='music-provider-button' src={appleLogo} alt='' />
+				<img className='music-provider-logo' src={appleLogo} alt='' />
 			</button>
 
 			{/* On click set hidden music provider input value to "spotify" and add class of "selected" */}
@@ -36,7 +36,7 @@ function MusicProviderButtons({ errors, setValue }) {
 					musicProvider === 'spotify' ? 'selected' : null
 				}`}
 				onClick={() => handleSpotifyClick()}>
-				<img className='music-provider-button' src={spotifyLogo} alt='' />
+				<img className='music-provider-logo' src={spotifyLogo} alt='' />
 			</button>
 		</div>
 	);
