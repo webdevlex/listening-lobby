@@ -7,7 +7,7 @@ const LOBBY_MAX_CAPACITY = 8;
 // = Join =
 // ========
 async function joinLobby(io, socket, data) {
-	const { lobby_id, username } = data;
+	const { lobby_id } = data;
 	data.user_id = socket.id;
 	socket.join(lobby_id);
 
@@ -116,6 +116,7 @@ function lobbyMessage(io, socket, { user, message }) {
 // ==========
 async function search(io, socket, data) {
 	// Perform search using the music provider of user that made the request
+	data.user.user_id = socket.id;
 	let searchResults = await helpers.uniSearch(data);
 	// Format search results for front-end
 	const formattedResults = helpers.formatUniSearchResults(searchResults, data);

@@ -254,6 +254,18 @@ function inTimeout(lobby_id) {
 	return lobbies[i].timeout;
 }
 
+function setUsersToken(lobby_id, user_id, newToken) {
+	const i = getLobbyIndex(lobby_id);
+	const lobby = lobbies[i];
+	const j = getMemberIndex(lobby.users, user_id);
+	lobbies[i].users[j].token = newToken;
+}
+
+function setTempToken(lobby_id, newToken) {
+	const i = getLobbyIndex(lobby_id);
+	lobbies[i].tokens.spotify = newToken;
+}
+
 module.exports = {
 	setPlayStatusPlaying,
 	setPlayStatusPaused,
@@ -287,4 +299,6 @@ module.exports = {
 	setTimeoutTo,
 	inTimeout,
 	getMembers,
+	setUsersToken,
+	setTempToken,
 };

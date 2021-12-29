@@ -79,35 +79,32 @@ router.get('/callback', async function (req, res) {
 	}
 });
 
-// TODO
-// router.get('/refresh_token', function (req, res) {
-// 	// requesting access token from refresh token
-// 	var refresh_token = req.query.refresh_token;
-// 	var authOptions = {
-// 		url: 'https://accounts.spotify.com/api/token',
-// 		headers: {
-// 			Authorization:
-// 				'Basic ' +
-// 				Buffer.from(client_id + ':' + client_secret).toString(
-// 					'base64'
-// 				),
-// 		},
-// 		form: {
-// 			grant_type: 'refresh_token',
-// 			refresh_token: refresh_token,
-// 		},
-// 		json: true,
-// 	};
+router.get('/refresh_token', async (req, res) => {
+	var refresh_token = req.query.refresh_token;
 
-// 	request.post(authOptions, function (error, response, body) {
-// 		if (!error && response.statusCode === 200) {
-// 			var access_token = body.access_token;
-// 			res.send({
-// 				access_token: access_token,
-// 			});
-// 		}
-// 	});
-// });
+	const endPoint = 'https://accounts.spotify.com/api/token';
+
+	const body = new URLSearchParams({
+		grant_type: 'refresh_token',
+		refresh_token: refresh_token,
+	});
+
+	const config = {
+		headers: {
+			'content-type': 'application/x-www-form-urlencoded',
+			Authorization:
+				'Basic ' +
+				Buffer.from(client_id + ':' + client_secret).toString('base64'),
+		},
+	};
+
+	try {
+		const response = await axios.post(endPoint, body, config);
+		res.send(response.data.access_token);
+	} catch (err) {
+		console.log(err);
+	}
+});
 
 router.get('/temp_token', async function (req, res) {
 	const endPoint = 'https://accounts.spotify.com/api/token';
