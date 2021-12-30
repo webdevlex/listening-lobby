@@ -285,8 +285,9 @@ function mediaChange(io, socket, { user }) {
 
 function startInterval(lobby_id) {
 	setTimeout(() => {
-		lobby.setTimeoutTo(lobby_id, false);
-		console.log('ready');
+		if (lobby.lobbyExists(lobby_id)) {
+			lobby.setTimeoutTo(lobby_id, false);
+		}
 	}, 10000);
 }
 
@@ -346,15 +347,17 @@ function kickUsersWhoAreNotReady(io, lobby_id) {
 	if (!lobbyRef.usersReadyTimeout) {
 		lobby.setUsersReadyTimeoutActive(lobby_id);
 		setTimeout(() => {
-			const lobbyRef = lobby.getLobbyById(lobby_id);
-			lobby.setUsersReadyTimeoutOff(lobby_id);
-			if (lobbyRef.loading) {
-				const usersWhoAreReady = lobbyRef.usersReady;
-				const allUsers = lobbyRef.users;
-				const usersWhoWillBeKicked = allUsers.filter(
-					({ user_id }) => !containMatch(usersWhoAreReady, user_id)
-				);
-				kickUsers(io, usersWhoWillBeKicked);
+			if (lobby.lobbyExists(lobby_id)) {
+				const lobbyRef = lobby.getLobbyById(lobby_id);
+				lobby.setUsersReadyTimeoutOff(lobby_id);
+				if (lobbyRef.loading) {
+					const usersWhoAreReady = lobbyRef.usersReady;
+					const allUsers = lobbyRef.users;
+					const usersWhoWillBeKicked = allUsers.filter(
+						({ user_id }) => !containMatch(usersWhoAreReady, user_id)
+					);
+					kickUsers(io, usersWhoWillBeKicked);
+				}
 			}
 		}, KICK_WAIT_TIME_IN_MILLIS);
 	}

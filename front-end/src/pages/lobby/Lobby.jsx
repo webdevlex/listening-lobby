@@ -7,6 +7,7 @@ import LobbyCenter from '../../components/lobby-center/LobbyCenter';
 import SocketHandler from '../../components/socket-handler/SocketHandler';
 import AlbumPopup from '../../components/album-popup/AlbumPopup';
 import socketio from 'socket.io-client';
+import LobbyLoading from '../../components/lobby-loading/LobbyLoading';
 import InvitePopup from '../../components/invite-popup/InvitePopup';
 import { SocketContext } from '../../context/SocketContext';
 import { PlayersContext } from '../../context/PlayersContext';
@@ -53,11 +54,11 @@ function Lobby() {
 			setSocket(socketio.connect(url));
 		}
 
-		// return () => {
-		// 	if (socket) {
-		// 		window.location.replace('http://localhost:3000');
-		// 	}
-		// };
+		return () => {
+			if (socket) {
+				window.location.replace('http://localhost:3000');
+			}
+		};
 	}, [applePlayer, setSocket, socket]);
 
 	return socket ? (
@@ -80,7 +81,7 @@ function Lobby() {
 			/>
 
 			{!playerStatus ? (
-				<h1>LOADING 1</h1>
+				<LobbyLoading />
 			) : (
 				<>
 					<div className={`player-grid ${loading ? 'hide' : null}`}>
@@ -102,7 +103,7 @@ function Lobby() {
 						/>
 					</div>
 					{loading ? (
-						<h1>LOADING 2</h1>
+						<LobbyLoading />
 					) : (
 						<>
 							<AlbumPopup
