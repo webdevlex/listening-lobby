@@ -1,0 +1,63 @@
+.early-access-page {
+	height: 100vh;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: var(--grey-100);
+	flex-direction: column;
+	padding: 30px;
+}
+
+.early-access-logo-container {
+	max-width: 500px;
+	width: 100%;
+}
+
+.early-access-form {
+	display: flex;
+}
+
+.password-input {
+	margin-top: 40px;
+	padding: 10px;
+	background-color: var(--grey-200);
+	width: fit-content;
+	border-radius: 10px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	max-width: 250px;
+	width: 100%;
+
+	.user-icon {
+		color: var(--grey-500);
+		margin: 0 10px 0 5px;
+	}
+
+	input {
+		background-color: transparent;
+		border: none;
+		outline: none;
+		font-size: 18px;
+		color: var(--grey-500);
+		width: 100%;
+	}
+}
+
+.early-access-form .submit-button {
+	padding: 0;
+	margin: 0;
+	background-color: transparent;
+	border: none;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+
+	.arrow-icon {
+		width: 25px;
+		height: 25px !important;
+		color: var(--grey-500);
+	}
+}

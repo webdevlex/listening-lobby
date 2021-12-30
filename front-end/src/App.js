@@ -1,24 +1,55 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PlayersProvider } from './context/PlayersContext';
 import { SocketContextProvider } from './context/SocketContext';
 import Home from './pages/home/Home';
+import EarlyAccess from './pages/early-access/EarlyAccess';
 import ChooseService from './pages/choose-service/ChooseService';
 import Lobby from './pages/lobby/Lobby';
-import SupportUs from './pages/support-us/SupportUs';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import PrivateRoute from './routing/PrivateRoute';
 import './App.scss';
 
+const WEBSITE_PRIVATE = true;
+
 function App() {
+	const [isAuthenticated, setIsAuthenticated] = useState(
+		JSON.parse(localStorage.getItem('earlyAccessAuth'))
+	);
+
 	return (
 		<SocketContextProvider>
 			<PlayersProvider>
 				<div className='App'>
 					<Router>
 						<Switch>
-							<Route path='/' exact component={Home} />
-							<Route path='/support-us' component={SupportUs} />
-							<Route path='/choose-service' exact component={ChooseService} />
-							<Route path='/lobby' component={Lobby} />
+							<Route
+								path='/early-access'
+								exact
+								component={() => (
+									<EarlyAccess
+										isAuthenticated={isAuthenticated}
+										setIsAuthenticated={setIsAuthenticated}
+										websitePrivate={WEBSITE_PRIVATE}
+									/>
+								)}
+							/>
+							<PrivateRoute
+								path='/'
+								exact
+								component={Home}
+								isAuthenticated={isAuthenticated}
+							/>
+							<PrivateRoute
+								path='/choose-service'
+								exact
+								component={ChooseService}
+								isAuthenticated={isAuthenticated}
+							/>
+							<PrivateRoute
+								path='/lobby'
+								component={Lobby}
+								isAuthenticated={isAuthenticated}
+							/>
 						</Switch>
 					</Router>
 				</div>

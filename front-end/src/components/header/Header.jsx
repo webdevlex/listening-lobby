@@ -42,9 +42,11 @@ export default function Header() {
 						<Link className='nav-link' to='/'>
 							Home
 						</Link>
-						<Link className='nav-link' to='/support-us'>
-							Donate
-						</Link>
+						<a
+							className='nav-link'
+							href='https://www.patreon.com/user?u=67023905&fan_landing=true'>
+							Support Us
+						</a>
 						<Link className='nav-link' to='/choose-service?action=create'>
 							Create Lobby
 						</Link>
