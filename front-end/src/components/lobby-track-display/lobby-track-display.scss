@@ -26,6 +26,13 @@
 		font-size: 150px;
 		font-weight: 600;
 		color: var(--gray-600);
+		position: relative;
+	}
+
+	.logo {
+		width: 60%;
+		height: 60%;
+		position: absolute;
 	}
 
 	.track-cover {

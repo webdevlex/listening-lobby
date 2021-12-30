@@ -15,6 +15,7 @@ import { faHeart as heartOutline } from '@fortawesome/free-regular-svg-icons';
 import LoadingSpinner from '../loading-spinner/LoadingSpinner';
 import './spotify-player.scss';
 import TimeBar from '../time-bar/TimeBar';
+import logo from '../../assets/images/listening-lobby-logo.svg';
 
 function SpotifyPlayer({
 	user,
@@ -140,7 +141,9 @@ function SpotifyPlayer({
 				) : (
 					<>
 						<div className='album-cover-container'>
-							<p className='default-album-cover'>?</p>
+							<p className='default-album-cover'>
+								<img className='logo' src={logo} alt='' />
+							</p>
 						</div>
 						<div className='text'>
 							<p className='simple-text track-title'>Listening Lobby</p>

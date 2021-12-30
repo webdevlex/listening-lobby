@@ -1,6 +1,7 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import useChildParentOverflow from '../../hooks/childParentOverflow';
 import TimeBar from '../time-bar/TimeBar';
+import logo from '../../assets/images/listening-lobby-logo.svg';
 import './lobby-track-display.scss';
 
 export default function LobbyTrackDisplay({ queue, percent, currentTime }) {
@@ -59,7 +60,9 @@ export default function LobbyTrackDisplay({ queue, percent, currentTime }) {
 				) : (
 					<>
 						<div className='track-display-left'>
-							<p className='default-album'>?</p>
+							<div className='default-album'>
+								<img className='logo' src={logo} alt='' />
+							</div>
 						</div>
 						<div ref={parent} className='track-display-right'>
 							<div
