@@ -29,3 +29,19 @@
 		background-color: var(--gray-200);
 	}
 }
+
+@media (max-width: 850px) {
+	.message-display {
+		.username {
+			font-size: 18px;
+		}
+
+		.timestamp {
+			font-size: 14px;
+		}
+
+		.message {
+			font-size: 16px;
+		}
+	}
+}

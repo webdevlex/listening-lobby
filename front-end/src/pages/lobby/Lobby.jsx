@@ -10,10 +10,13 @@ import socketio from 'socket.io-client';
 import InvitePopup from '../../components/invite-popup/InvitePopup';
 import { SocketContext } from '../../context/SocketContext';
 import { PlayersContext } from '../../context/PlayersContext';
+import useWindowSize from '../../hooks/hooks';
 
 import './lobby.scss';
 
 function Lobby() {
+	const [width] = useWindowSize();
+
 	// Context
 	const [socket, setSocket] = useContext(SocketContext);
 	const { apple } = useContext(PlayersContext);
@@ -50,11 +53,11 @@ function Lobby() {
 			setSocket(socketio.connect(url));
 		}
 
-		return () => {
-			if (socket) {
-				window.location.replace('http://localhost:3000');
-			}
-		};
+		// return () => {
+		// 	if (socket) {
+		// 		window.location.replace('http://localhost:3000');
+		// 	}
+		// };
 	}, [applePlayer, setSocket, socket]);
 
 	return socket ? (
@@ -108,6 +111,7 @@ function Lobby() {
 								albumMissingOn={albumMissingOn}
 								user={user}
 							/>
+
 							<InvitePopup
 								displayInvitePopup={displayInvitePopup}
 								setDisplayInvitePopup={setDisplayInvitePopup}
@@ -119,14 +123,20 @@ function Lobby() {
 									setDisplayInvitePopup={setDisplayInvitePopup}
 								/>
 							</div>
-							<div className='members-grid'>
-								<LobbyMembers members={members} adminId={adminId} />
-							</div>
-							<div className='messages-grid'>
-								<LobbyMessages messages={messages} user={user} />
-							</div>
+							{width > 850 ? (
+								<div className='members-grid'>
+									<LobbyMembers members={members} adminId={adminId} />
+								</div>
+							) : null}
+							{width > 850 ? (
+								<div className='messages-grid'>
+									<LobbyMessages messages={messages} user={user} />
+								</div>
+							) : null}
+
 							<div className='center-grid'>
 								<LobbyCenter
+									setCenterDisplay={setCenterDisplay}
 									centerDisplay={centerDisplay}
 									queue={queue}
 									user={user}
@@ -144,6 +154,9 @@ function Lobby() {
 									setSearchLoading={setSearchLoading}
 									percent={percent}
 									currentTime={currentTime}
+									members={members}
+									adminId={adminId}
+									messages={messages}
 								/>
 							</div>
 						</>

@@ -42,7 +42,7 @@ export default function Header() {
 						<Link className='nav-link' to='/'>
 							Home
 						</Link>
-						<Link className='nav-link' to='/'>
+						<Link className='nav-link' to='/support-us'>
 							Donate
 						</Link>
 						<Link className='nav-link' to='/choose-service?action=create'>

@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import LobbyTrackDisplay from '../lobby-track-display/LobbyTrackDisplay';
 import LobbyQueue from '../lobby-queue/LobbyQueue';
 import LobbySearch from '../lobby-search/LobbySearch';
+import LobbyMembers from '../../components/lobby-members/LobbyMembers';
+import LobbyMessages from '../../components/lobby-messages/LobbyMessages';
+import useWindowSize from '../../hooks/hooks';
 import './lobby-center.scss';
 
 export default function LobbyCenter({
+	setCenterDisplay,
 	centerDisplay,
 	queue,
 	user,
@@ -21,7 +25,21 @@ export default function LobbyCenter({
 	setSearchLoading,
 	percent,
 	currentTime,
+	members,
+	adminId,
+	messages,
 }) {
+	const [width] = useWindowSize();
+
+	useEffect(() => {
+		if (
+			width > 850 &&
+			(centerDisplay === 'messages' || centerDisplay === 'members')
+		) {
+			setCenterDisplay('player');
+		}
+	}, [centerDisplay, width]);
+
 	switch (centerDisplay) {
 		case 'player':
 			return (
@@ -55,8 +73,10 @@ export default function LobbyCenter({
 					setSearchLoading={setSearchLoading}
 				/>
 			);
-		case 'settings':
-			return <h1>settings</h1>;
+		case 'messages':
+			return <LobbyMessages messages={messages} user={user} />;
+		case 'members':
+			return <LobbyMembers members={members} adminId={adminId} />;
 		default:
 			return null;
 	}

@@ -5,7 +5,7 @@ import './members.scss';
 
 function LobbyMembers({ members, adminId }) {
 	return (
-		<div>
+		<div className='lobby-members'>
 			<h4 className='section-title'>Members</h4>
 			{members.map((member, index) => {
 				return (
