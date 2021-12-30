@@ -54,11 +54,11 @@ function Lobby() {
 			setSocket(socketio.connect(url));
 		}
 
-		return () => {
-			if (socket) {
-				window.location.replace('http://localhost:3000');
-			}
-		};
+		// return () => {
+		// 	if (socket) {
+		// 		window.location.replace('http://localhost:3000');
+		// 	}
+		// };
 	}, [applePlayer, setSocket, socket]);
 
 	return socket ? (
@@ -113,11 +113,13 @@ function Lobby() {
 								user={user}
 							/>
 
-							<InvitePopup
-								displayInvitePopup={displayInvitePopup}
-								setDisplayInvitePopup={setDisplayInvitePopup}
-								user={user}
-							/>
+							{width > 850 ? (
+								<InvitePopup
+									displayInvitePopup={displayInvitePopup}
+									setDisplayInvitePopup={setDisplayInvitePopup}
+									user={user}
+								/>
+							) : null}
 							<div className='settings-grid'>
 								<LobbySettings
 									setCenterDisplay={setCenterDisplay}
@@ -126,7 +128,13 @@ function Lobby() {
 							</div>
 							{width > 850 ? (
 								<div className='members-grid'>
-									<LobbyMembers members={members} adminId={adminId} />
+									<LobbyMembers
+										members={members}
+										adminId={adminId}
+										displayInvitePopup={displayInvitePopup}
+										setDisplayInvitePopup={setDisplayInvitePopup}
+										user={user}
+									/>
 								</div>
 							) : null}
 							{width > 850 ? (
@@ -157,6 +165,7 @@ function Lobby() {
 									currentTime={currentTime}
 									members={members}
 									adminId={adminId}
+									setDisplayInvitePopup={setDisplayInvitePopup}
 									messages={messages}
 								/>
 							</div>

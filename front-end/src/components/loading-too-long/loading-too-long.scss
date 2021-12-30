@@ -1,11 +1,11 @@
-.popup-container {
+.playback-popup-container {
 	border-radius: 25px;
 	background-color: var(--gray-300);
 	color: white;
-	width: 500px;
-	height: 320px;
+	width: 700px;
+	height: fit-content;
 	display: flex;
-	padding-top: 35px;
+	padding: 30px;
 	align-items: center;
 	flex-direction: column;
 	position: relative;
@@ -18,7 +18,7 @@
 	.warning-icon {
 		width: 80px !important;
 		height: 80px;
-		color: rgb(221, 60, 60);
+		color: var(--red);
 		z-index: 1;
 	}
 
@@ -31,23 +31,21 @@
 	}
 }
 
-.album-warning-text {
+.playback-warning-text {
 	text-align: center;
 	margin-top: 10px;
 	margin-bottom: 25px;
 	display: flex;
 	align-items: center;
 	flex-direction: column;
-}
 
-.album-warning-buttons {
-	button {
-		width: 150px;
-		height: 40px;
-		border-radius: 50px;
-		outline: none;
-		border: none;
-		margin-inline: 10px;
-		cursor: pointer;
+	.main-text {
+		font-size: 32px;
+		font-weight: 700;
+		margin-bottom: 10px;
+	}
+	.sub-text {
+		font-size: 18px;
+		color: var(--gray-600);
 	}
 }

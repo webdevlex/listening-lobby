@@ -8,7 +8,7 @@ let poppedRunning = false;
 // Listener
 function setListener(socket, player, user, setPercent, setCurrentTime, queue) {
 	player.addListener('player_state_changed', (state) => {
-		if (playbackChanged(state, queue)) {
+		if (!state || playbackChanged(state, queue)) {
 			kickFromLobby();
 		}
 

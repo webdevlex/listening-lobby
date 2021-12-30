@@ -1,4 +1,4 @@
-.popup {
+.invite-popup {
 	position: absolute;
 	background-color: rgba(0, 0, 0, 0.5);
 	width: 100%;
@@ -73,5 +73,20 @@
 		padding: 5px 10px;
 		background-color: var(--gray-300);
 		cursor: pointer;
+	}
+}
+
+@media (max-width: 850px) {
+	.invite-popup {
+		position: static;
+		background-color: transparent;
+	}
+	.invite-container {
+		padding: 15px;
+		margin: 0;
+	}
+
+	.lobby-id-container {
+		font-size: 16px;
 	}
 }

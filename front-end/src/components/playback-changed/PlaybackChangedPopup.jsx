@@ -3,14 +3,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import './playback-changed-popup.scss';
 
-export default function playbackChanged({
+export default function PlaybackChanged({
 	playbackChanged,
 	setPlaybackChanged,
 }) {
 	function handleOutsideClick(e) {
 		if (e.target.className === 'popup') {
+			document.body.style.overflow = 'auto';
 			setPlaybackChanged(false);
 		}
+	}
+
+	if (playbackChanged) {
+		document.body.style.overflow = 'hidden';
 	}
 
 	return playbackChanged ? (

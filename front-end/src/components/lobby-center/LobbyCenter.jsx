@@ -28,6 +28,7 @@ export default function LobbyCenter({
 	members,
 	adminId,
 	messages,
+	setDisplayInvitePopup,
 }) {
 	const [width] = useWindowSize();
 
@@ -38,7 +39,7 @@ export default function LobbyCenter({
 		) {
 			setCenterDisplay('player');
 		}
-	}, [centerDisplay, width]);
+	}, [centerDisplay, setCenterDisplay, width]);
 
 	switch (centerDisplay) {
 		case 'player':
@@ -76,7 +77,15 @@ export default function LobbyCenter({
 		case 'messages':
 			return <LobbyMessages messages={messages} user={user} />;
 		case 'members':
-			return <LobbyMembers members={members} adminId={adminId} />;
+			return (
+				<LobbyMembers
+					members={members}
+					adminId={adminId}
+					displayInvitePopup={true}
+					setDisplayInvitePopup={setDisplayInvitePopup}
+					user={user}
+				/>
+			);
 		default:
 			return null;
 	}

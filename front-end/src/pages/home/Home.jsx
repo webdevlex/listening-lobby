@@ -8,10 +8,12 @@ import one from '../../assets/images/1.png';
 import two from '../../assets/images/2.png';
 import three from '../../assets/images/3.png';
 import './home.scss';
+import LoadingTooLong from '../../components/loading-too-long/LoadingTooLong';
 
 function Home() {
 	const [maxReached, setMaxReached] = useState(false);
 	const [playbackChanged, setPlaybackChanged] = useState(false);
+	const [loadingTooLong, setLoadingTooLong] = useState(false);
 
 	useEffect(() => {
 		const capacity = JSON.parse(localStorage.getItem('capacity')) || {
@@ -21,6 +23,9 @@ function Home() {
 			changed: false,
 		};
 
+		const loadingTooLong =
+			JSON.parse(localStorage.getItem('loadingTooLong')) || false;
+
 		if (capacity.maxReached) {
 			setMaxReached(true);
 			localStorage.setItem('capacity', JSON.stringify({ maxReached: false }));
@@ -28,6 +33,11 @@ function Home() {
 		if (playback.changed) {
 			setPlaybackChanged(true);
 			localStorage.setItem('playback', JSON.stringify({ changed: false }));
+		}
+
+		if (loadingTooLong) {
+			setLoadingTooLong(true);
+			localStorage.setItem('loadingTooLong', false);
 		}
 	}, []);
 
@@ -38,6 +48,10 @@ function Home() {
 				setPlaybackChanged={setPlaybackChanged}
 			/>
 			<MaxCapPopup maxReached={maxReached} setMaxReached={setMaxReached} />
+			<LoadingTooLong
+				loadingTooLong={loadingTooLong}
+				setLoadingTooLong={setLoadingTooLong}
+			/>
 			<Header />
 			<Hero />
 

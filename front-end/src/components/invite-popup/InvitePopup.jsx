@@ -1,20 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './invite-popup.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLink } from '@fortawesome/free-solid-svg-icons';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import useWindowSize from '../../hooks/hooks';
 
 export default function InvitePopup({
 	displayInvitePopup,
 	setDisplayInvitePopup,
 	user,
 }) {
+	const lobby_id = user.lobby_id || '';
+	const [width] = useWindowSize();
 	const [copied, setCopied] = useState(false);
-	const link = `http://localhost:3000/choose-service?action=join&lobby_id=${user.lobby_id}`;
+	const link = `http://localhost:3000/choose-service?action=join&lobby_id=${lobby_id}`;
 	const [inputValue] = useState(link);
 
+	useEffect(() => {
+		return () => {
+			setCopied(false);
+		};
+	}, []);
+
 	function handleOutsideClick(e) {
-		if (e.target.className === 'popup') {
+		if (e.target.className === 'invite-popup' && width > 850) {
 			setDisplayInvitePopup(false);
 			setCopied(false);
 		}
@@ -22,7 +31,7 @@ export default function InvitePopup({
 
 	return displayInvitePopup ? (
 		<div
-			className='popup'
+			className='invite-popup'
 			onClick={(e) => {
 				handleOutsideClick(e);
 			}}>

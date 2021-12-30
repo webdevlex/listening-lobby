@@ -100,10 +100,7 @@ function SocketHandler({
 			});
 
 			socket.on('kickUser', () => {
-				localStorage.setItem(
-					'loading',
-					JSON.stringify({ tookTooLongToLoad: true })
-				);
+				localStorage.setItem('loadingTooLong', true);
 				window.location.replace('http://localhost:3000');
 			});
 		}

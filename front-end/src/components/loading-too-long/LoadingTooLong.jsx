@@ -1,27 +1,27 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
-import './max-cap-popup.scss';
+import './loading-too-long.scss';
 
-export default function MaxCapPopup({ maxReached, setMaxReached }) {
+export default function LoadingTooLong({ loadingTooLong, setLoadingTooLong }) {
 	function handleOutsideClick(e) {
 		if (e.target.className === 'popup') {
 			document.body.style.overflow = 'auto';
-			setMaxReached(false);
+			setLoadingTooLong(false);
 		}
 	}
 
-	if (maxReached) {
+	if (loadingTooLong) {
 		document.body.style.overflow = 'hidden';
 	}
 
-	return maxReached ? (
+	return loadingTooLong ? (
 		<div
 			className='popup'
 			onClick={(e) => {
 				handleOutsideClick(e);
 			}}>
-			<div className='max-cap-popup-container'>
+			<div className='playback-popup-container'>
 				<div className='warning-icon-container'>
 					<FontAwesomeIcon
 						className='warning-icon'
@@ -30,11 +30,11 @@ export default function MaxCapPopup({ maxReached, setMaxReached }) {
 					<div className='exclamation-color'></div>
 				</div>
 
-				<div className='max-cap-warning-text'>
-					<p className='main-text'>Maximum lobby capacity reached!</p>
+				<div className='playback-warning-text'>
+					<p className='main-text'>Poor internet connection!</p>
 					<p className='sub-text'>
-						There can be a maximum of 8 users in a lobby at a time, we apologize
-						for the inconvenience.
+						You were causing long load times in the lobby, this may be caused by
+						poor internet connection.
 					</p>
 				</div>
 			</div>

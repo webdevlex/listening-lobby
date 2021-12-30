@@ -1,10 +1,21 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faCrown } from '@fortawesome/free-solid-svg-icons';
+import useWindowSize from '../../hooks/hooks';
+import InvitePopup from '../invite-popup/InvitePopup';
 import logo from '../../assets/images/gray-logo-with-text.svg';
+
 import './members.scss';
 
-function LobbyMembers({ members, adminId }) {
+function LobbyMembers({
+	members,
+	adminId,
+	displayInvitePopup,
+	setDisplayInvitePopup,
+	user,
+}) {
+	const [width] = useWindowSize();
+
 	return (
 		<div className='lobby-members'>
 			<div className='members-container'>
@@ -22,8 +33,18 @@ function LobbyMembers({ members, adminId }) {
 				})}
 			</div>
 
-			<div className='lobby-logo-container'>
-				<img className='lobby-logo' src={logo} alt='' />
+			<div>
+				{width < 850 ? (
+					<InvitePopup
+						displayInvitePopup={displayInvitePopup}
+						setDisplayInvitePopup={setDisplayInvitePopup}
+						user={user}
+					/>
+				) : (
+					<div className='lobby-logo-container'>
+						<img className='lobby-logo' src={logo} alt='' />
+					</div>
+				)}
 			</div>
 		</div>
 	);
