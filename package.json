@@ -4,6 +4,7 @@
   "description": "A web application for listening to music with friends simultaneously via your music provider",
   "main": "index.js",
   "scripts": {
+    "heroku-postbuild": "cd front-end && npm install && npm install --only=dev --no-shrinkwrap && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "server": "nodemon server",
