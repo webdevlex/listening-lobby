@@ -12,8 +12,9 @@
     "dev": "concurrently \"npm run client\" \"npm run server\""
   },
   "engines": {
-    "node": "14.17.0"
- },
+    "node": "14.x",
+    "npm": "8.x"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alex-is-martin/listening-lobby.git"
