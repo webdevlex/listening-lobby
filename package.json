@@ -1,5 +1,5 @@
 {
-  "name": "listening-party",
+  "name": "listening-lobby",
   "version": "1.0.0",
   "description": "A web application for listening to music with friends simultaneously via your music provider",
   "main": "index.js",
