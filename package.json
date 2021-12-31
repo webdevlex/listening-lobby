@@ -11,6 +11,9 @@
     "client": "npm start --prefix front-end",
     "dev": "concurrently \"npm run client\" \"npm run server\""
   },
+  "engines": {
+    "node": "14.17.0"
+ },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alex-is-martin/listening-lobby.git"
