@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alex-is-martin/listening-party.git"
+    "url": "git+https://github.com/alex-is-martin/listening-lobby.git"
   },
   "author": "Justin Fisher & Alexis Martin",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/alex-is-martin/listening-party/issues"
+    "url": "https://github.com/alex-is-martin/listening-lobby/issues"
   },
-  "homepage": "https://github.com/alex-is-martin/listening-party#readme",
+  "homepage": "https://github.com/alex-is-martin/listening-lobby#readme",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-regular-svg-icons": "^5.15.4",
