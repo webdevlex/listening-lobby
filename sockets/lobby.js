@@ -15,6 +15,7 @@ function generateLobby(data, tempToken) {
 		hold: null,
 		timeout: false,
 		usersReadyTimeout: false,
+		loadingOverlapCount: 0,
 	};
 
 	lobbies.push(newLobby);
@@ -29,6 +30,7 @@ function generateUser(data, privilege) {
 		refresh_token: data.refresh_token,
 		music_provider: data.music_provider,
 		user_id: data.user_id,
+		frontEndId: data.frontEndId,
 	};
 }
 
@@ -277,6 +279,16 @@ function setUsersReadyTimeoutOff(lobby_id) {
 	lobbies[i].usersReadyTimeout = false;
 }
 
+function incremenetLoadingOverlap(lobby_id) {
+	const i = getLobbyIndex(lobby_id);
+	lobbies[i].loadingOverlapCount += 1;
+}
+
+function setLoadingOverlapToZero(lobby_id) {
+	const i = getLobbyIndex(lobby_id);
+	lobbies[i].loadingOverlapCount = 0;
+}
+
 module.exports = {
 	setPlayStatusPlaying,
 	setPlayStatusPaused,
@@ -314,4 +326,6 @@ module.exports = {
 	addUserToReady,
 	setUsersReadyTimeoutActive,
 	setUsersReadyTimeoutOff,
+	incremenetLoadingOverlap,
+	setLoadingOverlapToZero,
 };

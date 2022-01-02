@@ -2,7 +2,6 @@ import React from 'react';
 import './lobby-settings.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import useWindowSize from '../../hooks/hooks';
-import logo from '../../assets/images/logo-and-text.svg';
 import {
 	faHome,
 	faSearch,

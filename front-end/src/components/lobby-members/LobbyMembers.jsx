@@ -22,7 +22,15 @@ function LobbyMembers({
 				<h4 className='section-title'>Members</h4>
 				{members.map((member, index) => {
 					return (
-						<div className='member-display' key={index}>
+						<div
+							className={`member-display ${
+								user.frontEndId === member.frontEndId ? 'mark-as-me' : null
+							}`}
+							key={index}>
+							<div className='tool-tip'>
+								<p>{member.music_provider}</p>
+								<div className='triangle'></div>
+							</div>
 							<FontAwesomeIcon className='member-icon' icon={faUser} />
 							<p>{member.username}</p>
 							{adminId === member.user_id ? (

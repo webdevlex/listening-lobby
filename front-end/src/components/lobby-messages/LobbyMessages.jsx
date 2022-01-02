@@ -41,8 +41,8 @@ function LobbyMessages({ messages, user }) {
 			<h4 className='section-title'>Messages</h4>
 			<div className='messages-container' onScroll={(e) => handleScroll(e)}>
 				{hasMessages &&
-					messages.map((messageData) => (
-						<MessageDisplay messageData={messageData} />
+					messages.map((messageData, index) => (
+						<MessageDisplay messageData={messageData} key={index} />
 					))}
 				<div className='last-message' ref={lastMessage} />
 			</div>

@@ -2,7 +2,7 @@ const lobby = require('./lobby');
 const helpers = require('./helpers');
 
 const LOBBY_MAX_CAPACITY = 8;
-const KICK_WAIT_TIME_IN_MILLIS = 30000;
+const KICK_WAIT_TIME_IN_MILLIS = 10000;
 
 // ========
 // = Join =
@@ -10,9 +10,9 @@ const KICK_WAIT_TIME_IN_MILLIS = 30000;
 async function joinLobby(io, socket, data) {
 	const { lobby_id } = data;
 	data.user_id = socket.id;
+
 	socket.join(lobby_id);
 
-	// Check if lobby exists and handle accordingly
 	if (!lobby.lobbyExists(lobby_id)) {
 		// Get token for music provider that admin is NOT using
 		const tempToken = await helpers.generateTempToken(data.music_provider);
@@ -27,8 +27,11 @@ async function joinLobby(io, socket, data) {
 		io.to(lobby_id).emit('setLobbyInfo', members, messages);
 		io.to(lobby_id).emit('doneLoading', {});
 		io.to(lobby_id).emit('setAdmin', adminData.user_id);
+		io.to(socket.id).emit('setNewUserData', data);
 		operatorMessage(io, 'Welcome to the listening lobby!', lobby_id);
-	} else {
+	}
+	// Lobby exists
+	else {
 		const lobbyRef = lobby.getLobbyById(lobby_id);
 		lobby.joinLobby(data);
 
@@ -38,8 +41,8 @@ async function joinLobby(io, socket, data) {
 
 			const members = lobby.getMembers(lobby_id);
 			const messages = lobby.getLobbyMessages(lobby_id);
-			// Send new lobby data back to members
-			// TODO send queue and ui queue to designated player
+
+			// Send new lobby data back to all members
 			io.to(lobby_id).emit('setLobbyInfo', members, messages);
 			io.to(socket.id).emit('addSong', lobbyRef.queue);
 
@@ -181,7 +184,6 @@ async function addAlbum(io, socket, data) {
 
 		// Send front end the data for ui, spotify player, and apple player
 		io.to(data.user.lobby_id).emit('addSong', lobbyRef.queue);
-		// console.log(data);
 		io.to(socket.id).emit('addCheck', data.albumData.id);
 
 		if (firstSong) {
@@ -215,8 +217,6 @@ function play(io, socket, { user }) {
 		} else {
 			io.to(user.lobby_id).emit('pause', lobbyRef.queue[0]);
 		}
-	} else {
-		console.log('empty queue');
 	}
 }
 
@@ -327,6 +327,7 @@ function userReady(io, socket, { user }) {
 	lobby.addUserToReady(user);
 
 	if (lobbyRef.usersReady.length === lobbyRef.users.length) {
+		console.log('----------------------------------');
 		io.to(user.lobby_id).emit('activateButtons');
 		setLobbyToNotLoading(user.lobby_id);
 		lobby.resetReady(user.lobby_id);
@@ -335,6 +336,8 @@ function userReady(io, socket, { user }) {
 
 function setLobbyToNotLoading(lobby_id) {
 	lobby.setLobbyLoading(lobby_id, false);
+	clearInterval(kickAfterTimeInterval);
+	kickAfterTimeInterval = null;
 }
 
 function setLobbyToLoading(io, lobby_id) {
@@ -342,33 +345,57 @@ function setLobbyToLoading(io, lobby_id) {
 	kickUsersWhoAreNotReady(io, lobby_id);
 }
 
+let kickAfterTimeInterval = null;
 function kickUsersWhoAreNotReady(io, lobby_id) {
-	const lobbyRef = lobby.getLobbyById(lobby_id);
-	if (!lobbyRef.usersReadyTimeout) {
-		lobby.setUsersReadyTimeoutActive(lobby_id);
-		setTimeout(() => {
-			if (lobby.lobbyExists(lobby_id)) {
-				const lobbyRef = lobby.getLobbyById(lobby_id);
-				lobby.setUsersReadyTimeoutOff(lobby_id);
-				if (lobbyRef.loading) {
-					const usersWhoAreReady = lobbyRef.usersReady;
-					const allUsers = lobbyRef.users;
-					const usersWhoWillBeKicked = allUsers.filter(
-						({ user_id }) => !containMatch(usersWhoAreReady, user_id)
-					);
-					kickUsers(io, usersWhoWillBeKicked);
-				}
-			}
-		}, KICK_WAIT_TIME_IN_MILLIS);
-	}
+	kickAfterTimeInterval = setTimeout(() => {
+		if (lobby.lobbyExists(lobby_id)) {
+			const lobbyRef = lobby.getLobbyById(lobby_id);
+			const usersWhoAreReady = lobbyRef.usersReady;
+			const allUsers = lobbyRef.users;
+			const usersWhoWillBeKicked = allUsers.filter(
+				({ user_id }) => !containMatch(usersWhoAreReady, user_id)
+			);
+			console.log(usersWhoWillBeKicked);
+			kickUsers(io, usersWhoWillBeKicked);
+		}
+	}, KICK_WAIT_TIME_IN_MILLIS);
 }
+
+// function kickUsersWhoAreNotReady(io, lobby_id) {
+// 	const lobbyRef = lobby.getLobbyById(lobby_id);
+
+// 	if (!lobbyRef.usersReadyTimeout) {
+// 		lobby.setUsersReadyTimeoutActive(lobby_id);
+
+// 		kickAfterTimeInterval = setTimeout(() => {
+// 			if (lobby.lobbyExists(lobby_id)) {
+// 				const lobbyRef = lobby.getLobbyById(lobby_id);
+// 				const notEveryoneDoneloading = lobbyRef.loading;
+// 				const noLoadingOverlap = lobbyRef.everyLoadedSuccessfullyCount === 0;
+
+// 				lobby.setUsersReadyTimeoutOff(lobby_id);
+// 				lobby.setLoadingOverlapToZero(lobby_id);
+
+// 				if (notEveryoneDoneloading && noLoadingOverlap) {
+// 					const usersWhoAreReady = lobbyRef.usersReady;
+// 					const allUsers = lobbyRef.users;
+// 					const usersWhoWillBeKicked = allUsers.filter(
+// 						({ user_id }) => !containMatch(usersWhoAreReady, user_id)
+// 					);
+// 					kickUsers(io, usersWhoWillBeKicked);
+// 				}
+// 			}
+// 		}, KICK_WAIT_TIME_IN_MILLIS);
+// 	}
+// }
 
 function containMatch(arrayToCheck, idWeAreLookingFor) {
 	return arrayToCheck.some(({ user_id }) => user_id === idWeAreLookingFor);
 }
 
 function kickUsers(io, users) {
-	users.forEach(({ user_id }) => {
+	users.forEach(({ user_id, username }) => {
+		console.log('kicking:', username);
 		io.to(user_id).emit('kickUser');
 	});
 }

@@ -31,7 +31,6 @@ function MusicProviderForm({
 	};
 
 	const onSubmit = (formData) => {
-		console.log('submitting');
 		const username = formData.username.trim();
 		const validUsername =
 			username !== '' &&
@@ -53,21 +52,19 @@ function MusicProviderForm({
 				lobby_id: formData.lobby_id,
 				admin: formData.lobby_id ? false : true,
 				authorized: true,
+				frontEndId: generateRandomString(6),
 			});
 			localStorage.setItem('user', localUserData);
 			redirectTo(formData.musicProvider);
 		} else if (!validUsername) {
-			console.log('userbname');
 			setError('username', {
 				type: 'invalid',
 			});
 		} else if (!validProvider) {
-			console.log('musicprovider');
 			setError('musicProvider', {
 				type: 'invalid',
 			});
 		} else if (!validLobbyId) {
-			console.log('lobby id');
 			setError('lobby_id', {
 				type: 'invalid',
 			});

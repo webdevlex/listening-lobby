@@ -6,7 +6,6 @@ let appleIsPlaying = false;
 
 let addEventListener = (applePlayer, socket, user) => {
 	applePlayer.addEventListener('playbackStateDidChange', () => {
-		console.log(applePlayer.playbackState);
 		if (applePlayer.playbackState === 10) {
 			appleIsPlaying = false;
 			socket.emit('mediaChange', { user });
@@ -25,7 +24,7 @@ let addEventListener = (applePlayer, socket, user) => {
 
 //Helpers
 //Sets musicQueue
-async function setMusicKitQueue(applePlayer, id) {
+async function enqueueSong(applePlayer, id) {
 	await applePlayer.authorize();
 	appleIsPlaying = false;
 	await applePlayer.setQueue({
@@ -45,35 +44,57 @@ export async function startUp(
 	setPercent,
 	setCurrentTime
 ) {
-	//console.log(applePlayer);
-	applePlayer.bitrate = 128;
 	addEventListener(applePlayer, socket, user);
+	applePlayer.bitrate = 128;
 	applePlayer.volume = 0.1;
-	if (playerStatus && queue.length > 0 && queue[0].apple !== '-1') {
-		await setMusicKitQueue(applePlayer, queue[0].apple);
+
+	if (playerStatus && queue.length > 0) {
 		timeStampOnJoin = playerStatus.timestamp / 1000;
-		if (!playerStatus.paused) {
-			await handlePlay(
-				applePlayer,
-				socket,
-				user,
-				setPlaying,
-				queue[0],
-				setPercent,
-				setCurrentTime,
-				playerStatus.timestamp
-			);
-			await applePlayer.seekToTime(timeStampOnJoin);
-			setPlaying(true);
+
+		if (queue[0].apple !== '-1') {
+			await enqueueSong(applePlayer, queue[0].apple);
+			if (!playerStatus.paused) {
+				await handlePlay(
+					applePlayer,
+					socket,
+					user,
+					setPlaying,
+					queue[0],
+					setPercent,
+					setCurrentTime,
+					playerStatus.timestamp
+				);
+				await applePlayer.seekToTime(timeStampOnJoin);
+				setPlaying(true);
+			} else {
+				setupProgressBar(
+					setPercent,
+					setCurrentTime,
+					queue[0].ui.duration,
+					playerStatus.timestamp
+				);
+				joinOnPause = true;
+				socket.emit('userReady', { user });
+			}
 		} else {
-			setupProgressBar(
-				setPercent,
-				setCurrentTime,
-				queue[0].ui.duration,
-				playerStatus.timestamp
-			);
-			joinOnPause = true;
 			socket.emit('userReady', { user });
+			if (!playerStatus.paused) {
+				moveTimeStamp(
+					setPercent,
+					setCurrentTime,
+					queue[0].ui.duration,
+					playerStatus.timestamp
+				);
+				setPlaying(true);
+			} else {
+				setupProgressBar(
+					setPercent,
+					setCurrentTime,
+					queue[0].ui.duration,
+					playerStatus.timestamp
+				);
+				joinOnPause = true;
+			}
 		}
 	} else if (!user.admin) {
 		socket.emit('userReady', { user });
@@ -130,7 +151,8 @@ export async function handlePlay(
 export async function handlePause(applePlayer, socket, user, setPlaying, song) {
 	await applePlayer.authorize();
 
-	if (song.apple !== '-1') {
+	const songAvailableOnApple = song.apple !== '-1';
+	if (songAvailableOnApple) {
 		appleIsPlaying = false;
 		await applePlayer.pause();
 		emitReadyWhenPaused(socket, applePlayer, user);
@@ -144,8 +166,9 @@ export async function handlePause(applePlayer, socket, user, setPlaying, song) {
 
 //Handles first song add
 export async function handleFirstSong(applePlayer, song, socket, user) {
-	if (song.apple !== '-1') {
-		await setMusicKitQueue(applePlayer, song.apple);
+	const songAvailableOnApple = song.apple !== '-1';
+	if (songAvailableOnApple) {
+		await enqueueSong(applePlayer, song.apple);
 		emitReadyWhenQueueSet(socket, applePlayer, user);
 	} else {
 		emitUserReady(socket, user);
@@ -165,8 +188,12 @@ export async function handlePopped(
 	appleIsPlaying = false;
 	resetTimeStamp(setPercent, setCurrentTime);
 	pauseTimeStamp(setPercent, setCurrentTime);
-	if (song.apple !== '-1') {
-		await setMusicKitQueue(applePlayer, song.apple);
+	const songExists = !!song;
+	const songAvailableOnApple = song.apple !== '-1';
+
+	if (songExists && songAvailableOnApple) {
+		console.log('song in queue and available');
+		await enqueueSong(applePlayer, song.apple);
 		handlePlay(
 			applePlayer,
 			socket,
@@ -176,8 +203,10 @@ export async function handlePopped(
 			setPercent,
 			setCurrentTime
 		);
-	} else {
-		handlePause(applePlayer, socket, user, setPlaying, song);
+	} else if (songExists && !songAvailableOnApple) {
+		console.log('song in queue and NOT available');
+		moveTimeStamp(setPercent, setCurrentTime, song.ui.duration, 0);
+		emitUserReady(socket, user);
 	}
 }
 //Handles empty queue
@@ -207,8 +236,11 @@ export async function handleRemoveFirst(
 	setPercent,
 	setCurrentTime
 ) {
-	if (song.apple !== '-1') {
-		await setMusicKitQueue(applePlayer, song.apple);
+	const songExists = !!song;
+	const songAvailableOnApple = song.apple !== '-1';
+
+	if (songExists && songAvailableOnApple) {
+		await enqueueSong(applePlayer, song.apple);
 		if (isPlaying) {
 			handlePlay(
 				applePlayer,
@@ -222,12 +254,11 @@ export async function handleRemoveFirst(
 		} else {
 			handlePause(applePlayer, socket, user, setPlaying, song);
 		}
-	} else {
+	} else if (songExists && !songAvailableOnApple) {
 		if (isPlaying) {
-			pauseTimeStamp();
-			await handlePause();
 			setPlaying(true);
 		} else {
+			pauseTimeStamp();
 			setPlaying(false);
 		}
 		emitUserReady(socket, user);
@@ -235,7 +266,6 @@ export async function handleRemoveFirst(
 	resetTimeStamp(setPercent, setCurrentTime);
 }
 
-// Ready emitters
 function emitReadyWhenPlaying(socket, applePlayer, user) {
 	delay(() => socket.emit('userReady', { user }));
 }

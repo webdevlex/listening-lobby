@@ -9,12 +9,49 @@
 }
 
 .member-display {
+	position: relative;
 	padding-bottom: 8px;
 	font-size: 18px;
 	color: var(--gray-500);
 	display: flex;
 	align-items: center;
 	font-size: 16px;
+	padding: 5px 10px;
+	border-radius: 5px;
+	cursor: pointer;
+	margin-bottom: 5px;
+
+	&:hover {
+		background-color: var(--gray-200);
+		.tool-tip {
+			display: block;
+		}
+	}
+}
+
+.tool-tip {
+	display: none;
+	background-color: var(--gray-300);
+	position: absolute;
+	border-radius: 5px;
+	padding: 4px 6px;
+	top: -40px;
+	font-size: 14px;
+	right: 5%;
+}
+
+.triangle {
+	width: 10px;
+	height: 10px;
+	position: absolute;
+	bottom: -5px;
+	left: 10px;
+	transform: rotate(45deg);
+	background-color: var(--gray-300);
+}
+
+.mark-as-me {
+	background-color: var(--gray-200);
 }
 
 .member-icon {
@@ -42,6 +79,14 @@
 	.member-display {
 		padding-bottom: 12px;
 		font-size: 20px;
+
+		&:hover {
+			background-color: var(--gray-300);
+		}
+	}
+
+	.mark-as-me {
+		background-color: var(--gray-300);
 	}
 
 	.member-icon {

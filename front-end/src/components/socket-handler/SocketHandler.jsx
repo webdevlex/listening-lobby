@@ -41,6 +41,7 @@ function SocketHandler({
 				token: token,
 				refresh_token: refresh_token,
 				music_provider: localStorageData.music_provider,
+				frontEndId: localStorageData.frontEndId,
 			});
 
 			socket.on('lobbyMessage', (lobbyMessages) => {
@@ -53,6 +54,7 @@ function SocketHandler({
 			});
 
 			socket.on('setLobbyInfo', (members, lobbyMessages) => {
+				console.log(members);
 				setMembers(members);
 				setMessages(lobbyMessages);
 			});
@@ -100,8 +102,9 @@ function SocketHandler({
 			});
 
 			socket.on('kickUser', () => {
-				localStorage.setItem('loadingTooLong', true);
-				window.location.replace('http://localhost:3000');
+				alert('took too long, kicking you');
+				// localStorage.setItem('loadingTooLong', true);
+				// window.location.replace('http://localhost:3000');
 			});
 		}
 	}, [

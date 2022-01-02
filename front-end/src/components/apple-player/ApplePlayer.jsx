@@ -73,10 +73,6 @@ function ApplePlayer({
 		socket.emit('skip', { user });
 	};
 
-	let getInstance = async () => {
-		console.log(applePlayer);
-	};
-
 	let updateVolume = (e, data) => {
 		applePlayer.volume = e.target.value / 100;
 		setVolume(data);

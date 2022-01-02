@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 const INTERVAL = 500;
-let firstPlaybackSet = true;
-let lobbyIsPlaying = false;
+// let lobbyIsPlaying = false;
 let poppedRunning = false;
 
 // Listener
@@ -61,10 +60,10 @@ export async function setupPlayback(
 	// Make sure player status isnt an empty object
 	const validPlayerStatus = Object.keys(playerStatus).length !== 0;
 	const songInQueue = queue.length > 0;
-	const songExistsForSpotify =
+	const songAvailableOnSpotify =
 		validPlayerStatus && songInQueue ? queue[0].spotify !== '-1' : null;
 
-	if (validPlayerStatus && songInQueue && songExistsForSpotify) {
+	if (validPlayerStatus && songInQueue && songAvailableOnSpotify) {
 		// Set progress bar offset if some of the song has already been listened to when the user joined
 		const songLengthInMillis = queue[0].ui.duration;
 		const millisAlreadyElapsed = playerStatus.timestamp;
@@ -75,43 +74,54 @@ export async function setupPlayback(
 			millisAlreadyElapsed
 		);
 
-		// Turn off volume if lobby play status is paused so we dont here the song when the playback changes
-		setVolumeToZero(user, device_id);
-
-		// Switch playback to web player
+		// Set volume to zero so we dont here the song when the playback changes
 		await setPlaybackTo(device_id, user, queue[0], playerStatus);
-
-		firstPlaybackSet = false;
 
 		// Wait until the playback actually changes before performing actions
 		let interval = setInterval(async () => {
-			// Checks if playback is on web player
-			if (await spotifyPlayer.getCurrentState()) {
+			const playingOnBrowser = await spotifyPlayer.getCurrentState();
+			if (playingOnBrowser) {
 				setPlayerActive(true);
-				// Now playing on web player
-				// Set initial volume
-				setVolumeTo(spotifyPlayer, 0.1);
-				// If lobby player status is paused then pause player
+				await spotifyPlayer.setVolume(0);
+				await pauseAndEnsurePlayerPausedThenSetVolumeTo(0.1, spotifyPlayer);
 
 				if (playerStatus.paused) {
-					pausePlayer(spotifyPlayer);
 					pauseTimeStamp();
-					emitReadyWhenPaused(socket, spotifyPlayer, user);
-				}
-				// If lobby player not paused then just let it play
-				else {
-					// let UI know whether to display "play" or "pause" button
+					await ensureVolumeNotZeroThenEmitReady(socket, spotifyPlayer, user);
+				} else {
 					setPlayingTo(true, setPlaying);
-
-					// let backend know the user is ready
-					emitUserReady(socket, user);
+					await ensureVolumeNotZeroThenPlayAndEmitReady(
+						socket,
+						spotifyPlayer,
+						user
+					);
 				}
-				// Stop the interval now that all neccessary actions performed
 				clearInterval(interval);
 			}
 		}, INTERVAL);
-		// attach listener to player
 		setListener(socket, spotifyPlayer, user, setPercent, setCurrentTime, queue);
+	} else if (validPlayerStatus && songInQueue && !songAvailableOnSpotify) {
+		const songLengthInMillis = queue[0].ui.duration;
+		const millisAlreadyElapsed = playerStatus.timestamp;
+		const lobbyPlaying = !playerStatus.paused;
+
+		if (lobbyPlaying) {
+			setPlayingTo(true, setPlaying);
+			moveTimeStamp(
+				setPercent,
+				setCurrentTime,
+				songLengthInMillis,
+				millisAlreadyElapsed
+			);
+		} else {
+			setTimeStamp(
+				setPercent,
+				setCurrentTime,
+				songLengthInMillis,
+				millisAlreadyElapsed
+			);
+		}
+		emitUserReady(socket, user);
 	}
 	// If the person who joined is the admin then the lobby was just created
 	// no need to let the backend know the user is ready if the lobby was just created
@@ -119,9 +129,6 @@ export async function setupPlayback(
 		emitUserReady(socket, user);
 	}
 
-	if (validPlayerStatus && !playerStatus.paused) {
-		setPlayingTo(true, setPlaying);
-	}
 	// Let the user see the lobby once they are fully loaded in
 	setLoading(false);
 }
@@ -181,7 +188,7 @@ export async function emptyQueue(
 				await spotifyPlayer.pause();
 			} else {
 				await spotifyPlayer.setVolume(volume);
-				emitReadyVolumeNotZero(socket, spotifyPlayer, user);
+				ensureVolumeNotZeroThenEmitReady(socket, spotifyPlayer, user);
 				clearInterval(interval);
 			}
 		}, INTERVAL);
@@ -221,16 +228,14 @@ export async function firstSong(
 ) {
 	spotifyPlayer.removeListener('player_state_changed');
 	if (queue[0].spotify !== '-1') {
-		let volume = await setVolumeToZero(user, device_id);
-		volume = firstPlaybackSet ? 0.1 : volume;
+		const volume = await setVolumeToZeroAndGetOldVolume(user, device_id);
 		await setPlaybackTo(device_id, user, queue[0], { timestamp: 0 });
 
 		let interval = setInterval(async () => {
 			if (await spotifyPlayer.getCurrentState()) {
 				setPlayerActive(true);
-				pausePlayer(spotifyPlayer);
-				setVolumeTo(spotifyPlayer, volume);
-				emitReadyVolumeNotZero(socket, spotifyPlayer, user);
+				await pauseAndEnsurePlayerPausedThenSetVolumeTo(volume, spotifyPlayer);
+				await ensureVolumeNotZeroThenEmitReady(socket, spotifyPlayer, user);
 
 				clearInterval(interval);
 			}
@@ -239,14 +244,6 @@ export async function firstSong(
 		emitUserReady(socket, user);
 	}
 	setListener(socket, spotifyPlayer, user, setPercent, setCurrentTime, queue);
-}
-
-async function setVolumeToZero(user, device_id) {
-	const deviceData = await getDeviceData(user);
-	const { device: { volume_percent = 50 } = {} } = deviceData;
-	const volume = volume_percent / 100;
-	await setVolume(device_id, user, 0);
-	return volume;
 }
 
 export async function popped(
@@ -275,7 +272,7 @@ export async function popped(
 		);
 	} else {
 		const playerStatus = await spotifyPlayer.getCurrentState();
-		if (!playerStatus.paused) {
+		if (playerStatus && !playerStatus.paused) {
 			await spotifyPlayer.pause();
 			pauseTimeStamp();
 			emitReadyWhenPaused(socket, spotifyPlayer, user);
@@ -289,6 +286,9 @@ export async function popped(
 	setListener(socket, spotifyPlayer, user, setPercent, setCurrentTime, queue);
 }
 
+// =====================
+// = Remove First Song =
+// =====================
 export async function removeFirst(
 	socket,
 	spotifyPlayer,
@@ -301,20 +301,12 @@ export async function removeFirst(
 ) {
 	spotifyPlayer.removeListener('player_state_changed');
 	resetTimeStamp(setPercent, setCurrentTime);
-	if (queue[0].spotify !== '-1') {
+
+	const songAvailableOnSpotify = queue[0].spotify !== '-1';
+	if (songAvailableOnSpotify) {
 		let volume;
-		if (!playing) {
-			volume = await setVolumeToZero(user, device_id);
-		}
-
-		await setPlaybackTo(device_id, user, queue[0], { timestamp: 0 });
-
-		if (!playing) {
-			pausePlayer(spotifyPlayer);
-			setVolumeTo(spotifyPlayer, volume);
-			pauseTimeStamp();
-			emitReadyVolumeNotZero(socket, spotifyPlayer, user);
-		} else {
+		if (playing) {
+			await setPlaybackTo(device_id, user, queue[0], { timestamp: 0 });
 			emitReadyWhenPlaybackSet(
 				socket,
 				spotifyPlayer,
@@ -323,21 +315,70 @@ export async function removeFirst(
 				setPercent,
 				setCurrentTime
 			);
+		} else {
+			pauseTimeStamp();
+			volume = await setVolumeToZeroAndGetOldVolume(user, device_id);
+			await setPlaybackTo(device_id, user, queue[0], { timestamp: 0 });
+			await pauseAndEnsurePlayerPausedThenSetVolumeTo(volume, spotifyPlayer);
+			await ensureVolumeNotZeroThenEmitReady(socket, spotifyPlayer, user);
 		}
 	} else {
 		const playerStatus = await spotifyPlayer.getCurrentState();
-		if (!playerStatus.paused) {
+		if (playerStatus && !playerStatus.paused) {
 			await spotifyPlayer.pause();
 			emitReadyWhenPaused(socket, spotifyPlayer, user);
 		} else {
 			emitUserReady(socket, user);
+		}
+
+		if (playing) {
 			moveTimeStamp(setPercent, setCurrentTime, queue[0].ui.duration);
+		} else {
+			pauseTimeStamp();
 		}
 	}
 	setListener(socket, spotifyPlayer, user, setPercent, setCurrentTime, queue);
 }
 
-// Helpers
+async function setVolumeToZeroAndGetOldVolume(user, device_id) {
+	// Request player data and grab volume
+	const deviceData = await getDeviceData(user);
+	let { device: { volume_percent = 50 } = {} } = deviceData;
+
+	// Ensure compinsation never makes volume go past 100%
+	if (volume_percent >= 100) {
+		volume_percent = 99;
+	}
+	const volume = volume_percent / 100;
+
+	// Send request to set volume to zero
+	await setVolume(device_id, user, 0);
+
+	// spotify's set volume endpoint decreases volume by 0.01 so we compinsate for it
+	return volume + 0.01;
+}
+
+async function pauseAndEnsurePlayerPausedThenSetVolumeTo(
+	volume,
+	spotifyPlayer
+) {
+	await pausePlayer(spotifyPlayer);
+	await setVolumeAfterPaused(spotifyPlayer, volume);
+}
+
+async function setVolumeAfterPaused(spotifyPlayer, volume) {
+	let interval = setInterval(async () => {
+		const currentStatus = await spotifyPlayer.getCurrentState();
+		if (currentStatus.paused) {
+			await spotifyPlayer.setVolume(volume);
+			clearInterval(interval);
+		}
+	}, INTERVAL);
+}
+
+// =============
+// = Endpoints =
+// =============
 async function setPlaybackTo(device_id, user, song, playerStatus) {
 	const endPoint = `https://api.spotify.com/v1/me/player/play?device_id=${device_id}`;
 
@@ -362,20 +403,23 @@ async function setPlaybackTo(device_id, user, song, playerStatus) {
 }
 
 async function setVolume(device_id, user, volume) {
-	const endPoint = `https://api.spotify.com/v1/me/player/volume?device_id=${device_id}&volume_percent=${volume}`;
+	if (device_id) {
+		const endPoint = `https://api.spotify.com/v1/me/player/volume?device_id=${device_id}&volume_percent=${volume}`;
 
-	const config = {
-		headers: {
-			Accept: 'application/json',
-			'content-type': 'application/json',
-			Authorization: 'Bearer ' + user.token,
-		},
-	};
+		const config = {
+			headers: {
+				Accept: 'application/json',
+				'content-type': 'application/json',
+				Authorization: 'Bearer ' + user.token,
+			},
+		};
 
-	try {
-		await axios.put(endPoint, {}, config);
-	} catch (err) {
-		console.log(err);
+		try {
+			const res = await axios.put(endPoint, {}, config);
+			return res.status;
+		} catch (err) {
+			console.log(err);
+		}
 	}
 }
 
@@ -398,6 +442,9 @@ async function getDeviceData(user) {
 	}
 }
 
+// =============
+// = Intervals =
+// =============
 async function pausePlayer(player) {
 	let interval = setInterval(async () => {
 		const currentStatus = await player.getCurrentState();
@@ -409,25 +456,69 @@ async function pausePlayer(player) {
 	}, INTERVAL);
 }
 
-async function setVolumeTo(spotifyPlayer, volume) {
+function emitUserReady(socket, user) {
+	socket.emit('userReady', { user });
+}
+
+async function ensureVolumeNotZeroThenEmitReady(socket, spotifyPlayer, user) {
 	let interval = setInterval(async () => {
-		const currentStatus = await spotifyPlayer.getCurrentState();
-		if (currentStatus.paused) {
-			await spotifyPlayer.setVolume(volume);
+		const currentStatus = spotifyPlayer.getCurrentState();
+		const playerReady = !currentStatus.loading;
+
+		const localPlayerVolume = await spotifyPlayer.getVolume();
+
+		const playerDataFromEndPoint = await getDeviceData(user);
+		const playerVolumeFromEndpoint =
+			playerDataFromEndPoint.device.volume_percent;
+
+		const bothVolumesNotZero =
+			localPlayerVolume !== 0 && playerVolumeFromEndpoint !== 0;
+
+		if (bothVolumesNotZero && playerReady) {
+			emitUserReady(socket, user);
 			clearInterval(interval);
 		}
 	}, INTERVAL);
 }
 
-function emitUserReady(socket, user) {
-	socket.emit('userReady', { user });
-}
-
-async function emitReadyVolumeNotZero(socket, spotifyPlayer, user) {
+async function ensureVolumeNotZeroThenPlayAndEmitReady(
+	socket,
+	spotifyPlayer,
+	user
+) {
 	let interval = setInterval(async () => {
 		const currentStatus = spotifyPlayer.getCurrentState();
-		const volume = await spotifyPlayer.getVolume();
-		if (volume !== 0 && !currentStatus.loading) {
+		const playerReady = !currentStatus.loading;
+
+		const localPlayerVolume = await spotifyPlayer.getVolume();
+
+		const playerDataFromEndPoint = await getDeviceData(user);
+		const playerVolumeFromEndpoint =
+			playerDataFromEndPoint.device.volume_percent;
+
+		const bothVolumesNotZero =
+			localPlayerVolume !== 0 && playerVolumeFromEndpoint !== 0;
+
+		if (bothVolumesNotZero && playerReady) {
+			keepAttempingPlayUntilPlayingThenEmitReadyWhenPlaying(
+				socket,
+				spotifyPlayer,
+				user
+			);
+			clearInterval(interval);
+		}
+	}, INTERVAL);
+}
+
+async function keepAttempingPlayUntilPlayingThenEmitReadyWhenPlaying(
+	socket,
+	spotifyPlayer,
+	user
+) {
+	let interval = setInterval(async () => {
+		await spotifyPlayer.resume();
+		const currentStatus = await spotifyPlayer.getCurrentState();
+		if (!currentStatus.paused && !currentStatus.loading) {
 			emitUserReady(socket, user);
 			clearInterval(interval);
 		}
@@ -478,7 +569,8 @@ async function emitReadyWhenPlaybackSet(
 let currentTime = null;
 let percent = null;
 let interval = null;
-function moveTimeStamp(
+
+function setTimeStamp(
 	setPercent,
 	setCurrentTime,
 	songLengthInMillis,
@@ -488,6 +580,20 @@ function moveTimeStamp(
 	currentTime = currentTime || millisAlreadyElapsed;
 	setCurrentTime(currentTime);
 	setPercent(percent);
+}
+
+function moveTimeStamp(
+	setPercent,
+	setCurrentTime,
+	songLengthInMillis,
+	millisAlreadyElapsed
+) {
+	setTimeStamp(
+		setPercent,
+		setCurrentTime,
+		songLengthInMillis,
+		millisAlreadyElapsed
+	);
 
 	const INTERVAL = songLengthInMillis / 100;
 	if (!interval) {
@@ -515,6 +621,6 @@ function resetTimeStamp(setPercent, setCurrentTime) {
 }
 
 function setPlayingTo(value, setPlaying) {
-	lobbyIsPlaying = value;
+	// lobbyIsPlaying = value;
 	setPlaying(value);
 }

@@ -22,7 +22,7 @@ export default function AlbumPopup({
 	}
 
 	return displayAlbumQuestion ? (
-		<div className='album-popup'>
+		<div className='popup'>
 			<div className='popup-container'>
 				<div className='warning-icon-container'>
 					<FontAwesomeIcon

@@ -86,6 +86,7 @@ function socketsReciever(io) {
 		// = User Ready =
 		// ==============
 		socket.on('userReady', (data) => {
+			console.log(data.user.username, 'is ready');
 			handlers.userReady(io, socket, data);
 		});
 
