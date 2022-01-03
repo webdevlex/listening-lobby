@@ -10,7 +10,11 @@ function formatMessage(username, message) {
 		time: moment().format('h:mm a'),
 	};
 }
-
+function uniFormatArtists(query) {
+	query = replaceAll(query, 'and', ',');
+	query = replaceAll(query, '&', ',');
+	return query;
+}
 // Format apple search queries to allow cross platform queue adds
 function appleFormatSearchQuery(query) {
 	query = replaceAll(query, '&', 'and');
@@ -220,7 +224,7 @@ function extractAppleAlbumData(searchResults) {
 			href: album.href,
 			type: album.type,
 			albumName: appleFormatSearchQuery(album.attributes.name),
-			artists: appleFormatSearchQuery(album.attributes.artistName),
+			artists: uniFormatArtists(album.attributes.artistName),
 			albumCover: album.attributes.artwork.url.replace('{w}x{h}', '640x640'),
 			id: album.id,
 			songCount: album.attributes.trackCount,
@@ -309,10 +313,6 @@ async function uniAlbumSearch(tokens, { albumData, user }) {
 				appleToken,
 				dataForUi
 			);
-			// } else {
-			//   for (let i = 0; i < albumData.songCount; ++i) {
-			//     dataForApplePlayer.push("-1");
-			//   }
 		}
 	} else {
 		// We already have apple album id just request the album with the id and grab all song data
