@@ -269,10 +269,10 @@ async function formatAlbumData(
   albumData,
   appleToken,
   formatDuration,
-  { username }
+  { username },
+  uniFormatArtists
 ) {
   const allAlbumSongData = await getAlbumSongsData(albumData.id, appleToken);
-
   let dataForApplePlayer = [];
   let dataForUi = [];
 
