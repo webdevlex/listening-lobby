@@ -115,18 +115,24 @@ function replaceAll(target, search, replacement) {
 }
 
 // Perform search for music provider that the user is using
-async function uniSearch({ searchValue, user }) {
+async function uniSearch({ searchValue, user }, searchAmount = 10) {
 	const token = user.token;
 	const refreshToken = user.refresh_token;
 
 	// If the user is using spotify player perform spotify search
 	if (user.music_provider === 'spotify') {
-		return await spotify.search({ searchValue, token, refreshToken, user });
+		return await spotify.search({
+			searchValue,
+			token,
+			refreshToken,
+			user,
+			searchAmount,
+		});
 	}
 	// If the user is using apple player format their query then perform spotify search
 	else {
 		searchValue = appleFormatSearchQuery(searchValue);
-		return await apple.search(searchValue, token);
+		return await apple.search(searchValue, token, searchAmount);
 	}
 }
 

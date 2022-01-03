@@ -11,6 +11,7 @@ export default function AlbumDispaly({
 	buttonsClickable,
 	beenAdded,
 	searchLoading,
+	setArtistSearch,
 }) {
 	const [socket] = useContext(SocketContext);
 
@@ -19,6 +20,11 @@ export default function AlbumDispaly({
 	}
 	//TEMPORARY BUG FIX
 	let hasAlbum = albums === undefined ? false : albums[0];
+
+	function handleArtistClick(searchValue) {
+		setArtistSearch(searchValue);
+		socket.emit('artistSearch', { searchValue, user });
+	}
 
 	return (
 		<div className='search-albums-display'>
@@ -31,7 +37,15 @@ export default function AlbumDispaly({
 							</div>
 							<div className='text'>
 								<p className='title'>{album.albumName}</p>
-								<p className='simple-text artists'>{album.artists}</p>
+								<div className='all-artists'>
+									{album.artists.split(',').map((artist) => (
+										<p
+											className='simple-text artists'
+											onClick={() => handleArtistClick(artist)}>
+											{artist}
+										</p>
+									))}
+								</div>
 							</div>
 
 							<div className='search-result-action-icon'>

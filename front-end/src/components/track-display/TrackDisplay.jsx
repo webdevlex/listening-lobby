@@ -11,11 +11,17 @@ export default function TrackDisplay({
 	buttonsClickable,
 	beenAdded,
 	searchLoading,
+	setArtistSearch,
 }) {
 	const [socket] = useContext(SocketContext);
 
 	function handleSongClick(songData) {
 		socket.emit('addSong', { songData, user });
+	}
+
+	function handleArtistClick(searchValue) {
+		setArtistSearch(searchValue);
+		socket.emit('artistSearch', { searchValue, user });
 	}
 
 	const hasTracks = tracks[0];
@@ -31,7 +37,15 @@ export default function TrackDisplay({
 							</div>
 							<div className='text'>
 								<p className='title'>{track.trackName}</p>
-								<p className='simple-text artists'>{track.artists}</p>
+								<div className='all-artists'>
+									{track.artists.split(',').map((artist) => (
+										<p
+											className='simple-text artists'
+											onClick={() => handleArtistClick(artist)}>
+											{artist}
+										</p>
+									))}
+								</div>
 							</div>
 							<div className='search-result-action-icon'>
 								{buttonsClickable ? (

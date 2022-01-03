@@ -102,9 +102,8 @@ function SocketHandler({
 			});
 
 			socket.on('kickUser', () => {
-				alert('took too long, kicking you');
-				// localStorage.setItem('loadingTooLong', true);
-				// window.location.replace('http://localhost:3000');
+				localStorage.setItem('loadingTooLong', true);
+				window.location.replace('http://localhost:3000');
 			});
 		}
 	}, [

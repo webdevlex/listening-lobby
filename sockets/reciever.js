@@ -110,6 +110,13 @@ function socketsReciever(io) {
 		socket.on('forceAlbum', (data) => {
 			handlers.forceAlbum(io, socket, data);
 		});
+
+		// =================
+		// = Artist Search =
+		// =================
+		socket.on('artistSearch', (data) => {
+			handlers.artistSearch(io, socket, data);
+		});
 	});
 }
 

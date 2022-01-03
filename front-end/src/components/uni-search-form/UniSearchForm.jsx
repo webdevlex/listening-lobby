@@ -12,6 +12,8 @@ function UniSearchForm({
 	selected,
 	setSelected,
 	setSearchLoading,
+	artistSearch,
+	setArtistSearch,
 }) {
 	const { register, handleSubmit, setValue, getValues } = useForm({
 		defaultValues: {
@@ -25,10 +27,12 @@ function UniSearchForm({
 		return () => {
 			setTracks([]);
 			setAlbums([]);
+			setArtistSearch(null);
 		};
 	}, [socket, setAlbums, setTracks]);
 
 	const onSubmit = ({ search: searchValue }) => {
+		setArtistSearch(null);
 		searchValue = searchValue.trim();
 		if (searchValue && searchValue !== 'Search') {
 			document.activeElement.blur();
@@ -65,6 +69,9 @@ function UniSearchForm({
 					<FontAwesomeIcon className='arrrow-icon' icon={faArrowRight} />
 				</button>
 			</div>
+			{artistSearch ? (
+				<p className='large-artist-name'>{artistSearch}</p>
+			) : null}
 			<div className='search-header'>
 				<p
 					className={`search-header-text track-title ${

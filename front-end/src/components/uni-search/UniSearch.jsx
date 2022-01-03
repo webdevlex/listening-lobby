@@ -13,6 +13,7 @@ function UniSearch({
 	beenAdded,
 	selected,
 	searchLoading,
+	setArtistSearch,
 }) {
 	const [width] = useWindowSize();
 
@@ -25,6 +26,7 @@ function UniSearch({
 					buttonsClickable={buttonsClickable}
 					beenAdded={beenAdded}
 					searchLoading={searchLoading}
+					setArtistSearch={setArtistSearch}
 				/>
 			) : null}
 			{(width < 1000 && selected === 'albums') || width > 1000 ? (
@@ -34,6 +36,7 @@ function UniSearch({
 					buttonsClickable={buttonsClickable}
 					beenAdded={beenAdded}
 					searchLoading={searchLoading}
+					setArtistSearch={setArtistSearch}
 				/>
 			) : null}
 		</div>

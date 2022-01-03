@@ -5,6 +5,7 @@
 
 	.simple-text {
 		color: var(--gray-500);
+		cursor: pointer;
 	}
 }
 
@@ -39,9 +40,23 @@
 			white-space: nowrap;
 		}
 
+		.all-artists {
+			display: flex;
+		}
+
 		.artists {
 			color: var(--gray-600);
 			white-space: nowrap;
+
+			&::after {
+				content: ',';
+				margin-right: 5px;
+			}
+
+			&:last-child::after {
+				content: '';
+				background-color: red;
+			}
 		}
 	}
 

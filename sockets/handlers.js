@@ -3,6 +3,7 @@ const helpers = require('./helpers');
 
 const LOBBY_MAX_CAPACITY = 8;
 const KICK_WAIT_TIME_IN_MILLIS = 10000;
+const ARTIST_SEARCH_RESULTS_AMOUNT = 25;
 
 // ========
 // = Join =
@@ -46,7 +47,8 @@ async function joinLobby(io, socket, data) {
 			io.to(lobby_id).emit('setLobbyInfo', members, messages);
 			io.to(socket.id).emit('addSong', lobbyRef.queue);
 
-			if (!lobbyRef.loading) {
+			const lobbyNotLoading = !lobbyRef.loading;
+			if (lobbyNotLoading) {
 				setLobbyToLoading(io, lobby_id);
 				socket.broadcast.emit('getUserReady');
 			}
@@ -96,9 +98,9 @@ async function disconnect(io, socket) {
 		}
 
 		// Check if the person left while buttons were loading
-		if (lobbyRef.usersReady === lobbyRef.users.length) {
-			io.to(user.lobby_id).emit('activateButtons');
-			lobby.resetReadyCount(user.lobby_id);
+		if (lobbyRef.usersReady.length === lobbyRef.users.length) {
+			io.to(lobbyRef.lobby_id).emit('activateButtons');
+			lobby.resetReady(lobbyRef.lobby_id);
 		}
 	}
 }
@@ -324,10 +326,11 @@ function remove(io, socket, { index, user, songName }) {
 // ==============
 function userReady(io, socket, { user }) {
 	const lobbyRef = lobby.getLobbyById(user.lobby_id);
+	user.user_id = socket.id;
 	lobby.addUserToReady(user);
 
 	if (lobbyRef.usersReady.length === lobbyRef.users.length) {
-		console.log('----------------------------------');
+		console.log('--------- everyone done loading ----------');
 		io.to(user.lobby_id).emit('activateButtons');
 		setLobbyToNotLoading(user.lobby_id);
 		lobby.resetReady(user.lobby_id);
@@ -342,11 +345,11 @@ function setLobbyToNotLoading(lobby_id) {
 
 function setLobbyToLoading(io, lobby_id) {
 	lobby.setLobbyLoading(lobby_id, true);
-	kickUsersWhoAreNotReady(io, lobby_id);
+	waitSomeTimeThenKickAnyoneWhoIsNotReady(io, lobby_id);
 }
 
 let kickAfterTimeInterval = null;
-function kickUsersWhoAreNotReady(io, lobby_id) {
+function waitSomeTimeThenKickAnyoneWhoIsNotReady(io, lobby_id) {
 	kickAfterTimeInterval = setTimeout(() => {
 		if (lobby.lobbyExists(lobby_id)) {
 			const lobbyRef = lobby.getLobbyById(lobby_id);
@@ -355,10 +358,19 @@ function kickUsersWhoAreNotReady(io, lobby_id) {
 			const usersWhoWillBeKicked = allUsers.filter(
 				({ user_id }) => !containMatch(usersWhoAreReady, user_id)
 			);
-			console.log(usersWhoWillBeKicked);
 			kickUsers(io, usersWhoWillBeKicked);
 		}
 	}, KICK_WAIT_TIME_IN_MILLIS);
+}
+
+function containMatch(arrayToCheck, idWeAreLookingFor) {
+	return arrayToCheck.some(({ user_id }) => user_id === idWeAreLookingFor);
+}
+
+function kickUsers(io, users) {
+	users.forEach(({ user_id, username }) => {
+		io.to(user_id).emit('kickUser');
+	});
 }
 
 // function kickUsersWhoAreNotReady(io, lobby_id) {
@@ -388,17 +400,6 @@ function kickUsersWhoAreNotReady(io, lobby_id) {
 // 		}, KICK_WAIT_TIME_IN_MILLIS);
 // 	}
 // }
-
-function containMatch(arrayToCheck, idWeAreLookingFor) {
-	return arrayToCheck.some(({ user_id }) => user_id === idWeAreLookingFor);
-}
-
-function kickUsers(io, users) {
-	users.forEach(({ user_id, username }) => {
-		console.log('kicking:', username);
-		io.to(user_id).emit('kickUser');
-	});
-}
 
 // ================
 // = Spotify Like =
@@ -444,6 +445,18 @@ function operatorMessage(io, message, lobby_id) {
 	io.to(lobby_id).emit('lobbyMessage', messages);
 }
 
+// =================
+// = Artist Search =
+// =================
+async function artistSearch(io, socket, data) {
+	let searchResults = await helpers.uniSearch(
+		data,
+		ARTIST_SEARCH_RESULTS_AMOUNT
+	);
+	const formattedResults = helpers.formatUniSearchResults(searchResults, data);
+	io.to(socket.id).emit('uniSearchResults', formattedResults);
+}
+
 module.exports = {
 	joinLobby,
 	disconnect,
@@ -460,4 +473,5 @@ module.exports = {
 	likeSong,
 	setDeviceId,
 	forceAlbum,
+	artistSearch,
 };

@@ -16,14 +16,14 @@ function defaultHeader(token) {
 
 // Perfoms a basic track and album search on spotify
 async function search(params) {
-	const { searchValue, token } = params;
+	const { searchValue, token, searchAmount } = params;
 	const endPoint = 'https://api.spotify.com/v1/search';
 	const config = {
 		headers: defaultHeader(token).headers,
 		params: {
 			q: searchValue,
 			type: 'album,track',
-			limit: 10,
+			limit: searchAmount,
 		},
 	};
 

@@ -1,7 +1,7 @@
 .search-form {
 	display: flex;
 	flex-direction: column;
-	height: 100px;
+	// height: 100px;
 }
 
 .search-bar {
@@ -50,6 +50,12 @@
 	}
 }
 
+.large-artist-name {
+	font-size: 80px;
+	font-weight: 700;
+	margin-left: 30px;
+}
+
 .search-header {
 	display: flex;
 	border-bottom: var(--gray-400) 1px solid;
@@ -78,6 +84,10 @@
 @media (max-width: 1000px) {
 	.search-bar {
 		margin-left: 0;
+	}
+
+	.large-artist-name {
+		margin-left: 10px;
 	}
 	.search-header .search-header-text {
 		padding-block: 8px;
