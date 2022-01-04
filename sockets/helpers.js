@@ -10,7 +10,7 @@ function formatMessage(username, message) {
     time: moment().format("h:mm a"),
   };
 }
-function uniFormatArtists(query) {
+function uniFormatArtistsForUi(query) {
   query = replaceAll(query, "and", ",");
   query = replaceAll(query, "&", ",");
   return query;
@@ -204,7 +204,7 @@ function extractAppleSongData(searchResults) {
       href: track.href,
       type: track.type,
       trackName: appleFormatSearchQuery(track.attributes.name),
-      artists: uniFormatArtists(track.attributes.artistName),
+      artists: uniFormatArtistsForUi(track.attributes.artistName),
       trackCover: track.attributes.artwork.url.replace("{w}x{h}", "640x640"),
       id: track.id,
       uniId: track.attributes.isrc,
@@ -224,7 +224,7 @@ function extractAppleAlbumData(searchResults) {
       href: album.href,
       type: album.type,
       albumName: appleFormatSearchQuery(album.attributes.name),
-      artists: uniFormatArtists(album.attributes.artistName),
+      artists: uniFormatArtistsForUi(album.attributes.artistName),
       albumCover: album.attributes.artwork.url.replace("{w}x{h}", "640x640"),
       id: album.id,
       songCount: album.attributes.trackCount,
