@@ -38,8 +38,9 @@ export default function TrackDisplay({
 							<div className='text'>
 								<p className='title'>{track.trackName}</p>
 								<div className='all-artists'>
-									{track.artists.split(',').map((artist) => (
+									{track.artists.split(',').map((artist, index) => (
 										<p
+											key={index}
 											className='simple-text artists'
 											onClick={() => handleArtistClick(artist)}>
 											{artist}

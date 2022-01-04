@@ -10,7 +10,7 @@ let defaultSearchResults = {
 	},
 };
 
-async function search(searchName, token, searchAmount) {
+async function search(searchName, token, searchAmount = 10) {
 	const LIMIT = searchAmount;
 	const endPoint = `https://api.music.apple.com/v1/catalog/us/search?term=${searchName}&limit=${LIMIT}&types=songs,albums`;
 	const config = {

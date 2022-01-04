@@ -271,40 +271,6 @@ async function getAlbumById(params) {
 	}
 }
 
-// async function setDevice({ device_id, token }) {
-// 	const endPoint = `https://api.spotify.com/v1/me/player`;
-// 	const body = {
-// 		device_ids: [device_id],
-// 	};
-
-// 	try {
-// 		await axios.put(endPoint, body, defaultHeader(token));
-// 	} catch (err) {
-// 	}
-// }
-
-// Pause active player
-// async function pause({ token }) {
-// 	const endPoint = `https://api.spotify.com/v1/me/player/pause`;
-
-// 	try {
-// 		return await axios.put(endPoint, {}, defaultHeader(token));
-// 	} catch (err) {
-// 	}
-// }
-
-// Get current player state
-// async function playerState(token) {
-// 	const endPoint = `https://api.spotify.com/v1/me/player`;
-
-// 	try {
-// 		const res = await axios.get(endPoint, defaultHeader(token));
-// 		return res.data;
-// 	} catch (err) {
-// 		// console.log(err);
-// 	}
-// }
-
 async function getTempToken() {
 	const endPoint = 'http://localhost:8888/spotify/temp_token';
 
@@ -344,6 +310,7 @@ async function getAlbumSongsUriByAlbumId(albumId, token, dataForApple) {
 		return undefined;
 	}
 }
+
 async function likeSong({ spotifySong, user }) {
 	const songId = spotifySong.replace('spotify:track:', '');
 	const endPoint = `https://api.spotify.com/v1/me/tracks?ids=${songId}`;
@@ -394,16 +361,24 @@ async function handleTempToken(params, func) {
 	return results;
 }
 
+async function getAlbumTracks(albumId, user) {
+	const results = await getAlbumById({
+		albumId,
+		token: user.token,
+		user,
+	});
+	return results.items;
+}
+
 module.exports = {
 	likeSong,
-	// pause,
 	search,
-	// playerState,
 	formatSongData,
 	getAndFormatSongData,
 	formatAlbumData,
-	// setDevice,
 	getTempToken,
 	getAlbumId,
 	getAlbumSongsUriByAlbumId,
+	getAlbumTracks,
+	getAlbumById,
 };

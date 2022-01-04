@@ -2,13 +2,13 @@
 let lobbies = [];
 
 // Generates a new lobby and admin
-function generateLobby(data, tempToken) {
+function createLobbyAndJoin(data) {
 	const newLobby = {
 		lobby_id: data.lobby_id,
 		users: [generateUser(data, 'admin')],
 		queue: [],
 		messages: [],
-		tokens: generateTokens(data, tempToken),
+		tokens: generateTokens(data),
 		playing: false,
 		usersReady: [],
 		loading: false,
@@ -41,20 +41,20 @@ function getMostRecentlyJoined({ lobby_id, memberId }) {
 }
 
 // Creates object that keeps track of players in the lobby
-function generateTokens({ music_provider, token }, tempToken) {
+function generateTokens({ music_provider, token, missingProviderToken }) {
 	return music_provider === 'spotify'
 		? {
 				spotify: token,
-				apple: tempToken,
+				apple: missingProviderToken,
 		  }
 		: {
-				spotify: tempToken,
+				spotify: missingProviderToken,
 				apple: token,
 		  };
 }
 
 // Check if lobby exists
-function lobbyExists(lobby_id) {
+function exists(lobby_id) {
 	return getLobbyById(lobby_id);
 }
 
@@ -63,9 +63,9 @@ function deleteLobbyByIndex(i) {
 }
 
 // join new user into lobby
-function joinLobby(data) {
-	const newUser = generateUser(data, 'guest');
-	const i = getLobbyIndex(data.lobby_id);
+function joinUserIntoLobby(userData) {
+	const newUser = generateUser(userData, 'guest');
+	const i = getLobbyIndex(userData.lobby_id);
 	lobbies[i].users.push(newUser);
 }
 
@@ -293,10 +293,10 @@ module.exports = {
 	setPlayStatusPlaying,
 	setPlayStatusPaused,
 	updatePlayStatus,
-	generateLobby,
-	lobbyExists,
+	createLobbyAndJoin,
+	exists,
 	getLobbyById,
-	joinLobby,
+	joinUserIntoLobby,
 	getUserById,
 	getMemberUsernames,
 	addMessageToLobby,

@@ -4,6 +4,7 @@ import LobbyQueue from '../lobby-queue/LobbyQueue';
 import LobbySearch from '../lobby-search/LobbySearch';
 import LobbyMembers from '../../components/lobby-members/LobbyMembers';
 import LobbyMessages from '../../components/lobby-messages/LobbyMessages';
+import FullAlbum from '../full-album/FullAlbum';
 import useWindowSize from '../../hooks/hooks';
 import './lobby-center.scss';
 
@@ -29,17 +30,34 @@ export default function LobbyCenter({
 	adminId,
 	messages,
 	setDisplayInvitePopup,
+	fullAlbum,
+	setFullAlbum,
+	setDisplayFullAlbum,
+	displayFullAlbum,
 }) {
 	const [width] = useWindowSize();
 
 	useEffect(() => {
-		if (
-			width > 850 &&
-			(centerDisplay === 'messages' || centerDisplay === 'members')
-		) {
+		const noLongerOnMobile = width > 850;
+		const isOnPageThatDoesntExistsOnMobile =
+			centerDisplay === 'messages' || centerDisplay === 'members';
+
+		if (noLongerOnMobile && isOnPageThatDoesntExistsOnMobile) {
 			setCenterDisplay('player');
 		}
-	}, [centerDisplay, setCenterDisplay, width]);
+
+		if (fullAlbum && displayFullAlbum) {
+			setDisplayFullAlbum(false);
+			setCenterDisplay('fullAlbum');
+		}
+	}, [
+		centerDisplay,
+		setCenterDisplay,
+		width,
+		fullAlbum,
+		displayFullAlbum,
+		setDisplayFullAlbum,
+	]);
 
 	switch (centerDisplay) {
 		case 'player':
@@ -84,6 +102,19 @@ export default function LobbyCenter({
 					displayInvitePopup={true}
 					setDisplayInvitePopup={setDisplayInvitePopup}
 					user={user}
+				/>
+			);
+		case 'fullAlbum':
+			return (
+				<FullAlbum
+					user={user}
+					buttonsClickable={buttonsClickable}
+					beenAdded={beenAdded}
+					searchLoading={searchLoading}
+					setSearchLoading={setSearchLoading}
+					fullAlbum={fullAlbum}
+					setCenterDisplay={setCenterDisplay}
+					setFullAlbum={setFullAlbum}
 				/>
 			);
 		default:

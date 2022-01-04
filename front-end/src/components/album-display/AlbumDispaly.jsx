@@ -26,6 +26,10 @@ export default function AlbumDispaly({
 		socket.emit('artistSearch', { searchValue, user });
 	}
 
+	function handleAlbumNameClick(album) {
+		// socket.emit('getAlbumTracks', { album, user });
+	}
+
 	return (
 		<div className='search-albums-display'>
 			{!searchLoading ? (
@@ -36,10 +40,15 @@ export default function AlbumDispaly({
 								<img src={album.albumCover} alt='' />
 							</div>
 							<div className='text'>
-								<p className='title'>{album.albumName}</p>
+								<p
+									className='title album-name'
+									onClick={() => handleAlbumNameClick(album)}>
+									{album.albumName}
+								</p>
 								<div className='all-artists'>
-									{album.artists.split(',').map((artist) => (
+									{album.artists.split(',').map((artist, index) => (
 										<p
+											key={index}
 											className='simple-text artists'
 											onClick={() => handleArtistClick(artist)}>
 											{artist}

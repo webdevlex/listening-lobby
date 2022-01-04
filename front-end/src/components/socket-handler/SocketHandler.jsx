@@ -16,6 +16,8 @@ function SocketHandler({
 	beenAdded,
 	setAdminId,
 	setSearchLoading,
+	setFullAlbum,
+	setDisplayFullAlbum,
 }) {
 	const params = new URLSearchParams(window.location.search);
 	const token = params.get('token');
@@ -35,7 +37,7 @@ function SocketHandler({
 			}
 			setUser({ ...localStorageData, token, refresh_token });
 		} else {
-			socket.emit('joinLobby', {
+			socket.emit('attemptJoinLobby', {
 				lobby_id: localStorageData.lobby_id,
 				username: localStorageData.username,
 				token: token,
@@ -54,9 +56,12 @@ function SocketHandler({
 			});
 
 			socket.on('setLobbyInfo', (members, lobbyMessages) => {
-				console.log(members);
 				setMembers(members);
 				setMessages(lobbyMessages);
+			});
+
+			socket.on('setMembers', (members) => {
+				setMembers(members);
 			});
 
 			socket.on('addSong', (queue) => {
@@ -105,6 +110,11 @@ function SocketHandler({
 				localStorage.setItem('loadingTooLong', true);
 				window.location.replace('http://localhost:3000');
 			});
+
+			socket.on('displayAlbum', (tracks) => {
+				setFullAlbum(tracks);
+				setDisplayFullAlbum(true);
+			});
 		}
 	}, [
 		socket,
@@ -124,6 +134,8 @@ function SocketHandler({
 		beenAdded,
 		setAdminId,
 		setSearchLoading,
+		setFullAlbum,
+		setDisplayFullAlbum,
 	]);
 
 	return null;

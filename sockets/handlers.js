@@ -1,68 +1,95 @@
 const lobby = require('./lobby');
 const helpers = require('./helpers');
+const user = require('./user');
+const apple = require('./apple');
+const spotify = require('./spotify');
 
-const LOBBY_MAX_CAPACITY = 8;
-const KICK_WAIT_TIME_IN_MILLIS = 10000;
+const KICK_WAIT_TIME_IN_MILLIS = 30000;
 const ARTIST_SEARCH_RESULTS_AMOUNT = 25;
+const LOBBY_MAX_CAPACITY = 8;
 
-// ========
-// = Join =
-// ========
-async function joinLobby(io, socket, data) {
-	const { lobby_id } = data;
-	data.user_id = socket.id;
+// ================
+// = Attempt Join =
+// ================
+async function attemptJoinLobby(io, socket, userData) {
+	userData = assignUserAnId(userData, socket.id);
+	socket.join(userData.lobby_id);
 
-	socket.join(lobby_id);
-
-	if (!lobby.lobbyExists(lobby_id)) {
-		// Get token for music provider that admin is NOT using
-		const tempToken = await helpers.generateTempToken(data.music_provider);
-
-		// Create and join lobby
-		lobby.generateLobby(data, tempToken);
-		const members = lobby.getMembers(lobby_id);
-		const messages = [];
-		const adminData = lobby.getAdminData(data);
-
-		// Send new lobby data back to members
-		io.to(lobby_id).emit('setLobbyInfo', members, messages);
-		io.to(lobby_id).emit('doneLoading', {});
-		io.to(lobby_id).emit('setAdmin', adminData.user_id);
-		io.to(socket.id).emit('setNewUserData', data);
-		operatorMessage(io, 'Welcome to the listening lobby!', lobby_id);
+	if (lobby.exists(userData.lobby_id)) {
+		joinLobby(io, socket, userData.lobby_id, userData);
+	} else {
+		createLobby(io, userData);
 	}
-	// Lobby exists
-	else {
-		const lobbyRef = lobby.getLobbyById(lobby_id);
-		lobby.joinLobby(data);
+}
 
-		// If not exceeding the limit then join existing lobby
-		if (lobbyRef.users.length < LOBBY_MAX_CAPACITY) {
-			io.to(lobby_id).emit('deactivateButtons');
+function assignUserAnId(data, id) {
+	data.user_id = id;
+	return data;
+}
 
-			const members = lobby.getMembers(lobby_id);
-			const messages = lobby.getLobbyMessages(lobby_id);
+function joinLobby(io, socket, lobby_id, userData) {
+	const lobbyData = lobby.getLobbyById(lobby_id);
+	lobby.joinUserIntoLobby(userData);
 
-			// Send new lobby data back to all members
-			io.to(lobby_id).emit('setLobbyInfo', members, messages);
-			io.to(socket.id).emit('addSong', lobbyRef.queue);
-
-			const lobbyNotLoading = !lobbyRef.loading;
-			if (lobbyNotLoading) {
-				setLobbyToLoading(io, lobby_id);
-				socket.broadcast.emit('getUserReady');
-			}
-
-			const adminData = lobby.getAdminData(data);
-			io.to(lobby_id).emit('setAdmin', adminData.user_id);
-			io.to(adminData.user_id).emit('getPlayerData', socket.id);
-			operatorMessage(io, `${data.username} joined the lobby!`, lobby_id);
-		}
-		// Limit reached dont allow them to join
-		else {
-			io.to(socket.id).emit('lobbyMaxReached');
-		}
+	if (maxCapacityReached(lobbyData)) {
+		kickNewUser(io, userData.user_id);
+	} else {
+		setLobbyToLoadingIfNotAlready(io, socket, lobbyData);
+		deactivateLobbyButtons(io, lobby_id);
+		showNewUserInLobby(io, lobbyData);
+		sendNewUserTheQueueAndMessages(io, lobbyData, userData.user_id);
+		requestAdminsPlayerStatusAndLetNewUserKnowWhoIsAdmin(io, userData);
+		sendOperatorMessage(io, `${userData.username} joined the lobby!`, lobby_id);
 	}
+}
+
+async function createLobby(io, userData) {
+	const missingProviderToken = await helpers.getMissingProviderToken(
+		userData.music_provider
+	);
+	userData.missingProviderToken = missingProviderToken;
+	lobby.createLobbyAndJoin(userData);
+
+	const members = lobby.getMembers(userData.lobby_id);
+	const messages = [];
+	const adminData = lobby.getAdminData(userData);
+
+	io.to(userData.lobby_id).emit('setLobbyInfo', members, messages);
+	io.to(userData.lobby_id).emit('doneLoading', {});
+	io.to(userData.lobby_id).emit('setAdmin', adminData.user_id);
+	sendOperatorMessage(io, 'Welcome to the listening lobby!', userData.lobby_id);
+}
+
+function maxCapacityReached(lobbyData) {
+	return lobbyData.users.length > LOBBY_MAX_CAPACITY;
+}
+
+function kickNewUser(io, user_id) {
+	io.to(user_id).emit('lobbyMaxReached');
+}
+
+function setLobbyToLoadingIfNotAlready(io, socket, lobbyData) {
+	const lobbyNotLoading = !lobbyData.loading;
+	if (lobbyNotLoading) {
+		setLobbyToLoading(io, lobbyData.lobby_id);
+		socket.broadcast.emit('getUserReady');
+	}
+}
+
+function showNewUserInLobby(io, lobbyData) {
+	io.to(lobbyData.lobby_id).emit('setMembers', lobbyData.users);
+}
+
+function sendNewUserTheQueueAndMessages(io, lobbyData, user_id) {
+	// const messages = lobby.getLobbyMessages(lobbyData.lobby_id);
+	io.to(user_id).emit('lobbyMessage', lobbyData.messages);
+	io.to(user_id).emit('addSong', lobbyData.queue);
+}
+
+function requestAdminsPlayerStatusAndLetNewUserKnowWhoIsAdmin(io, userData) {
+	const adminData = lobby.getAdminData(userData);
+	io.to(userData.lobby_id).emit('setAdmin', adminData.user_id);
+	io.to(adminData.user_id).emit('getPlayerData', userData.user_id);
 }
 
 // ==============
@@ -75,7 +102,11 @@ async function disconnect(io, socket) {
 
 	// Notify the lobby that this user left
 	const member = lobby.getUserById(lobbyRef.lobby_id, socket.id);
-	operatorMessage(io, `${member.username} left the lobby.`, lobbyRef.lobby_id);
+	sendOperatorMessage(
+		io,
+		`${member.username} left the lobby.`,
+		lobbyRef.lobby_id
+	);
 
 	// Remove the member who left from the lobby
 	const i = lobby.leaveLobby(lobbyRef, socket.id);
@@ -231,7 +262,7 @@ function skip(io, socket, { user }) {
 		lobby.popSong(user.lobby_id);
 		io.to(user.lobby_id).emit('addSong', lobbyRef.queue);
 		io.to(user.lobby_id).emit('deactivateButtons');
-		operatorMessage(
+		sendOperatorMessage(
 			io,
 			`${user.username} skipped the song.`,
 			lobbyRef.lobby_id
@@ -318,7 +349,7 @@ function remove(io, socket, { index, user, songName }) {
 		lobby.removeSong(index, lobby_id);
 	}
 	io.to(lobby_id).emit('addSong', lobbyRef.queue);
-	operatorMessage(io, `${user.username} removed ${songName}.`, lobby_id);
+	sendOperatorMessage(io, `${user.username} removed ${songName}.`, lobby_id);
 }
 
 // ==============
@@ -373,34 +404,6 @@ function kickUsers(io, users) {
 	});
 }
 
-// function kickUsersWhoAreNotReady(io, lobby_id) {
-// 	const lobbyRef = lobby.getLobbyById(lobby_id);
-
-// 	if (!lobbyRef.usersReadyTimeout) {
-// 		lobby.setUsersReadyTimeoutActive(lobby_id);
-
-// 		kickAfterTimeInterval = setTimeout(() => {
-// 			if (lobby.lobbyExists(lobby_id)) {
-// 				const lobbyRef = lobby.getLobbyById(lobby_id);
-// 				const notEveryoneDoneloading = lobbyRef.loading;
-// 				const noLoadingOverlap = lobbyRef.everyLoadedSuccessfullyCount === 0;
-
-// 				lobby.setUsersReadyTimeoutOff(lobby_id);
-// 				lobby.setLoadingOverlapToZero(lobby_id);
-
-// 				if (notEveryoneDoneloading && noLoadingOverlap) {
-// 					const usersWhoAreReady = lobbyRef.usersReady;
-// 					const allUsers = lobbyRef.users;
-// 					const usersWhoWillBeKicked = allUsers.filter(
-// 						({ user_id }) => !containMatch(usersWhoAreReady, user_id)
-// 					);
-// 					kickUsers(io, usersWhoWillBeKicked);
-// 				}
-// 			}
-// 		}, KICK_WAIT_TIME_IN_MILLIS);
-// 	}
-// }
-
 // ================
 // = Spotify Like =
 // ================
@@ -439,7 +442,7 @@ function forceAlbum(io, socket, { user, addedToQueue }) {
 	}
 }
 
-function operatorMessage(io, message, lobby_id) {
+function sendOperatorMessage(io, message, lobby_id) {
 	const formattedMessage = helpers.formatMessage('Listening Lobby', message);
 	const messages = lobby.addMessageToLobby(formattedMessage, lobby_id);
 	io.to(lobby_id).emit('lobbyMessage', messages);
@@ -457,8 +460,34 @@ async function artistSearch(io, socket, data) {
 	io.to(socket.id).emit('uniSearchResults', formattedResults);
 }
 
+// ====================
+// = Get Album Tracks =
+// ====================
+async function getAlbumTracks(io, socket, data) {
+	const { album, user: userRef } = data;
+	const { lobby_id } = userRef;
+	const { albumCover, id: albumId } = album;
+	const userData = lobby.getUserById(lobby_id, socket.id);
+
+	if (user.usingSpotify(userData)) {
+		const tracks = await spotify.getAlbumTracks(albumId, userData);
+		const formattedTracks = helpers.formatTracksForDisplayingAlbum(
+			tracks,
+			albumCover
+		);
+		io.to(socket.id).emit('displayAlbum', formattedTracks);
+	} else {
+		const test = await apple.getAlbumTracks(albumId, userData);
+		console.log(test);
+	}
+}
+
+function deactivateLobbyButtons(io, lobby_id) {
+	io.to(lobby_id).emit('deactivateButtons');
+}
+
 module.exports = {
-	joinLobby,
+	attemptJoinLobby,
 	disconnect,
 	lobbyMessage,
 	search,
@@ -474,4 +503,5 @@ module.exports = {
 	setDeviceId,
 	forceAlbum,
 	artistSearch,
+	getAlbumTracks,
 };

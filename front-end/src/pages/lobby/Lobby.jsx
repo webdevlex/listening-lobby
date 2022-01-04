@@ -41,6 +41,9 @@ function Lobby() {
 	const [albumMissingOn, setAlbumMissingOn] = useState(null);
 	const beenAdded = useRef([]);
 	const [adminId, setAdminId] = useState(null);
+	const [fullAlbum, setFullAlbum] = useState(null);
+	const [displayFullAlbum, setDisplayFullAlbum] = useState(false);
+
 	// Timebar
 	const [percent, setPercent] = useState(0);
 	const [currentTime, setCurrentTime] = useState(0);
@@ -78,6 +81,8 @@ function Lobby() {
 				beenAdded={beenAdded}
 				setAdminId={setAdminId}
 				setSearchLoading={setSearchLoading}
+				setFullAlbum={setFullAlbum}
+				setDisplayFullAlbum={setDisplayFullAlbum}
 			/>
 
 			{!playerStatus ? (
@@ -167,6 +172,10 @@ function Lobby() {
 									adminId={adminId}
 									setDisplayInvitePopup={setDisplayInvitePopup}
 									messages={messages}
+									fullAlbum={fullAlbum}
+									setFullAlbum={setFullAlbum}
+									setDisplayFullAlbum={setDisplayFullAlbum}
+									displayFullAlbum={displayFullAlbum}
 								/>
 							</div>
 						</>

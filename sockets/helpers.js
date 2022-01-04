@@ -136,7 +136,7 @@ async function uniSearch({ searchValue, user }, searchAmount = 10) {
 	// If the user is using apple player format their query then perform spotify search
 	else {
 		searchValue = appleFormatSearchQuery(searchValue);
-		return await apple.search(searchValue, token, searchAmount);
+		return await apple.search(searchValue, token);
 	}
 }
 
@@ -344,7 +344,7 @@ async function uniAlbumSearch(tokens, { albumData, user }) {
 	return { dataForSpotifyPlayer, dataForApplePlayer, dataForUi };
 }
 
-async function generateTempToken(musicProvider) {
+async function getMissingProviderToken(musicProvider) {
 	return musicProvider === 'spotify'
 		? await apple.getTempToken()
 		: await spotify.getTempToken();
@@ -360,12 +360,28 @@ function formatDuration(millis) {
 	return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 }
 
+function formatTracksForDisplayingAlbum(tracks, albumCover) {
+	return tracks.map((track) => {
+		return {
+			trackName: track.name,
+			artists: track.artists.map(({ name }) => name).join(', '),
+			trackCover: albumCover,
+			id: track.id,
+			uri: track.uri,
+			// uniId: track.external_ids.isrc,
+			duration: track.duration_ms,
+			formattedDuration: formatDuration(track.duration_ms),
+		};
+	});
+}
+
 module.exports = {
 	formatUniSearchResults,
 	getSongDataForPlayers,
 	uniAlbumSearch,
 	formatMessage,
 	uniSearch,
-	generateTempToken,
+	getMissingProviderToken,
 	likeSong,
+	formatTracksForDisplayingAlbum,
 };

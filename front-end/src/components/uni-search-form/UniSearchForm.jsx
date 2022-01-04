@@ -29,7 +29,7 @@ function UniSearchForm({
 			setAlbums([]);
 			setArtistSearch(null);
 		};
-	}, [socket, setAlbums, setTracks]);
+	}, [socket, setAlbums, setTracks, setArtistSearch]);
 
 	const onSubmit = ({ search: searchValue }) => {
 		setArtistSearch(null);
