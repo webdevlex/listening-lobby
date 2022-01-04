@@ -1,5 +1,4 @@
 const axios = require("axios");
-const e = require("express");
 
 let defaultSearchResults = {
   songs: {
@@ -63,6 +62,7 @@ function songMatchTesting(rawResults, trackName, artists, uniId, duration) {
     return true;
   });
 }
+
 async function getAndFormatSongData(
   { trackName, artists, duration, uniId },
   token
@@ -132,7 +132,6 @@ async function removeMusicVideosFromCount(album, token, spotifySongCount) {
     }
   });
   if (newSongData.length === spotifySongCount) {
-    console.log("match count");
     newSongData.push(1);
     return newSongData;
   }
@@ -144,7 +143,6 @@ async function getAlbumId(
   token,
   spotifyData
 ) {
-  console.log(artists);
   const searchResults = await appleAlbumSearch(
     `${albumName} ${artists}`,
     token
@@ -181,7 +179,6 @@ async function getAlbumId(
 
   if (albumMatch) {
     if (albumMatch[albumMatch.length - 1] === 1) {
-      console.log("found album with music videos");
       return albumMatch;
     }
     console.log("Match!");
