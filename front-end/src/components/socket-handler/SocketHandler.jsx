@@ -140,6 +140,7 @@ function SocketHandler({
     setSearchLoading,
     setFullAlbum,
     setDisplayFullAlbum,
+    setShuffle,
   ]);
 
   return null;

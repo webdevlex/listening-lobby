@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlay,
   faPause,
-  faStepBackward,
   faStepForward,
   faVolumeUp,
   faHeart,
