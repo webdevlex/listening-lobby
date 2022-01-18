@@ -141,8 +141,7 @@ export async function play(
   song,
   setPercent,
   setCurrentTime,
-  device_id,
-  queue
+  device_id
 ) {
   if (song.spotify !== "-1") {
     if (song.shuffled) {
@@ -154,7 +153,6 @@ export async function play(
     }
     setPlayingTo(true, setPlaying);
     await spotifyPlayer.resume();
-    console.log(queue);
     emitReadyWhenPlaying(socket, spotifyPlayer, user);
   } else {
     setPlayingTo(true, setPlaying);
