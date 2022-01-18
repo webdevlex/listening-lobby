@@ -2,20 +2,22 @@
 let lobbies = [];
 
 // Generates a new lobby and admin
-function createLobbyAndJoin(data) {
+function generateLobby(data, tempToken) {
 	const newLobby = {
 		lobby_id: data.lobby_id,
 		users: [generateUser(data, 'admin')],
 		queue: [],
 		messages: [],
-		tokens: generateTokens(data),
+		tokens: generateTokens(data, tempToken),
 		playing: false,
+		playback: false,
 		usersReady: [],
 		loading: false,
 		hold: null,
 		timeout: false,
 		usersReadyTimeout: false,
 		loadingOverlapCount: 0,
+		shuffleMode: false,
 	};
 
 	lobbies.push(newLobby);
@@ -147,6 +149,24 @@ function setDeviceId(memberId, { lobby_id, device_id }) {
 	lobbies[i].users[j].deviceId = device_id;
 }
 
+function setShuffleMode(lobby_id) {
+	const lobby = getLobbyById(lobby_id);
+	lobby.shuffleMode = !lobby.shuffleMode;
+	return lobby.shuffleMode;
+}
+
+function shuffleQueue(lobby_id) {
+	const lobbyRef = getLobbyById(lobby_id);
+	let lobbyQueue = lobbyRef.queue;
+	if (lobbyQueue.length > 0) {
+		const randomIndex = Math.floor(Math.random() * lobbyRef.queue.length);
+		let firstSong = lobbyQueue[randomIndex];
+		lobbyQueue.splice(randomIndex, 1);
+		lobbyQueue.unshift(firstSong);
+	}
+	return lobbyQueue;
+}
+
 // Adds a message to the lobby by first finding the lobbies index then inserting the new message to the lobby
 function addMessageToLobby(message, lobbyId) {
 	const i = getLobbyIndex(lobbyId);
@@ -199,6 +219,16 @@ function updatePlayStatus(lobby_id) {
 		lobbies[i].playing = true;
 	}
 	return lobbies[i].playing;
+}
+//Turns playback to true; Playback is if our player is in a playing state
+function playbackOn(lobby_id) {
+	const lobby = getLobbyById(lobby_id);
+	lobby.playback = true;
+}
+//Turns playback to false; Playback is if our player is in a playing state
+function playbackOff(lobby_id) {
+	const lobby = getLobbyById(lobby_id);
+	lobby.playback = false;
 }
 
 function setPlayStatusPaused(lobby_id) {
@@ -293,10 +323,10 @@ module.exports = {
 	setPlayStatusPlaying,
 	setPlayStatusPaused,
 	updatePlayStatus,
-	createLobbyAndJoin,
-	exists,
+	generateLobby,
+	lobbyExists,
 	getLobbyById,
-	joinUserIntoLobby,
+	joinLobby,
 	getUserById,
 	getMemberUsernames,
 	addMessageToLobby,
@@ -328,4 +358,8 @@ module.exports = {
 	setUsersReadyTimeoutOff,
 	incremenetLoadingOverlap,
 	setLoadingOverlapToZero,
+	setShuffleMode,
+	shuffleQueue,
+	playbackOff,
+	playbackOn,
 };

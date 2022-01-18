@@ -252,8 +252,17 @@ async function addAlbum(io, socket, data) {
 // = Play =
 // ========
 function play(io, socket, { user }) {
-	const lobbyRef = lobby.getLobbyById(user.lobby_id);
+	let lobbyRef = lobby.getLobbyById(user.lobby_id);
 	const play = lobby.updatePlayStatus(user.lobby_id);
+	const shuffleMode = lobbyRef.shuffleMode;
+
+	if (shuffleMode && !lobbyRef.playback) {
+		const queue = lobby.shuffleQueue(user.lobby_id);
+		io.to(user.lobby_id).emit('addSong', queue);
+		lobbyRef.queue[0].shuffled = true;
+	} else {
+		lobbyRef.queue[0].shuffled = false;
+	}
 
 	if (lobbyRef.queue.length > 0) {
 		io.to(user.lobby_id).emit('deactivateButtons');
@@ -265,6 +274,8 @@ function play(io, socket, { user }) {
 			io.to(user.lobby_id).emit('pause', lobbyRef.queue[0]);
 		}
 	}
+
+	lobby.playbackOn(user.lobby_id);
 }
 
 // ========
@@ -272,11 +283,16 @@ function play(io, socket, { user }) {
 // ========
 function skip(io, socket, { user }) {
 	const lobbyRef = lobby.getLobbyById(user.lobby_id);
+	const shuffleMode = lobbyRef.shuffleMode;
+
 	if (lobbyRef.queue.length > 0) {
 		lobby.popSong(user.lobby_id);
-		io.to(user.lobby_id).emit('addSong', lobbyRef.queue);
+		let queue = shuffleMode
+			? lobby.shuffleQueue(user.lobby_id)
+			: lobbyRef.queue;
+		io.to(user.lobby_id).emit('addSong', queue);
 		io.to(user.lobby_id).emit('deactivateButtons');
-		sendALobbyMessage(
+		operatorMessage(
 			io,
 			`${user.username} skipped the song.`,
 			lobbyRef.lobby_id
@@ -284,11 +300,12 @@ function skip(io, socket, { user }) {
 		setLobbyToLoading(io, user.lobby_id);
 
 		if (lobbyRef.queue.length === 0) {
+			lobby.playbackOff(user.lobby_id);
 			lobby.setPlayStatusPaused(user.lobby_id);
-			io.to(user.lobby_id).emit('emptyQueue', lobbyRef.queue);
+			io.to(user.lobby_id).emit('emptyQueue', queue);
 		} else {
 			lobby.setPlayStatusPlaying(user.lobby_id);
-			io.to(user.lobby_id).emit('popped', lobbyRef.queue);
+			io.to(user.lobby_id).emit('popped', queue);
 		}
 	}
 }
@@ -311,20 +328,25 @@ function mediaChange(io, socket, { user }) {
 	if (!lobby.inTimeout(user.lobby_id)) {
 		lobby.setTimeoutTo(user.lobby_id, true);
 		startInterval(user.lobby_id);
-
 		const lobbyRef = lobby.getLobbyById(user.lobby_id);
+		const shuffleMode = lobbyRef.shuffleMode;
 		if (lobbyRef.queue.length > 0) {
 			lobby.popSong(user.lobby_id);
-			io.to(user.lobby_id).emit('addSong', lobbyRef.queue);
+			let queue = shuffleMode
+				? lobby.shuffleQueue(user.lobby_id)
+				: lobbyRef.queue;
+
+			io.to(user.lobby_id).emit('addSong', queue);
 			io.to(user.lobby_id).emit('deactivateButtons');
 			setLobbyToLoading(io, user.lobby_id);
 
-			if (lobbyRef.queue.length === 0) {
+			if (queue.length === 0) {
 				lobby.setPlayStatusPaused(user.lobby_id);
-				io.to(user.lobby_id).emit('emptyQueue', lobbyRef.queue);
+				lobby.playbackOff(user.lobby_id);
+				io.to(user.lobby_id).emit('emptyQueue', queue);
 			} else {
 				lobby.setPlayStatusPlaying(user.lobby_id);
-				io.to(user.lobby_id).emit('popped', lobbyRef.queue);
+				io.to(user.lobby_id).emit('popped', queue);
 			}
 		}
 	}
@@ -353,6 +375,7 @@ function remove(io, socket, { index, user, songName }) {
 
 		if (lobbyRef.queue.length === 0) {
 			lobby.setPlayStatusPaused(lobby_id);
+			lobby.playbackOff(user.lobby_id);
 			io.to(lobby_id).emit('emptyQueue', lobbyRef.queue);
 		} else {
 			io.to(lobby_id).emit('removeFirst', lobbyRef.queue, lobbyRef.playing);
@@ -363,7 +386,7 @@ function remove(io, socket, { index, user, songName }) {
 		lobby.removeSong(index, lobby_id);
 	}
 	io.to(lobby_id).emit('addSong', lobbyRef.queue);
-	sendALobbyMessage(io, `${user.username} removed ${songName}.`, lobby_id);
+	operatorMessage(io, `${user.username} removed ${songName}.`, lobby_id);
 }
 
 // ==============
@@ -473,6 +496,15 @@ async function artistSearch(io, socket, data) {
 	const formattedResults = helpers.formatUniSearchResults(searchResults, data);
 	io.to(socket.id).emit('uniSearchResults', formattedResults);
 }
+function handleShuffle(io, { user }) {
+	let shuffleMode = lobby.setShuffleMode(user.lobby_id);
+	io.to(user.lobby_id).emit('shuffleToggled', shuffleMode);
+	operatorMessage(
+		io,
+		`${user.username} turned shuffle mode ${shuffleMode ? 'on' : 'off'}.`,
+		user.lobby_id
+	);
+}
 
 // ====================
 // = Get Album Tracks =
@@ -501,7 +533,7 @@ function deactivateLobbyButtons(io, lobby_id) {
 }
 
 module.exports = {
-	attemptJoinLobby,
+	joinLobby,
 	disconnect,
 	lobbyMessage,
 	search,
@@ -517,5 +549,5 @@ module.exports = {
 	setDeviceId,
 	forceAlbum,
 	artistSearch,
-	getAlbumTracks,
+	handleShuffle,
 };

@@ -5,11 +5,11 @@ function socketsReciever(io) {
 	io.sockets.on('connection', function (socket) {
 		console.log('----- connection -----');
 
-		// ================
-		// = Attempt Join =
-		// ================
-		socket.on('attemptJoinLobby', async (data) => {
-			await handlers.attemptJoinLobby(io, socket, data);
+		// ========
+		// = Join =
+		// ========
+		socket.on('joinLobby', async (data) => {
+			await handlers.joinLobby(io, socket, data);
 		});
 
 		// ==============
@@ -118,11 +118,11 @@ function socketsReciever(io) {
 			handlers.artistSearch(io, socket, data);
 		});
 
-		// ====================
-		// = Get Album Tracks =
-		// ====================
-		socket.on('getAlbumTracks', (data) => {
-			handlers.getAlbumTracks(io, socket, data);
+		// ==================
+		// = Toggle Shuffle =
+		// ==================
+		socket.on('setShuffle', (data) => {
+			handlers.handleShuffle(io, data);
 		});
 	});
 }

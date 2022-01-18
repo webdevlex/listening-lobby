@@ -14,6 +14,7 @@ import { PlayersContext } from '../../context/PlayersContext';
 import useWindowSize from '../../hooks/hooks';
 
 import './lobby.scss';
+import { use } from 'express/lib/router';
 
 function Lobby() {
 	const [width] = useWindowSize();
@@ -43,6 +44,7 @@ function Lobby() {
 	const [adminId, setAdminId] = useState(null);
 	const [fullAlbum, setFullAlbum] = useState(null);
 	const [displayFullAlbum, setDisplayFullAlbum] = useState(false);
+	const [shuffle, setShuffle] = useState(false);
 
 	// Timebar
 	const [percent, setPercent] = useState(0);
@@ -83,6 +85,7 @@ function Lobby() {
 				setSearchLoading={setSearchLoading}
 				setFullAlbum={setFullAlbum}
 				setDisplayFullAlbum={setDisplayFullAlbum}
+				setShuffle={setShuffle}
 			/>
 
 			{!playerStatus ? (
@@ -105,6 +108,8 @@ function Lobby() {
 							setPercent={setPercent}
 							currentTime={currentTime}
 							setCurrentTime={setCurrentTime}
+							shuffle={shuffle}
+							setShuffle={setShuffle}
 						/>
 					</div>
 					{loading ? (
