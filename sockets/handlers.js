@@ -27,6 +27,7 @@ function assignUserAnId(data, id) {
 	return data;
 }
 
+// Join
 function joinLobby(io, socket, lobby_id, userData) {
 	const lobbyData = lobby.getLobbyById(lobby_id);
 	lobby.joinUserIntoLobby(userData);
@@ -34,30 +35,14 @@ function joinLobby(io, socket, lobby_id, userData) {
 	if (maxCapacityReached(lobbyData)) {
 		kickNewUser(io, userData.user_id);
 	} else {
-		setLobbyToLoadingIfNotAlready(io, socket, lobbyData);
 		deactivateLobbyButtons(io, lobby_id);
+		setLobbyToLoadingIfNotAlready(io, socket, lobbyData);
 		showNewUserInLobby(io, lobbyData);
 		sendNewUserTheQueueAndMessages(io, lobbyData, userData.user_id);
-		requestAdminsPlayerStatusAndLetNewUserKnowWhoIsAdmin(io, userData);
-		sendOperatorMessage(io, `${userData.username} joined the lobby!`, lobby_id);
+		requestAdminsPlayerStatus(io, userData);
+		letNewUserKnowWhoIsAdmin(io, userData);
+		sendALobbyMessage(io, `${userData.username} joined the lobby!`, lobby_id);
 	}
-}
-
-async function createLobby(io, userData) {
-	const missingProviderToken = await helpers.getMissingProviderToken(
-		userData.music_provider
-	);
-	userData.missingProviderToken = missingProviderToken;
-	lobby.createLobbyAndJoin(userData);
-
-	const members = lobby.getMembers(userData.lobby_id);
-	const messages = [];
-	const adminData = lobby.getAdminData(userData);
-
-	io.to(userData.lobby_id).emit('setLobbyInfo', members, messages);
-	io.to(userData.lobby_id).emit('doneLoading', {});
-	io.to(userData.lobby_id).emit('setAdmin', adminData.user_id);
-	sendOperatorMessage(io, 'Welcome to the listening lobby!', userData.lobby_id);
 }
 
 function maxCapacityReached(lobbyData) {
@@ -86,10 +71,39 @@ function sendNewUserTheQueueAndMessages(io, lobbyData, user_id) {
 	io.to(user_id).emit('addSong', lobbyData.queue);
 }
 
-function requestAdminsPlayerStatusAndLetNewUserKnowWhoIsAdmin(io, userData) {
+function requestAdminsPlayerStatus(io, userData) {
+	const adminData = lobby.getAdminData(userData);
+	io.to(adminData.user_id).emit('getPlayerData', userData.user_id);
+}
+
+function letNewUserKnowWhoIsAdmin(io, userData) {
 	const adminData = lobby.getAdminData(userData);
 	io.to(userData.lobby_id).emit('setAdmin', adminData.user_id);
-	io.to(adminData.user_id).emit('getPlayerData', userData.user_id);
+}
+
+async function createLobby(io, userData) {
+	const missingProviderToken = await helpers.getMissingProviderToken(
+		userData.music_provider
+	);
+	userData.missingProviderToken = missingProviderToken;
+	lobby.createLobbyAndJoin(userData);
+
+	displayMembersAndMessagesInNewLobby(io, userData);
+	setDummyAdminPlayerStatus(userData);
+	letNewUserKnowWhoIsAdmin(io, userData);
+	sendALobbyMessage(io, 'Welcome to the listening lobby!', userData.lobby_id);
+}
+
+function displayMembersAndMessagesInNewLobby(io, { lobby_id }) {
+	const members = lobby.getMembers(lobby_id);
+	const messages = [];
+	io.to(lobby_id).emit('setLobbyInfo', members, messages);
+}
+
+// When a new user joins they will continue to load until they have recieved the admins player status
+// because the lobby was just created there is no admin player status yet so we send a dummy status
+function setDummyAdminPlayerStatus({ lobby_id }) {
+	io.to(lobby_id).emit('setAdminsPlayerStatus', {});
 }
 
 // ==============
@@ -102,7 +116,7 @@ async function disconnect(io, socket) {
 
 	// Notify the lobby that this user left
 	const member = lobby.getUserById(lobbyRef.lobby_id, socket.id);
-	sendOperatorMessage(
+	sendALobbyMessage(
 		io,
 		`${member.username} left the lobby.`,
 		lobbyRef.lobby_id
@@ -262,7 +276,7 @@ function skip(io, socket, { user }) {
 		lobby.popSong(user.lobby_id);
 		io.to(user.lobby_id).emit('addSong', lobbyRef.queue);
 		io.to(user.lobby_id).emit('deactivateButtons');
-		sendOperatorMessage(
+		sendALobbyMessage(
 			io,
 			`${user.username} skipped the song.`,
 			lobbyRef.lobby_id
@@ -284,7 +298,7 @@ function skip(io, socket, { user }) {
 // =========================
 function playerData(io, socket, data) {
 	const member = lobby.getMostRecentlyJoined(data);
-	socket.to(member.user_id).emit('doneLoading', {
+	socket.to(member.user_id).emit('setAdminsPlayerStatus', {
 		paused: data.paused,
 		timestamp: data.timestamp,
 	});
@@ -349,7 +363,7 @@ function remove(io, socket, { index, user, songName }) {
 		lobby.removeSong(index, lobby_id);
 	}
 	io.to(lobby_id).emit('addSong', lobbyRef.queue);
-	sendOperatorMessage(io, `${user.username} removed ${songName}.`, lobby_id);
+	sendALobbyMessage(io, `${user.username} removed ${songName}.`, lobby_id);
 }
 
 // ==============
@@ -442,7 +456,7 @@ function forceAlbum(io, socket, { user, addedToQueue }) {
 	}
 }
 
-function sendOperatorMessage(io, message, lobby_id) {
+function sendALobbyMessage(io, message, lobby_id) {
 	const formattedMessage = helpers.formatMessage('Listening Lobby', message);
 	const messages = lobby.addMessageToLobby(formattedMessage, lobby_id);
 	io.to(lobby_id).emit('lobbyMessage', messages);

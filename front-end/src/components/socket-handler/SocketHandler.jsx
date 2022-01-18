@@ -71,7 +71,7 @@ function SocketHandler({
 				setQueue(queue);
 			});
 
-			socket.on('doneLoading', (playerData) => {
+			socket.on('setAdminsPlayerStatus', (playerData) => {
 				setPlayerStatus(playerData);
 			});
 
