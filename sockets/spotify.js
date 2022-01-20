@@ -370,6 +370,32 @@ async function getAlbumTracks(albumId, user) {
 	return results.items;
 }
 
+async function getIsrc({ songData, user }) {
+	const track = await getTrackById({
+		songId: songData.id,
+		token: user.token,
+		user,
+		refreshToken: user.refreshToken,
+	});
+	return track.external_ids.isrc;
+}
+
+async function getTrackById(params) {
+	const { songId, token } = params;
+	const endPoint = `https://api.spotify.com/v1/tracks/${songId}`;
+
+	try {
+		const res = await axios.get(endPoint, defaultHeader(token));
+		res.data.refreshOccured = false;
+		return res.data;
+	} catch (err) {
+		const refreshTokenError = err.response.status === UNAUTHORIZED_ERROR_CODE;
+		if (refreshTokenError) {
+			return await handleRefreshToken(params, getTrackById);
+		}
+	}
+}
+
 module.exports = {
 	likeSong,
 	search,
@@ -381,4 +407,5 @@ module.exports = {
 	getAlbumSongsUriByAlbumId,
 	getAlbumTracks,
 	getAlbumById,
+	getIsrc,
 };

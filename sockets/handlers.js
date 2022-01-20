@@ -189,9 +189,14 @@ async function addSong(io, socket, data) {
 	io.to(data.user.lobby_id).emit('deactivateButtons');
 	setLobbyToLoading(io, data.user.lobby_id);
 
-	// Perform the necessary searches and return an object containing display for ui and data for each player
+	if (data.songData.noIsrc) {
+		const isrc = await spotify.getIsrc(data);
+		data.songData.uniId = isrc;
+	}
 
+	// Perform the necessary searches and return an object containing display for ui and data for each player
 	let allSongData = await helpers.getSongDataForPlayers(lobbyRef.tokens, data);
+
 	// Make sure the ui knows who added the song
 	allSongData.dataForUi.addedBy = data.user.username;
 
@@ -528,10 +533,20 @@ async function getAlbumTracks(io, socket, data) {
 			tracks,
 			albumCover
 		);
-		io.to(socket.id).emit('displayAlbum', formattedTracks);
+		// Results don't have ISRC which is required for adding a song to the queue,
+		// we will flag and handle if they try to add a song
+		const forammtedTracksWithIrscFlag = noIsrcFlagger(formattedTracks);
+		io.to(socket.id).emit('displayAlbum', forammtedTracksWithIrscFlag);
 	} else {
-		const test = await apple.getAlbumTracks(albumId, userData);
+		// APPLE
 	}
+}
+
+function noIsrcFlagger(formattedTracks) {
+	return formattedTracks.map((track) => {
+		track.noIsrc = true;
+		return track;
+	});
 }
 
 function deactivateLobbyButtons(io, lobby_id) {
@@ -576,6 +591,7 @@ function playOnDoubleClick(io, socket, { user }) {
 	}
 
 	//
+
 	if (lobbyData.queue.length > 0) {
 		if (!lobbyIsPlaying) {
 			lobby.setPlayStatusPlaying(user.lobby_id);
@@ -610,4 +626,5 @@ module.exports = {
 	artistSearch,
 	handleShuffle,
 	doubleClickToPlay,
+	getAlbumTracks,
 };

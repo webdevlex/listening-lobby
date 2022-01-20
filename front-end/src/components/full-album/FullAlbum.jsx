@@ -30,7 +30,10 @@ export default function FullAlbum({
 	return (
 		<div className='full-album'>
 			{fullAlbum.map((track, index) => (
-				<div key={index} className='results-display'>
+				<div
+					key={index}
+					className='results-display'
+					onDoubleClick={() => handleSongClick(track)}>
 					<div className='album-cover-container'>
 						<img src={track.trackCover} alt='' />
 					</div>

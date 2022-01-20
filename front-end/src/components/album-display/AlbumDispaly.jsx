@@ -27,7 +27,7 @@ export default function AlbumDispaly({
 	}
 
 	function handleAlbumNameClick(album) {
-		// socket.emit('getAlbumTracks', { album, user });
+		socket.emit('getAlbumTracks', { album, user });
 	}
 
 	return (

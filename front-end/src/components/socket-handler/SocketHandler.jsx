@@ -116,6 +116,7 @@ function SocketHandler({
         setFullAlbum(tracks);
         setDisplayFullAlbum(true);
       });
+      
       socket.on("shuffleToggled", (shuffleMode) => {
         setShuffle(shuffleMode);
       });

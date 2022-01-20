@@ -118,6 +118,13 @@ function socketsReciever(io) {
 			handlers.artistSearch(io, socket, data);
 		});
 
+		// ====================
+		// = Get Album Tracks =
+		// ====================
+		socket.on('getAlbumTracks', (data) => {
+			handlers.getAlbumTracks(io, socket, data);
+		});
+
 		// ==================
 		// = Toggle Shuffle =
 		// ==================
