@@ -312,4 +312,5 @@ module.exports = {
   getAlbumId,
   getTempToken,
   getAlbumSongsIdByAlbumId,
+  getAlbumSongsData,
 };

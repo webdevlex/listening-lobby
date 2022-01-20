@@ -99,8 +99,8 @@ function SocketHandler({
         setTracks(tracks);
       });
 
-      socket.on("addCheck", (albumId) => {
-        beenAdded.current = [...beenAdded.current, albumId];
+      socket.on("addCheck", (musicItemId) => {
+        beenAdded.current = [...beenAdded.current, musicItemId];
       });
 
       socket.on("setAdmin", (adminId) => {
@@ -116,7 +116,7 @@ function SocketHandler({
         setFullAlbum(tracks);
         setDisplayFullAlbum(true);
       });
-      
+
       socket.on("shuffleToggled", (shuffleMode) => {
         setShuffle(shuffleMode);
       });
