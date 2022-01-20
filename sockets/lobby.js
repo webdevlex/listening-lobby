@@ -89,6 +89,9 @@ function getAdminData({ lobby_id }) {
 		(user) => user.privilege === 'admin'
 	);
 }
+function getShuffleData(lobby_id) {
+	return getLobbyById(lobby_id).shuffleMode;
+}
 
 // Get index of passed lobby within lobbies array
 function getLobbyIndex(lobby_id) {

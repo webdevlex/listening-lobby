@@ -36,8 +36,7 @@ export function setupSocketRecievers(
       song,
       setPercent,
       setCurrentTime,
-      device_id,
-      queue
+      device_id
     );
   });
 

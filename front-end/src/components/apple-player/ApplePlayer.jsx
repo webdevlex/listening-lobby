@@ -8,7 +8,6 @@ import TimeBar from "../time-bar/TimeBar";
 import {
   faPlay,
   faPause,
-  faStepBackward,
   faStepForward,
   faVolumeUp,
   faHeart,
