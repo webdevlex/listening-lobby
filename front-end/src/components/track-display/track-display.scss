@@ -23,6 +23,8 @@
 		width: 50px;
 		min-width: 50px;
 		height: 50px;
+		pointer-events: none;
+		user-select: none;
 
 		img {
 			height: 100%;
@@ -34,6 +36,7 @@
 		margin-left: 20px;
 		width: 80%;
 		overflow: hidden;
+		pointer-events: none;
 
 		.title {
 			font-weight: bold;
@@ -42,9 +45,11 @@
 
 		.all-artists {
 			display: flex;
+			width: fit-content;
 		}
 
 		.artists {
+			pointer-events: auto;
 			color: var(--gray-600);
 			white-space: nowrap;
 
@@ -70,6 +75,7 @@
 	}
 
 	.add-button {
+		user-select: none;
 		font-size: 30px;
 		width: 30px;
 		height: 30px;
@@ -90,6 +96,7 @@
 		justify-content: center;
 		align-items: center;
 		margin-left: auto;
+		user-select: none;
 	}
 
 	.check-icon {
@@ -97,6 +104,7 @@
 		justify-content: center;
 		align-items: center;
 		color: rgb(87, 211, 87);
+		user-select: none;
 	}
 }
 

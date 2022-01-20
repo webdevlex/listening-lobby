@@ -35,7 +35,10 @@ export default function AlbumDispaly({
 			{!searchLoading ? (
 				hasAlbum ? (
 					albums.map((album, index) => (
-						<div key={index} className='results-display'>
+						<div
+							key={index}
+							className='results-display'
+							onDoubleClick={() => handleAlbumClick(album)}>
 							<div className='album-cover-container'>
 								<img src={album.albumCover} alt='' />
 							</div>

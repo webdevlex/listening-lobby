@@ -1,7 +1,28 @@
+.queue-track {
+	padding-block: 7px;
+	display: flex;
+	align-items: center;
+	position: relative;
+	border-radius: 5px;
+	margin: auto;
+	cursor: pointer;
+
+	.text {
+		margin-left: 20px;
+		pointer-events: none;
+	}
+}
+
+.queue-track:hover {
+	background-color: var(--gray-250);
+}
+
 .index-wrapper {
 	min-width: 53px;
 	display: flex;
 	justify-content: center;
+	pointer-events: none;
+	user-select: none;
 }
 
 .index {
@@ -12,11 +33,13 @@
 	display: flex;
 	min-width: 40%;
 	white-space: nowrap;
+	pointer-events: none;
 
 	.album-cover-container {
 		width: 50px;
 		min-width: 50px;
 		height: 50px;
+		user-select: none;
 
 		img {
 			height: 100%;
@@ -78,15 +101,19 @@
 }
 
 .added-by {
+	pointer-events: none;
 	min-width: 20%;
 	width: 20%;
 	color: var(--gray-600);
+	user-select: none;
 }
 
 .duration {
 	width: 17%;
 	min-width: 17%;
 	color: var(--gray-600);
+	pointer-events: none;
+	user-select: none;
 }
 
 .action-buttons {
@@ -101,15 +128,18 @@
 .action-icon {
 	cursor: pointer;
 	height: 16px;
+	pointer-events: auto;
 }
 
 .like-button {
 	width: 11%;
 	min-width: 42px;
+	pointer-events: none;
 }
 
 .remove-button {
 	min-width: 55px;
+	pointer-events: none;
 }
 
 @media (max-width: 1300px) {
@@ -121,6 +151,12 @@
 	}
 	.added-by {
 		display: none;
+	}
+}
+
+@media (max-width: 1000px) {
+	.queue-track {
+		width: 100%;
 	}
 }
 

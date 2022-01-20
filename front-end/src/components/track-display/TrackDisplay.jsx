@@ -31,7 +31,10 @@ export default function TrackDisplay({
 			{!searchLoading ? (
 				hasTracks ? (
 					tracks.map((track, index) => (
-						<div key={index} className='results-display'>
+						<div
+							key={index}
+							className='results-display'
+							onDoubleClick={() => handleSongClick(track)}>
 							<div className='album-cover-container'>
 								<img src={track.trackCover} alt='' />
 							</div>

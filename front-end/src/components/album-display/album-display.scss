@@ -11,6 +11,8 @@
 
 	.album-name {
 		cursor: pointer;
+		pointer-events: auto;
+		width: fit-content;
 	}
 }
 

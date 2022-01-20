@@ -9,8 +9,8 @@ function createLobbyAndJoin(data, tempToken) {
 		queue: [],
 		messages: [],
 		tokens: generateTokens(data, tempToken),
-		playing: false,
-		playback: false,
+		playing: false, // lobby is playing
+		playback: false, // true: there is a song in queue and song is first in queue and duration is 0:00
 		usersReady: [],
 		loading: false,
 		hold: null,
@@ -170,6 +170,15 @@ function shuffleQueue(lobby_id) {
 	return lobbyQueue;
 }
 
+function setFirstSongTo(index, lobby_id) {
+	const lobbyRef = getLobbyById(lobby_id);
+	let lobbyQueue = lobbyRef.queue;
+
+	let newFirstSong = lobbyQueue[index];
+	lobbyQueue.splice(index, 1);
+	lobbyQueue.unshift(newFirstSong);
+}
+
 // Adds a message to the lobby by first finding the lobbies index then inserting the new message to the lobby
 function addMessageToLobby(message, lobbyId) {
 	const i = getLobbyIndex(lobbyId);
@@ -327,9 +336,9 @@ module.exports = {
 	setPlayStatusPaused,
 	updatePlayStatus,
 	createLobbyAndJoin,
-	lobbyExists,
+	exists,
 	getLobbyById,
-	joinLobby,
+	createLobbyAndJoin,
 	getUserById,
 	getMemberUsernames,
 	addMessageToLobby,
@@ -365,4 +374,5 @@ module.exports = {
 	shuffleQueue,
 	playbackOff,
 	playbackOn,
+	setFirstSongTo,
 };

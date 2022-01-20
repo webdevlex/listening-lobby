@@ -3,28 +3,7 @@
 	overflow-x: hidden;
 }
 
-.queue-track {
-	padding-block: 7px;
-	display: flex;
-	align-items: center;
-	position: relative;
-	border-radius: 5px;
-	margin: auto;
-
-	.text {
-		margin-left: 20px;
-	}
-}
-
-.queue-track:hover {
-	background-color: var(--gray-250);
-}
-
 @media (max-width: 1000px) {
-	.queue-track {
-		width: 100%;
-	}
-
 	.lobby-queue {
 		overflow-y: visible;
 		height: fit-content;

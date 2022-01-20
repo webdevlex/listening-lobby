@@ -1,190 +1,192 @@
 .player-bar {
-  height: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  position: relative;
-  color: var(--gray-500);
+	height: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 10px;
+	position: relative;
+	color: var(--gray-500);
 }
 
 .player-left {
-  display: flex;
-  height: 100%;
-  width: 35%;
-  flex: 1fr 2fr 1fr;
-  align-items: center;
-  position: relative;
+	display: flex;
+	height: 100%;
+	width: 35%;
+	flex: 1fr 2fr 1fr;
+	align-items: center;
+	position: relative;
 
-  .default-album-cover {
-    width: 70px;
-    height: 70px;
-    background-color: var(--gray-400);
-    color: var(--gray-600);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 25px;
-    font-weight: 700;
-  }
+	.default-album-cover {
+		width: 70px;
+		height: 70px;
+		background-color: var(--gray-400);
+		color: var(--gray-600);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 25px;
+		font-weight: 700;
+	}
 
-  .logo {
-    width: 50%;
-  }
+	.logo {
+		width: 50%;
+	}
 
-  .album-cover-container {
-    position: relative;
-    min-width: 70px;
-    height: 70px;
-  }
+	.album-cover-container {
+		position: relative;
+		min-width: 70px;
+		height: 70px;
+	}
 
-  .album-cover {
-    height: 100%;
-  }
+	.album-cover {
+		height: 100%;
+	}
 
-  .text {
-    margin-left: 15px;
-    overflow: hidden;
-    width: fit-content;
-  }
+	.text {
+		margin-left: 15px;
+		overflow: hidden;
+		width: fit-content;
+	}
 
-  .track-title {
-    font-weight: 500;
-    color: white;
-    width: fit-content;
-    min-width: none;
-    white-space: nowrap;
-  }
+	.track-title {
+		font-weight: 500;
+		color: white;
+		width: fit-content;
+		min-width: none;
+		white-space: nowrap;
+	}
 
-  .track-artists {
-    font-size: 14px;
-    white-space: nowrap;
-  }
+	.track-artists {
+		font-size: 14px;
+		white-space: nowrap;
+	}
 
-  .like-icon-container {
-    display: flex;
-    margin-inline: 20px;
-  }
-  .like-icon {
-    margin-left: auto;
-    cursor: pointer;
-  }
+	.like-icon-container {
+		display: flex;
+		margin-inline: 20px;
+	}
+	.like-icon {
+		margin-left: auto;
+		cursor: pointer;
+	}
 }
 
 .player-center {
-  height: 100%;
-  width: 40%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
+	height: 100%;
+	width: 40%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
 }
 
 .player-controls-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .player-controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .play-button {
-  border: none;
-  margin-inline: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 40px;
-  width: 40px;
-  border-radius: 50px;
-  color: var(--gray-200);
-  background-color: white;
-  cursor: pointer;
+	border: none;
+	margin-inline: 10px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 40px;
+	width: 40px;
+	border-radius: 50px;
+	color: var(--gray-200);
+	background-color: white;
+	cursor: pointer;
 }
 
-.skip-icon {
-  margin-inline: 10px;
-  color: white;
-  cursor: pointer;
+.skip-icon,
+.shuffle-icon {
+	margin-inline: 10px;
+	color: white;
+	cursor: pointer;
 }
-.skip-icon-green {
-  margin-inline: 10px;
-  color: #157f1f;
-  cursor: pointer;
+
+.shuffle-icon-green {
+	margin-inline: 10px;
+	color: var(--green);
+	cursor: pointer;
 }
 
 .player-right {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  width: 35%;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	width: 35%;
 }
 
 .volume-icon {
-  margin-right: 10px;
+	margin-right: 10px;
 }
 
 .volume-slider {
-  width: 50% !important;
+	width: 50% !important;
 }
 
-input[type="range"] {
-  -webkit-appearance: none;
-  margin-right: 15px;
-  width: 150px;
-  height: 4px;
-  background: var(--gray-400);
-  border-radius: 5px;
-  background-image: linear-gradient(var(--gray-500), var(--gray-500));
-  background-size: 10% 100%;
-  background-repeat: no-repeat;
+input[type='range'] {
+	-webkit-appearance: none;
+	margin-right: 15px;
+	width: 150px;
+	height: 4px;
+	background: var(--gray-400);
+	border-radius: 5px;
+	background-image: linear-gradient(var(--gray-500), var(--gray-500));
+	background-size: 10% 100%;
+	background-repeat: no-repeat;
 }
 
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  height: 12px;
-  width: 12px;
-  border-radius: 50%;
-  background: var(--gray-600);
-  cursor: pointer;
-  transition: background 0.3s ease-in-out;
+input[type='range']::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	height: 12px;
+	width: 12px;
+	border-radius: 50%;
+	background: var(--gray-600);
+	cursor: pointer;
+	transition: background 0.3s ease-in-out;
 }
 
-input[type="range"]::-webkit-slider-runnable-track {
-  -webkit-appearance: none;
-  box-shadow: none;
-  border: none;
-  background: transparent;
+input[type='range']::-webkit-slider-runnable-track {
+	-webkit-appearance: none;
+	box-shadow: none;
+	border: none;
+	background: transparent;
 }
 
 @media (max-width: 850px) {
-  .player-center .time-bar-container {
-    display: none;
-  }
+	.player-center .time-bar-container {
+		display: none;
+	}
 
-  .player-left {
-    .default-album-cover {
-      width: 40px;
-      height: 40px;
-    }
+	.player-left {
+		.default-album-cover {
+			width: 40px;
+			height: 40px;
+		}
 
-    .album-cover-container {
-      min-width: 40px;
-      height: 40px;
-    }
-  }
+		.album-cover-container {
+			min-width: 40px;
+			height: 40px;
+		}
+	}
 }
 
 @media (max-width: 600px) {
-  .player-left .text {
-    display: none;
-  }
+	.player-left .text {
+		display: none;
+	}
 
-  .volume-icon {
-    display: none;
-  }
+	.volume-icon {
+		display: none;
+	}
 }
