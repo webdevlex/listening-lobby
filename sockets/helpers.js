@@ -21,7 +21,7 @@ async function uniSearch({ searchValue, user }, searchAmount = 10) {
   // If the user is using apple player format their query then perform spotify search
   else {
     searchValue = formatter.appleFormatSearchQuery(searchValue);
-    return await apple.search(searchValue, token);
+    return await apple.search(searchValue, token, searchAmount);
   }
 }
 
