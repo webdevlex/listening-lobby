@@ -2,7 +2,7 @@
 let lobbies = [];
 
 // Generates a new lobby and admin
-function generateLobby(data, tempToken) {
+function createLobbyAndJoin(data, tempToken) {
 	const newLobby = {
 		lobby_id: data.lobby_id,
 		users: [generateUser(data, 'admin')],
@@ -323,7 +323,7 @@ module.exports = {
 	setPlayStatusPlaying,
 	setPlayStatusPaused,
 	updatePlayStatus,
-	generateLobby,
+	createLobbyAndJoin,
 	lobbyExists,
 	getLobbyById,
 	joinLobby,
