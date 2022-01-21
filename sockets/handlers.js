@@ -571,14 +571,13 @@ function doubleClickToPlay(io, socket, { index, user }) {
 
   if (!lobbyData.loading) {
     const lobbyPlayback = lobbyData.playback;
-
     const queueEmpty = lobbyData.queue.length === 0;
     const isFirstSongInQueue = index === 0;
+    const clickedFirstSongAndPlaying = lobbyData.playing && isFirstSongInQueue;
 
-    if (!queueEmpty) {
+    if (!queueEmpty && !clickedFirstSongAndPlaying) {
       io.to(user.lobby_id).emit("deactivateButtons");
       setLobbyToLoading(io, user.lobby_id);
-
       if (lobbyPlayback) {
         lobby.popSong(user.lobby_id);
         --index;
@@ -588,7 +587,6 @@ function doubleClickToPlay(io, socket, { index, user }) {
         lobbyData.queue[0].newFirstSong = true;
         io.to(user.lobby_id).emit("addSong", lobbyData.queue);
       }
-
       playOnDoubleClick(io, socket, { user });
     }
   }
