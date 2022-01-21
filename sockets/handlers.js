@@ -575,7 +575,7 @@ function doubleClickToPlay(io, socket, { index, user }) {
     const queueEmpty = lobbyData.queue.length === 0;
     const isFirstSongInQueue = index === 0;
 
-    if (!isFirstSongInQueue && !queueEmpty) {
+    if (!queueEmpty) {
       io.to(user.lobby_id).emit("deactivateButtons");
       setLobbyToLoading(io, user.lobby_id);
 
@@ -583,9 +583,12 @@ function doubleClickToPlay(io, socket, { index, user }) {
         lobby.popSong(user.lobby_id);
         --index;
       }
-      lobby.setFirstSongTo(index, user.lobby_id);
-      lobbyData.queue[0].newFirstSong = true;
-      io.to(user.lobby_id).emit("addSong", lobbyData.queue);
+      if (!isFirstSongInQueue) {
+        lobby.setFirstSongTo(index, user.lobby_id);
+        lobbyData.queue[0].newFirstSong = true;
+        io.to(user.lobby_id).emit("addSong", lobbyData.queue);
+      }
+
       playOnDoubleClick(io, socket, { user });
     }
   }
