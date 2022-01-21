@@ -25,8 +25,6 @@ export default function LobbyQueue({
 		socket.emit('songDoubleClicked', { index, user });
 	}
 
-	console.log(queue);
-
 	return (
 		<div className='lobby-queue'>
 			{queueHasItems &&
