@@ -75,7 +75,7 @@ export async function setupPlayback(
     );
 
     // Set volume to zero so we dont here the song when the playback changes
-    const beforeSetQueue = Date.now();
+    const timeBeforeSetQueue = Date.now();
     await setPlaybackTo(device_id, user, queue[0], playerStatus);
 
     // Wait until the playback actually changes before performing actions
@@ -96,10 +96,10 @@ export async function setupPlayback(
             spotifyPlayer,
             user
           );
-          const afterSetQueue = Date.now();
+          const timeAfterSetQueue = Date.now();
 
           await spotifyPlayer.seek(
-            millisAlreadyElapsed + (afterSetQueue - beforeSetQueue)
+            millisAlreadyElapsed + (timeAfterSetQueue - timeBeforeSetQueue)
           );
         }
         clearInterval(interval);
