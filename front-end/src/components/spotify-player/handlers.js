@@ -1,5 +1,5 @@
 import axios from "axios";
-import setMediaController from "../../media-controller/mediacontroller";
+
 const INTERVAL = 500;
 // let lobbyIsPlaying = false;
 let poppedRunning = false;
@@ -253,7 +253,6 @@ export async function firstSong(
   } else {
     emitUserReady(socket, user);
   }
-  setMediaController();
   setListener(socket, spotifyPlayer, user, setPercent, setCurrentTime, queue);
 }
 
