@@ -9,8 +9,8 @@ function UniSearchForm({
 	setTracks,
 	setAlbums,
 	user,
-	selected,
-	setSelected,
+	searchTabSelected,
+	setSearchTabSelected,
 	setSearchLoading,
 	artistSearch,
 	setArtistSearch,
@@ -25,8 +25,6 @@ function UniSearchForm({
 
 	useEffect(() => {
 		return () => {
-			setTracks([]);
-			setAlbums([]);
 			setArtistSearch(null);
 		};
 	}, [socket, setAlbums, setTracks, setArtistSearch]);
@@ -75,16 +73,16 @@ function UniSearchForm({
 			<div className='search-header'>
 				<p
 					className={`search-header-text track-title ${
-						selected === 'tracks' ? 'selected' : null
+						searchTabSelected === 'tracks' ? 'selected' : null
 					}`}
-					onClick={() => setSelected('tracks')}>
+					onClick={() => setSearchTabSelected('tracks')}>
 					Tracks
 				</p>
 				<p
 					className={`search-header-text album-title ${
-						selected === 'albums' ? 'selected' : null
+						searchTabSelected === 'albums' ? 'selected' : null
 					}`}
-					onClick={() => setSelected('albums')}>
+					onClick={() => setSearchTabSelected('albums')}>
 					Albums
 				</p>
 			</div>

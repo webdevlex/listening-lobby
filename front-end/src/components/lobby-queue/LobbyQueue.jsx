@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import QueueTrack from '../queue-track/QueueTrack';
 import { SocketContext } from '../../context/SocketContext';
 import './lobby-queue.scss';
@@ -10,11 +10,18 @@ export default function LobbyQueue({
 	likedSongs,
 	setLikedSongs,
 	playing,
+	setAlbums,
+	setTracks,
 }) {
 	const queueHasItems = queue[0];
 	const [hover, setHover] = useState(false);
 	const [hoverIndex, setHoverIndex] = useState(false);
 	const [socket] = useContext(SocketContext);
+
+	useEffect(() => {
+		setTracks([]);
+		setAlbums([]);
+	}, [setAlbums, setTracks]);
 
 	function handleHover(index) {
 		setHoverIndex(index);

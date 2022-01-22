@@ -20,6 +20,7 @@
 .index-wrapper {
 	min-width: 53px;
 	display: flex;
+	align-items: center;
 	justify-content: center;
 	pointer-events: none;
 	user-select: none;
@@ -106,6 +107,7 @@
 	width: 20%;
 	color: var(--gray-600);
 	user-select: none;
+	font-size: 14px;
 }
 
 .duration {
@@ -114,6 +116,7 @@
 	color: var(--gray-600);
 	pointer-events: none;
 	user-select: none;
+	font-size: 14px;
 }
 
 .action-buttons {
@@ -129,6 +132,11 @@
 	cursor: pointer;
 	height: 16px;
 	pointer-events: auto;
+	color: var(--gray-600);
+
+	&:hover {
+		color: var(--gray-800);
+	}
 }
 
 .like-button {

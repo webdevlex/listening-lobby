@@ -1,15 +1,35 @@
 .full-album {
 	overflow-y: auto;
-	padding: 20px;
+	padding-inline: 20px;
+	padding-bottom: 10px;
+}
+
+.back-button {
+	color: var(--gray-600);
+	display: flex;
+	align-items: center;
+	margin-block: 10px;
+	cursor: pointer;
+	background-color: var(--gray-300);
+	width: fit-content;
+	padding: 4px 10px;
+	border-radius: 5px;
+}
+
+.back-icon {
+	margin-right: 5px;
+}
+
+.back-text {
+	text-transform: uppercase;
+	font-size: 12px;
 }
 
 .full-album-info-dispaly {
-	padding: 10px;
 }
 
 .full-album-cover-wrapper {
-	width: 300px;
-	height: 300px;
+	width: 100%;
 }
 
 .full-album-info-dispaly {
@@ -18,9 +38,197 @@
 }
 
 .full-album-text {
+	margin-block: 10px;
+	width: 100%;
+	display: flex;
+	position: relative;
+	justify-content: center;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.full-album-name-container,
+.full-album-artist-container {
+	display: flex;
+	width: fit-content;
 }
 
 .full-album-name {
 	font-size: 25px;
 	font-weight: 500;
+	width: fit-content;
+	margin-right: 80px;
+	white-space: nowrap;
+}
+
+.full-album-artist {
+	font-size: 16px;
+	font-weight: 300;
+	color: var(--gray-600);
+	margin-right: 80px;
+	white-space: nowrap;
+}
+
+.full-album-header {
+	display: flex;
+	font-weight: 300;
+	width: 100%;
+	margin: 20px auto 10px auto;
+	padding-bottom: 5px;
+	border-bottom: 1px solid var(--gray-400);
+	color: var(--gray-400);
+
+	.hash-tag {
+		min-width: 53px;
+		text-align: center;
+	}
+
+	.title {
+		min-width: 50%;
+		width: 100%;
+	}
+
+	.duration {
+		width: 100%;
+	}
+
+	.add {
+		min-width: 55px;
+	}
+}
+
+.full-album .results-display {
+	padding-inline: 0;
+}
+
+.full-album .results-display {
+	padding-inline: 0;
+}
+
+.full-album .search-result-action-icon {
+	justify-content: unset;
+	min-width: 55px;
+}
+
+.cover-and-text-wrapper {
+	display: flex;
+	min-width: 50%;
+	width: 100%;
+	padding-right: 10px;
+}
+
+.duration-wrapper {
+	width: 100%;
+	color: var(--gray-400);
+	font-weight: 300;
+	font-size: 14px;
+	display: flex;
+	align-items: center;
+	display: none;
+}
+
+@media (min-width: 450px) {
+	.full-album {
+		padding-inline: 30px;
+	}
+
+	.full-album-cover-wrapper {
+		width: 200px;
+		min-width: 200px;
+		margin-right: 20px;
+	}
+
+	.full-album-info-dispaly {
+		flex-direction: row;
+	}
+
+	.full-album-name {
+		font-size: 65px;
+		white-space: nowrap;
+		font-weight: 700;
+		line-height: 90px;
+	}
+
+	.full-album-artist {
+		font-size: 20px;
+	}
+}
+
+@media (min-width: 600px) {
+	.full-album-cover-wrapper {
+		width: 250px;
+		min-width: 250px;
+		margin-right: 40px;
+	}
+
+	.full-album-name {
+		font-size: 80px;
+	}
+
+	.full-album-artist {
+		font-size: 30px;
+	}
+
+	.duration-wrapper {
+		display: flex;
+	}
+}
+
+@media (min-width: 850px) {
+	.full-album-info-dispaly {
+		flex-direction: column;
+	}
+
+	.full-album-cover-wrapper {
+		width: 100%;
+	}
+
+	.full-album-name {
+		font-size: 65px;
+	}
+
+	.full-album-artist {
+		font-size: 20px;
+	}
+
+	.duration-wrapper {
+		display: none;
+	}
+}
+@media (min-width: 950px) {
+	.duration-wrapper {
+		display: flex;
+	}
+}
+
+@media (min-width: 1000px) {
+	.full-album {
+		padding-inline: 40px;
+	}
+
+	.full-album-info-dispaly {
+		flex-direction: row;
+	}
+
+	.full-album-cover-wrapper {
+		min-width: 200px;
+		width: 200px;
+		height: 200px;
+	}
+}
+
+@media (min-width: 1300px) {
+	.full-album-cover-wrapper {
+		min-width: 250px;
+		width: 250px;
+		height: 250px;
+	}
+
+	.full-album-name {
+		font-size: 80px;
+	}
+
+	.full-album-artist {
+		font-size: 30px;
+	}
 }

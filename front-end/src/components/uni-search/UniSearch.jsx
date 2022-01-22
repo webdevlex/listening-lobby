@@ -11,7 +11,7 @@ function UniSearch({
 	albums,
 	tracks,
 	beenAdded,
-	selected,
+	searchTabSelected,
 	searchLoading,
 	setArtistSearch,
 }) {
@@ -19,7 +19,7 @@ function UniSearch({
 
 	return (
 		<div className='results'>
-			{(width < 1000 && selected === 'tracks') || width > 1000 ? (
+			{(width < 1000 && searchTabSelected === 'tracks') || width > 1000 ? (
 				<TrackDisplay
 					tracks={tracks}
 					user={user}
@@ -29,7 +29,7 @@ function UniSearch({
 					setArtistSearch={setArtistSearch}
 				/>
 			) : null}
-			{(width < 1000 && selected === 'albums') || width > 1000 ? (
+			{(width < 1000 && searchTabSelected === 'albums') || width > 1000 ? (
 				<AlbumDispaly
 					albums={albums}
 					user={user}

@@ -13,15 +13,16 @@ export default function LobbySearch({
 	beenAdded,
 	searchLoading,
 	setSearchLoading,
+	searchTabSelected,
+	setSearchTabSelected,
 }) {
-	const [selected, setSelected] = useState('tracks');
 	const [artistSearch, setArtistSearch] = useState(null);
 
 	useEffect(() => {
 		return () => {
 			beenAdded.current = [];
 		};
-	}, [beenAdded]);
+	}, [beenAdded, searchTabSelected, setSearchTabSelected]);
 
 	return (
 		<div className='search-section'>
@@ -29,8 +30,8 @@ export default function LobbySearch({
 				setAlbums={setAlbums}
 				setTracks={setTracks}
 				user={user}
-				selected={selected}
-				setSelected={setSelected}
+				searchTabSelected={searchTabSelected}
+				setSearchTabSelected={setSearchTabSelected}
 				setSearchLoading={setSearchLoading}
 				artistSearch={artistSearch}
 				setArtistSearch={setArtistSearch}
@@ -43,7 +44,7 @@ export default function LobbySearch({
 				tracks={tracks}
 				setTracks={setTracks}
 				beenAdded={beenAdded}
-				selected={selected}
+				searchTabSelected={searchTabSelected}
 				searchLoading={searchLoading}
 				artistSearch={artistSearch}
 				setArtistSearch={setArtistSearch}
