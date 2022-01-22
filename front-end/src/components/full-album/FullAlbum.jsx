@@ -35,10 +35,13 @@ export default function FullAlbum({
 	}, [setCenterDisplay, setFullAlbum]);
 
 	function handleSongClick(songData) {
-		socket.emit('addSong', { songData, user });
+		const songHasBeenAdded = beenAdded.current.some(
+			(addedId) => addedId === songData.id || songData.uniId
+		);
+		if (!songHasBeenAdded) {
+			socket.emit('addSong', { songData, user });
+		}
 	}
-
-	console.log(fullAlbum);
 
 	return (
 		<div className='full-album'>

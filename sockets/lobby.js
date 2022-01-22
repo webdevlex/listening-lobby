@@ -375,4 +375,6 @@ module.exports = {
 	playbackOff,
 	playbackOn,
 	setFirstSongTo,
+	joinUserIntoLobby,
+	getShuffleData,
 };

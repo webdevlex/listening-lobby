@@ -16,7 +16,12 @@ export default function AlbumDispaly({
 	const [socket] = useContext(SocketContext);
 
 	function handleAlbumClick(albumData) {
-		socket.emit('addAlbum', { albumData, user });
+		const albumHasBeenAdded = beenAdded.current.some(
+			(addedId) => addedId === albumData.id
+		);
+		if (!albumHasBeenAdded) {
+			socket.emit('addAlbum', { albumData, user });
+		}
 	}
 	//TEMPORARY BUG FIX
 	let hasAlbum = albums === undefined ? false : albums[0];

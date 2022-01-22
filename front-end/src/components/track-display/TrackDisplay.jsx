@@ -16,7 +16,12 @@ export default function TrackDisplay({
 	const [socket] = useContext(SocketContext);
 
 	function handleSongClick(songData) {
-		socket.emit('addSong', { songData, user });
+		const songHasBeenAdded = beenAdded.current.some(
+			(addedId) => addedId === songData.id || songData.uniId
+		);
+		if (!songHasBeenAdded) {
+			socket.emit('addSong', { songData, user });
+		}
 	}
 
 	function handleArtistClick(searchValue) {
