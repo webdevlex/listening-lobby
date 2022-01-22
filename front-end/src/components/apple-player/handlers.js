@@ -34,6 +34,15 @@ async function enqueueSong(applePlayer, id) {
     song: id,
   });
 }
+async function enqueueSongFirstSong(applePlayer, id) {
+  await applePlayer.authorize();
+  appleIsPlaying = false;
+  await applePlayer.setQueue({
+    song: id,
+  });
+  await applePlayer.play();
+  await applePlayer.pause();
+}
 
 //Start up function that sets intial values, listeners and catches up to existing
 //players
@@ -54,6 +63,7 @@ export async function startUp(
     timeStampOnJoin = playerStatus.timestamp / 1000;
 
     if (queue[0].apple !== "-1") {
+      const timeBeforeEnqueue = Date.now();
       await enqueueSong(applePlayer, queue[0].apple);
       if (!playerStatus.paused) {
         await handlePlay(
@@ -66,7 +76,10 @@ export async function startUp(
           setCurrentTime,
           playerStatus.timestamp
         );
-
+        const timeAfterEnqueue = Date.now();
+        console.log((timeAfterEnqueue - timeBeforeEnqueue) / 1000);
+        timeStampOnJoin =
+          timeStampOnJoin + (timeAfterEnqueue - timeBeforeEnqueue) / 1000;
         await applePlayer.seekToTime(timeStampOnJoin);
         setPlaying(true);
       } else {
@@ -173,7 +186,7 @@ export async function handlePause(applePlayer, socket, user, setPlaying, song) {
 export async function handleFirstSong(applePlayer, song, socket, user) {
   const songAvailableOnApple = song.apple !== "-1";
   if (songAvailableOnApple) {
-    await enqueueSong(applePlayer, song.apple);
+    await enqueueSongFirstSong(applePlayer, song.apple);
     emitReadyWhenQueueSet(socket, applePlayer, user);
   } else {
     emitUserReady(socket, user);
