@@ -28,8 +28,12 @@ export default function LobbyQueue({
 		setHover(true);
 	}
 
-	function handleDoubleClick(index) {
-		socket.emit('songDoubleClicked', { index, user });
+	function handleDoubleClick(e, index) {
+		const nodeName = e.target.nodeName;
+		console.log(nodeName);
+		if (nodeName === 'DIV') {
+			socket.emit('songDoubleClicked', { index, user });
+		}
 	}
 
 	return (
@@ -41,7 +45,7 @@ export default function LobbyQueue({
 						key={index}
 						onMouseOver={() => handleHover(index)}
 						onMouseOut={() => setHover(false)}
-						onDoubleClick={() => handleDoubleClick(index)}>
+						onDoubleClick={(e) => handleDoubleClick(e, index)}>
 						<QueueTrack
 							song={song}
 							index={index}
