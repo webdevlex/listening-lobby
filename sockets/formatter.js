@@ -14,7 +14,6 @@ function uniFormatArtistsForUi(query) {
 // search restrictions are more strict
 function appleFormatSearchQuery(query) {
   query = replaceAll(query, "&", "and");
-  query = replaceAll(query, "with", "feat");
   query = replaceAll(query, "’", "");
   query = replaceAll(query, "$", "");
   query = query.normalize("NFD").replace(/[\u0300-\u036f]/g, "");

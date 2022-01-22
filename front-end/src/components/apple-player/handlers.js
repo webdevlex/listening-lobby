@@ -77,7 +77,6 @@ export async function startUp(
           playerStatus.timestamp
         );
         const timeAfterEnqueue = Date.now();
-        console.log((timeAfterEnqueue - timeBeforeEnqueue) / 1000);
         timeStampOnJoin =
           timeStampOnJoin + (timeAfterEnqueue - timeBeforeEnqueue) / 1000;
         await applePlayer.seekToTime(timeStampOnJoin);
