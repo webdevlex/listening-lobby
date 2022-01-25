@@ -43,13 +43,13 @@ Listening Lobby is a web application that allows you to listen to music with fri
 
   <img src="./assets/service-select.gif" alt="service select" width="300"/>
 
-3. Congrats, you've arrived in the lobby! 🎉 Now Lets make our first serach by clicking the search button!
+3. Congrats, you've arrived to the lobby! 🎉 Now Lets make our first serach by clicking the search button!
 4. Type in a song, artist, or album and **click** the plus sign or **double click** to add it.
 
    <img src="./assets/search.gif" alt="search-gif" width="700"/>
 
 5. Press play and enjoy the jam! 🎶
-6. Lets get some company in here by clicking on the _invite friends_ button, copying the link and sending it to your friends.
+6. Lets get some company in here by clicking on the _invite friends_ button, copying the link, and sending it to your friends.
 
 ## Built With
 
@@ -73,7 +73,7 @@ Listening Lobby is a web application that allows you to listen to music with fri
 - [ ] Party Mode - _Only admin will need a music provider while other members can set the queue and listen on a centralized device. Perfect for parties._
 - [ ] Games - _Create Lobby games that make the listening lobby more interactive and fun. Games will include queue battle royale, guess who queued it and more._
 - [ ] QR Code Invites - _Friends can easily join lobby by scanning a qr code_
-- [ ] Games - \_Mobile App.
+- [ ] Mobile App
 
 ## Authors
 
