@@ -11,7 +11,7 @@ Listening Lobby is a web application that allows you to listen to music with fri
 
 - Provides a way for both Spotify and Apple Music users to listen to music together!
 
-- Our Rich and easy to use lobby system allows users to chat with friends, set/edit the queue, and more.
+- Our rich yet easy to use lobby system allows users to chat with friends, set/edit the queue, and more.
 
 - Easily add songs to your
   _liked playlist_ from the lobby.
