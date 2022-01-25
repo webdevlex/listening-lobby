@@ -4,7 +4,7 @@
 
 Listening Lobby is a web application that allows you to listen to music with friends simultaneosly using Spotify or Apple Music in an interactive lobby.
 
-<img src="./assets/player.jpg" alt="drawing" width="100%"/>
+<img src="./assets/player.JPG" alt="player" width="800"/>
 
 ### _Features_
 
@@ -40,12 +40,12 @@ Listening Lobby is a web application that allows you to listen to music with fri
 - Click either the Apple or Spotify logo to select your music service.
 - Then type in a username of choice.
 
-  <img src="./assets/service-select.gif" alt="drawing" width="200"/>
+  <img src="./assets/service-select.gif" alt="service select" width="300"/>
 
 3. Congrats you've arrived in the lobby! 🎉 Now Lets make our first serach by clicking the search button!
 4. Type in a song, artist, or album and **click** the plus sign or **double click** to add it.
 
-   <img src="./assets/search.gif" alt="drawing" width="300"/>
+   <img src="./assets/search.gif" alt="search-gif" width="700"/>
 
 5. Press play and enjoy the jam! 🎶
 6. Lets get some company in here by clicking on the _invite friends_ button,copying the link and sending it to your friends.
