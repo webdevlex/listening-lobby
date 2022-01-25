@@ -16,7 +16,7 @@ Listening Lobby is a web application that allows you to listen to music with fri
 - Easily add songs to your
   _liked playlist_ from the lobby.
 
-- Extensive search system allows an easy way to find your favorite songs and artists.
+- Extensive search system allows for an easy way to find your favorite songs and artists.
 
 ## Table of Contents
 
