@@ -84,13 +84,13 @@ Listening Lobby is a web application that allows you to listen to music with fri
 - [GitHub Profile](https://github.com/webdevlex)
 - [Personal Website](https://webdevlex.com/)
 - [Email:](mailto:webdeveloperlex@gmail.com?subject=Listening-Lobby "webdeveloperlex@gmail.com")
-  webdeveloperlex@gmail.com ✉️
+  webdeveloperlex@gmail.<area>com ✉️
 ___
 **Justin Fisher**
 
 - [GitHub Profile](https://github.com/justinfisherrr)
 - [Email:](mailto:jf.thedeveloper@gmail.com?subject=Listening-Lobby "jf.thedeveloper@gmail.com")
-  jf.thedeveloper@gmail.com ✉️
+  jf.thedeveloper@gmail.<area>com ✉️
 
 ## Support
 
