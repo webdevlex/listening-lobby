@@ -77,7 +77,7 @@ Listening Lobby is a web application that allows you to listen to music with fri
 
 ## Authors
 
----
+
 
 **Alexis Martin**
 
@@ -85,7 +85,7 @@ Listening Lobby is a web application that allows you to listen to music with fri
 - [Personal Website](https://webdevlex.com/)
 - [Email:](mailto:webdeveloperlex@gmail.com?subject=Listening-Lobby "webdeveloperlex@gmail.com")
   webdeveloperlex@gmail.com✉️
-
+___
 **Justin Fisher**
 
 - [GitHub Profile](https://github.com/justinfisherrr)
