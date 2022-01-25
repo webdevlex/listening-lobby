@@ -44,6 +44,7 @@ function MessagesForm({ user, isShowing }) {
     <form className='message-form' onSubmit={handleSubmit(onSubmit)}>
       <div className={`message-input ${isShowing ? "tab-showing" : null}`}>
         <input
+          autoComplete='off'
           maxLength={MESSAGE_MAX_LENGTH}
           {...register("message")}
           onFocus={() => handleFocus()}

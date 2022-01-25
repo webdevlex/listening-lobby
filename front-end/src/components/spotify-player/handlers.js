@@ -97,7 +97,6 @@ export async function setupPlayback(
             user
           );
           const timeAfterSetQueue = Date.now();
-
           await spotifyPlayer.seek(
             millisAlreadyElapsed + (timeAfterSetQueue - timeBeforeSetQueue)
           );

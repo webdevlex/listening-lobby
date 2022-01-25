@@ -1,2 +1,104 @@
-# listening-lobby
-A web application for listening to music with friends simultaneously via your music provider
+## **Listening Lobby**
+
+---
+
+Listening Lobby is a web application that allows you to listen to music with friends simultaneosly using Spotify or Apple Music in an interactive lobby.
+
+<img src="./assets/player.jpg" alt="drawing" width="100%"/>
+
+### _Features_
+
+- Provides a way for both Spotify and ~~those~~ Apple Music users to listen to music together!
+
+- Our Rich and easy to use lobby system allows users to chat with friends, set/edit the queue, and more.
+
+- Easily add songs to your
+  _liked playlist_ from the lobby.
+
+- Extensive search system allows an easy way to find your favorite songs and artists.
+
+## Table of Contents
+
+---
+
+- [**Listening Lobby**](#listening-lobby)
+  - [_Features_](#features)
+- [Table of Contents](#table-of-contents)
+- [Usage](#usage)
+- [Built With](#built-with)
+- [Future Updates](#future-updates)
+- [Authors](#authors)
+- [Support](#support)
+
+## Usage
+
+---
+
+1. Start by creating a lobby clicking the _create lobby_ button on the front page.
+2. On the create lobby page:
+
+- Click either the Apple or Spotify logo to select your music service.
+- Then type in a username of choice.
+
+  <img src="./assets/service-select.gif" alt="drawing" width="200"/>
+
+3. Congrats you've arrived in the lobby! 🎉 Now Lets make our first serach by clicking the search button!
+4. Type in a song, artist, or album and **click** the plus sign or **double click** to add it.
+
+   <img src="./assets/search.gif" alt="drawing" width="300"/>
+
+5. Press play and enjoy the jam! 🎶
+6. Lets get some company in here by clicking on the _invite friends_ button,copying the link and sending it to your friends.
+
+## Built With
+
+---
+
+- JavaScript
+- React
+- Express
+- Node
+- NPM
+- HTML
+- CSS
+- Socket io
+- Apple and Spotify api
+- Sass
+
+## Future Updates
+
+---
+
+- [x] Playlist Compatibility - _Easily add songs to your liked playlist from the lobby._
+- [ ] Party Mode - _Only admin will need a music provider while other members can set the queue and listen on a centralized device. Perfect for parties._
+- [ ] Games - _Create Lobby games that make the listening lobby more interactive and fun. Games will include queue battle royale, guess who queued it and more._
+- [ ] Qr Code Invites - _Friends can easily join lobby by scanning a qr code_
+- [ ] Games - \_Mobile App.
+
+## Authors
+
+---
+
+**Alexis Martin**
+
+- [GitHub Profile](https://github.com/webdevlex)
+- [Personal Website](https://webdevlex.com/)
+- [Email:](mailto:webdeveloperlex@gmail.com?subject=Listening-Lobby "webdeveloperlex@gmail.com")
+  webdeveloperlex@gmail.com✉️
+
+**Justin Fisher**
+
+- [GitHub Profile](https://github.com/justinfisherrr)
+- [Personal Website](https://webdevlex.com/)
+- [Email:](mailto:jf.thedeveloper@gmail.com?subject=Listening-Lobby "jf.thedeveloper@gmail.com")
+  jf.thedeveloper@gmail.com✉️
+
+## Support
+
+---
+
+Contributions, issues, and feature requests are welcome!
+
+Give a ⭐️ if you like this project!
+
+[Our Patreon:](https://www.patreon.com/user?u=67023905&fan_landing=true) Please consider supporting us on our Patreon as this project is funded by two college students
