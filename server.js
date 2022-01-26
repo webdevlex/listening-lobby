@@ -10,7 +10,7 @@ const frontEndUrl = '' || 'http://localhost:3000';
 const app = express();
 
 app
-	.use(cors(corsOptions))
+	.use(cors())
 	.use(cookieParser())
 	.use('/spotify', require('./routes/spotify'))
 	.use('/apple', require('./routes/apple'));
