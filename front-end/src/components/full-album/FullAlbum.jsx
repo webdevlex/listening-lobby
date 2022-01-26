@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef } from 'react';
-import { SocketContext } from '../../context/SocketContext';
+import { SocketContext } from '../../context/SocketContextProvider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import useChildParentOverflow from '../../hooks/childParentOverflow';

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { SocketContext } from '../../context/SocketContext';
+import { SocketContext } from '../../context/SocketContextProvider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import LoadingSpinner from '../loading-spinner/LoadingSpinner';

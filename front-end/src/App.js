@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { PlayersProvider } from './context/PlayersContext';
-import { SocketContextProvider } from './context/SocketContext';
+import { PlayersContextProvider } from './context/PlayersContextProvider';
+import { SocketContextProvider } from './context/SocketContextProvider';
 import Home from './pages/home/Home';
 import EarlyAccess from './pages/early-access/EarlyAccess';
 import ChooseService from './pages/choose-service/ChooseService';
@@ -18,7 +18,7 @@ function App() {
 
 	return (
 		<SocketContextProvider>
-			<PlayersProvider>
+			<PlayersContextProvider>
 				<div className='App'>
 					<Router>
 						<Switch>
@@ -53,7 +53,7 @@ function App() {
 						</Switch>
 					</Router>
 				</div>
-			</PlayersProvider>
+			</PlayersContextProvider>
 		</SocketContextProvider>
 	);
 }

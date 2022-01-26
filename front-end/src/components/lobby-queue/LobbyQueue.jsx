@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import QueueTrack from '../queue-track/QueueTrack';
-import { SocketContext } from '../../context/SocketContext';
+import { SocketContext } from '../../context/SocketContextProvider';
 import './lobby-queue.scss';
 
 export default function LobbyQueue({

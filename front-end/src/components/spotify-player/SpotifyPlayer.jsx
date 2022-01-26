@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { playerSetup } from './playerSetup';
-import { SocketContext } from '../../context/SocketContext';
-import { PlayersContext } from '../../context/PlayersContext';
+import { SocketContext } from '../../context/SocketContextProvider';
+import { PlayersContext } from '../../context/PlayersContextProvider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	faPlay,
