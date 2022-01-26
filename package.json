@@ -4,12 +4,12 @@
   "description": "A web application for listening to music with friends simultaneously via your music provider",
   "main": "index.js",
   "scripts": {
-    "heroku-postbuild": "cd front-end && npm install && npm install --only=dev --no-shrinkwrap && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "server": "nodemon server",
     "client": "npm start --prefix front-end",
-    "dev": "concurrently \"npm run client\" \"npm run server\""
+    "dev": "concurrently \"npm run client\" \"npm run server\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false && npm install --prefix front-end && npm run build --prefix front-end",
   },
   "engines": {
     "node": "14.17.0",

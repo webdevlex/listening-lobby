@@ -9,19 +9,6 @@ const frontEndUrl = '' || 'http://localhost:3000';
 
 const app = express();
 
-const whitelist = ['http://localhost:3000', 'http://localhost:8888'];
-const corsOptions = {
-	origin: function (origin, callback) {
-		// console.log('** Origin of request ' + origin);
-		if (whitelist.indexOf(origin) !== -1 || !origin) {
-			// console.log('Origin acceptable');
-			callback(null, true);
-		} else {
-			// console.log('Origin rejected');
-			callback(new Error('Not allowed by CORS'));
-		}
-	},
-};
 app
 	.use(cors(corsOptions))
 	.use(cookieParser())
@@ -35,10 +22,11 @@ const ioCors = {
 const io = socketio(server, ioCors);
 reciever(io);
 
+// Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
-	app.use(express.static(path.join(__dirname, 'front-end/build')));
-	app.get('*', function (req, res) {
-		res.sendFile(path.join(__dirname, 'front-end/build', 'index.html'));
+	app.use(express.static('front-end/build'));
+	app.get('*', (req, res) => {
+		res.sendFile(path.resolve(__dirname, 'front-end', 'build', 'index.html'));
 	});
 }
 
