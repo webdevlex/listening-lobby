@@ -9,7 +9,7 @@ const client_secret = config.get('client_secret');
 
 const redirect_url =
 	process.env.NODE_ENV === 'production'
-		? 'www.listeninglobby.com'
+		? 'http://www.listeninglobby.com'
 		: 'http://localhost:8888';
 const redirect_uri = `${redirect_url}/spotify/callback`;
 
