@@ -35,9 +35,7 @@ function SocketHandler({
 			} else {
 				socket.disconnect();
 				const url =
-					process.env.NODE_ENV === 'production'
-						? 'www.listeninglobby.com'
-						: 'http://localhost:3000';
+					process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000';
 
 				window.location.replace(url);
 			}
@@ -59,9 +57,7 @@ function SocketHandler({
 			socket.on('lobbyMaxReached', () => {
 				localStorage.setItem('capacity', JSON.stringify({ maxReached: true }));
 				const url =
-					process.env.NODE_ENV === 'production'
-						? 'www.listeninglobby.com'
-						: 'http://localhost:3000';
+					process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000';
 
 				window.location.replace(url);
 			});
@@ -120,9 +116,7 @@ function SocketHandler({
 			socket.on('kickUser', () => {
 				localStorage.setItem('loadingTooLong', true);
 				const url =
-					process.env.NODE_ENV === 'production'
-						? 'www.listeninglobby.com'
-						: 'http://localhost:3000';
+					process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000';
 
 				window.location.replace(url);
 			});

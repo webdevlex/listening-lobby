@@ -86,7 +86,7 @@ function MusicProviderForm({
 	function redirectToSpotify() {
 		const url =
 			process.env.NODE_ENV === 'production'
-				? 'www.listeninglobby.com/spotify/login'
+				? 'spotify/login'
 				: 'http://localhost:8888/spotify/login';
 		window.location.replace(url);
 	}
