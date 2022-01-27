@@ -45,7 +45,6 @@ router.get('/login', function (req, res) {
 		state: state,
 	});
 
-	console.log('success login');
 	res.redirect(urlObj.toString());
 });
 
@@ -86,11 +85,8 @@ router.get('/callback', async function (req, res) {
 				token: response.data.access_token,
 				refresh_token: response.data.refresh_token,
 			});
-			console.log('success URL');
 			res.redirect(urlObj.toString());
 		} catch (err) {
-			console.log(err);
-			console.log('some error');
 			res.redirect(auth_error_url);
 		}
 	}
