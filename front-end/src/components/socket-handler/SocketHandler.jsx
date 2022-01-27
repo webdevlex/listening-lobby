@@ -34,7 +34,12 @@ function SocketHandler({
 				localStorage.setItem('user', JSON.stringify(localStorageData));
 			} else {
 				socket.disconnect();
-				window.location.replace('http://localhost:3000');
+				const url =
+					process.env.NODE_ENV === 'production'
+						? 'www.listeninglobby.com'
+						: 'http://localhost:3000';
+
+				window.location.replace(url);
 			}
 			setUser({ ...localStorageData, token, refresh_token });
 		} else {
@@ -53,7 +58,12 @@ function SocketHandler({
 
 			socket.on('lobbyMaxReached', () => {
 				localStorage.setItem('capacity', JSON.stringify({ maxReached: true }));
-				window.location.replace('http://localhost:3000');
+				const url =
+					process.env.NODE_ENV === 'production'
+						? 'www.listeninglobby.com'
+						: 'http://localhost:3000';
+
+				window.location.replace(url);
 			});
 
 			socket.on('setLobbyInfo', (members, lobbyMessages) => {
@@ -109,7 +119,12 @@ function SocketHandler({
 
 			socket.on('kickUser', () => {
 				localStorage.setItem('loadingTooLong', true);
-				window.location.replace('http://localhost:3000');
+				const url =
+					process.env.NODE_ENV === 'production'
+						? 'www.listeninglobby.com'
+						: 'http://localhost:3000';
+
+				window.location.replace(url);
 			});
 
 			socket.on('displayAlbum', (tracks) => {

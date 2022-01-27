@@ -5,7 +5,12 @@ const http = require('http');
 const socketio = require('socket.io');
 const reciever = require('./sockets/reciever');
 const path = require('path');
-const frontEndUrl = '' || 'http://localhost:3000';
+var url = require('url');
+
+const frontEndUrl =
+	process.env.NODE_ENV === 'production'
+		? 'www.listeninglobby.com'
+		: 'http://localhost:3000';
 
 const app = express();
 

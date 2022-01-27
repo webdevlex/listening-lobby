@@ -7,7 +7,7 @@ export async function setUpMusicKit(
 	setAppleToken
 ) {
 	try {
-		const res = await axios.get('http://localhost:8888/apple/token');
+		const res = await axios.get('/apple/token');
 		const devToken = res.data.token;
 		setAppleToken(devToken);
 

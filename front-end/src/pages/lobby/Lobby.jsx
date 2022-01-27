@@ -54,16 +54,24 @@ function Lobby() {
 	const [buttonsClickable, setButtonsClickable] = useState(true);
 
 	useEffect(() => {
+		const inProduction = process.env.NODE_ENV === 'production';
 		if (!socket) {
-			const url = '' || 'http://localhost:8888';
+			const url = inProduction
+				? 'www.listeninglobby.com'
+				: 'http://localhost:8888';
+
 			setSocket(socketio.connect(url));
 		}
 
-		// return () => {
-		// 	if (socket) {
-		// 		window.location.replace('http://localhost:3000');
-		// 	}
-		// };
+		return () => {
+			if (socket) {
+				const url = inProduction
+					? 'www.listeninglobby.com'
+					: 'http://localhost:3000';
+
+				window.location.replace(url);
+			}
+		};
 	}, [applePlayer, setSocket, socket]);
 
 	return socket ? (
