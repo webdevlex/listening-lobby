@@ -22,7 +22,6 @@ export function playerSetup(
 	document.body.appendChild(script);
 
 	window.onSpotifyWebPlaybackSDKReady = () => {
-		console.log(token);
 		const spotifyPlayer = new window.Spotify.Player({
 			name: 'Web Playback SDK',
 			getOAuthToken: (cb) => {
@@ -32,10 +31,7 @@ export function playerSetup(
 		});
 
 		spotifyPlayer.addListener('ready', ({ device_id }) => {
-			console.log('spotify player ready');
 			setSpotifyPlayer(spotifyPlayer);
-			console.log('spotify context set', spotifyPlayer);
-
 			socket.emit('setDeviceId', { lobby_id: user.lobby_id, device_id });
 			setupSocketRecievers(
 				socket,
