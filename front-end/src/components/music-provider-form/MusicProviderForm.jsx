@@ -84,12 +84,11 @@ function MusicProviderForm({
 	}
 
 	function redirectToSpotify() {
-		// const url =
-		// 	process.env.NODE_ENV === 'production'
-		// 		? 'www.listeninglobby.com'
-		// 		: 'http://localhost:8888';
-		// window.location.replace(`${url}/spotify/login`);
-		window.location.replace('/spotify/login');
+		const url =
+			process.env.NODE_ENV === 'production'
+				? 'www.listeninglobby.com/spotify/login'
+				: 'http://localhost:8888/spotify/login';
+		window.location.replace(url);
 	}
 
 	const handleFocus = (e) => {
