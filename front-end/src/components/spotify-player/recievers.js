@@ -13,6 +13,7 @@ export function setupSocketRecievers(
 	setCurrentTime,
 	setPlayerActive
 ) {
+	console.log('setting up socket recievers');
 	handlers.setupPlayback(
 		spotifyPlayer,
 		device_id,

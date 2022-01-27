@@ -48,8 +48,8 @@ function SpotifyPlayer({
 
 	useEffect(() => {
 		if (!ran) {
-			console.log(shuffle);
 			setRan(true);
+			console.log('abou to run player setup');
 			playerSetup(
 				socket,
 				setSpotifyPlayer,

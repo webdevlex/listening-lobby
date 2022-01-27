@@ -22,12 +22,13 @@ export function playerSetup(
 	document.body.appendChild(script);
 
 	window.onSpotifyWebPlaybackSDKReady = () => {
+		console.log('spotify sdk ready');
 		const spotifyPlayer = new window.Spotify.Player({
 			name: 'Web Playback SDK',
 			getOAuthToken: (cb) => {
 				cb(token);
 			},
-			volume: 0.5,
+			volume: 0.1,
 		});
 
 		setSpotifyPlayer(spotifyPlayer);

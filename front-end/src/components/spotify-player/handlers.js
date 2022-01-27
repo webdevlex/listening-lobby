@@ -139,6 +139,7 @@ export async function setupPlayback(
 
 	// Let the user see the lobby once they are fully loaded in
 	setLoading(false);
+	console.log('loaindg was set to false');
 }
 
 export async function play(

@@ -93,7 +93,10 @@ function Lobby() {
 			/>
 
 			{!playerStatus ? (
-				<LobbyLoading />
+				<>
+					<h1>Loading 1</h1>
+					<LobbyLoading />
+				</>
 			) : (
 				<>
 					<div className={`player-grid ${loading ? 'hide' : null}`}>
@@ -117,7 +120,10 @@ function Lobby() {
 						/>
 					</div>
 					{loading ? (
-						<LobbyLoading />
+						<>
+							<h1>Loading 2</h1>
+							<LobbyLoading />
+						</>
 					) : (
 						<>
 							<AlbumPopup
