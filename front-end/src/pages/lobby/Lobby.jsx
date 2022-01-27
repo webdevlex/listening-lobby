@@ -56,14 +56,14 @@ function Lobby() {
 	useEffect(() => {
 		const inProduction = process.env.NODE_ENV === 'production';
 		if (!socket) {
-			const url = inProduction ? '' : 'http://localhost:8888';
+			const url = inProduction ? '.' : 'http://localhost:8888';
 
 			setSocket(socketio.connect(url));
 		}
 
 		return () => {
 			if (socket) {
-				const url = inProduction ? '' : 'http://localhost:3000';
+				const url = inProduction ? '.' : 'http://localhost:3000';
 
 				window.location.replace(url);
 			}

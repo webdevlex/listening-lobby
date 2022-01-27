@@ -273,9 +273,10 @@ async function getAlbumById(params) {
 
 async function getTempToken() {
 	try {
-		const url = process.env.NODE_ENV === 'production'
-			? 'www.listeninglobby.com/spotify/temp_token'
-			: 'http://localhost:8888/spotify/temp_token';
+		const url =
+			process.env.NODE_ENV === 'production'
+				? 'www.listeninglobby.com/spotify/temp_token'
+				: 'http://localhost:8888/spotify/temp_token';
 		const res = await axios.get(url);
 		return res.data;
 	} catch (err) {}

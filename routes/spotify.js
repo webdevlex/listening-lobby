@@ -45,6 +45,7 @@ router.get('/login', function (req, res) {
 		state: state,
 	});
 
+	console.log('success login');
 	res.redirect(urlObj.toString());
 });
 
@@ -78,16 +79,18 @@ router.get('/callback', async function (req, res) {
 			const response = await axios.post(endPoint, body, config);
 			const url =
 				process.env.NODE_ENV === 'production'
-					? 'www.listeninglobby.com/lobby'
+					? 'http://www.listeninglobby.com/lobby'
 					: 'http://localhost:3000/lobby';
 			const urlObj = new URL(url);
 			urlObj.search = new URLSearchParams({
 				token: response.data.access_token,
 				refresh_token: response.data.refresh_token,
 			});
+			console.log('success URL');
 			res.redirect(urlObj.toString());
 		} catch (err) {
 			console.log(err);
+			console.log('some error');
 			res.redirect(auth_error_url);
 		}
 	}

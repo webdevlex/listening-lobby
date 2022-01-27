@@ -295,11 +295,12 @@ async function formatAlbumData(
 
 async function getTempToken() {
 	try {
-		const endPoint = process.env.NODE_ENV === 'production'
-			? 'www.listeninglobby.com/apple/token'
-			: 'http://localhost:8888/apple/token';
+		const endPoint =
+			process.env.NODE_ENV === 'production'
+				? 'www.listeninglobby.com/apple/token'
+				: 'http://localhost:8888/apple/token';
 		const res = await axios.get(endPoint);
-		
+
 		return res.data.token;
 	} catch (err) {
 		// TODO
