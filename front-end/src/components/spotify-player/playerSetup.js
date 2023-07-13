@@ -27,11 +27,11 @@ export function playerSetup(
 			getOAuthToken: (cb) => {
 				cb(token);
 			},
-			volume: 0.5,
+			volume: 0.1,
 		});
 
-		setSpotifyPlayer(spotifyPlayer);
 		spotifyPlayer.addListener('ready', ({ device_id }) => {
+			setSpotifyPlayer(spotifyPlayer);
 			socket.emit('setDeviceId', { lobby_id: user.lobby_id, device_id });
 			setupSocketRecievers(
 				socket,

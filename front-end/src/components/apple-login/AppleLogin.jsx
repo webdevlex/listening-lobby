@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { PlayersContext } from '../../context/PlayersContext';
+import { PlayersContext } from '../../context/PlayersContextProvider';
 import { Redirect } from 'react-router-dom';
 import { setUpMusicKit } from './musicKitSetup';
 

@@ -6,8 +6,18 @@ const config = require('config');
 const stateKey = 'spotify_auth_state';
 const client_id = config.get('client_id');
 const client_secret = config.get('client_secret');
-const redirect_uri = '' || 'http://localhost:8888/spotify/callback';
-const auth_error_url = '' || 'http://localhost:3000';
+
+const redirect_url =
+	process.env.NODE_ENV === 'production'
+		? 'http://www.listeninglobby.com'
+		: 'http://localhost:8888';
+const redirect_uri = `${redirect_url}/spotify/callback`;
+
+const auth_error_url =
+	process.env.NODE_ENV === 'production'
+		? 'www.listeninglobby.com'
+		: 'http://localhost:3000';
+
 const spotify_scope =
 	'user-read-private user-read-email streaming user-read-playback-state user-read-currently-playing playlist-modify-public playlist-modify-private user-library-modify';
 
@@ -66,14 +76,17 @@ router.get('/callback', async function (req, res) {
 
 		try {
 			const response = await axios.post(endPoint, body, config);
-			const urlObj = new URL('http://localhost:3000/lobby');
+			const url =
+				process.env.NODE_ENV === 'production'
+					? 'http://www.listeninglobby.com/lobby'
+					: 'http://localhost:3000/lobby';
+			const urlObj = new URL(url);
 			urlObj.search = new URLSearchParams({
 				token: response.data.access_token,
 				refresh_token: response.data.refresh_token,
 			});
 			res.redirect(urlObj.toString());
 		} catch (err) {
-			console.log(err);
 			res.redirect(auth_error_url);
 		}
 	}

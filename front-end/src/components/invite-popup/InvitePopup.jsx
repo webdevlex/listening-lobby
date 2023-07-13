@@ -13,8 +13,13 @@ export default function InvitePopup({
 	const lobby_id = user.lobby_id || '';
 	const [width] = useWindowSize();
 	const [copied, setCopied] = useState(false);
-	const link = `http://localhost:3000/choose-service?action=join&lobby_id=${lobby_id}`;
-	const [inputValue] = useState(link);
+
+	const url =
+		process.env.NODE_ENV === 'production'
+			? `www.listeninglobby.com/choose-service?action=join&lobby_id=${lobby_id}`
+			: `http://localhost:3000/choose-service?action=join&lobby_id=${lobby_id}`;
+
+	const [inputValue] = useState(url);
 
 	useEffect(() => {
 		return () => {
@@ -42,7 +47,7 @@ export default function InvitePopup({
 				</div>
 				<div className={`invite-link ${copied ? 'green' : null}`}>
 					<FontAwesomeIcon className='link-icon' icon={faLink} />
-					<input type='text' readOnly={true} defaultValue={link} />
+					<input type='text' readOnly={true} defaultValue={url} />
 					<CopyToClipboard text={inputValue}>
 						<button
 							onClick={() => {

@@ -272,10 +272,12 @@ async function getAlbumById(params) {
 }
 
 async function getTempToken() {
-	const endPoint = 'http://localhost:8888/spotify/temp_token';
-
 	try {
-		const res = await axios.get(endPoint);
+		const url =
+			process.env.NODE_ENV === 'production'
+				? 'www.listeninglobby.com/spotify/temp_token'
+				: 'http://localhost:8888/spotify/temp_token';
+		const res = await axios.get(url);
 		return res.data;
 	} catch (err) {}
 }
@@ -323,7 +325,6 @@ async function likeSong({ spotifySong, user }) {
 }
 
 async function getNewToken(refreshToken) {
-	const endPoint = 'http://localhost:8888/spotify/refresh_token';
 	const config = {
 		params: {
 			refresh_token: refreshToken,
@@ -331,7 +332,7 @@ async function getNewToken(refreshToken) {
 	};
 
 	try {
-		const res = await axios.get(endPoint, config);
+		const res = await axios.get('/spotify/refresh_token', config);
 		return res.data;
 	} catch (err) {}
 }

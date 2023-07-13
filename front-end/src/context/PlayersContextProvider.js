@@ -2,7 +2,7 @@ import React, { useState, createContext } from 'react';
 
 export const PlayersContext = createContext();
 
-export const PlayersProvider = (props) => {
+export const PlayersContextProvider = (props) => {
 	const [applePlayer, setApplePlayer] = useState();
 	const [spotifyPlayer, setSpotifyPlayer] = useState();
 	const [ran, setRan] = useState(false);

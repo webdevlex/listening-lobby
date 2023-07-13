@@ -23,7 +23,7 @@ const corsOptions = {
 	},
 };
 app
-	.use(cors(corsOptions))
+	.use(cors())
 	.use(cookieParser())
 	.use("/spotify", require("./routes/spotify"))
 	.use("/apple", require("./routes/apple"));

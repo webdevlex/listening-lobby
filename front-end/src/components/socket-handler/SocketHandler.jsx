@@ -1,150 +1,159 @@
-import { useContext, useEffect } from "react";
-import { SocketContext } from "../../context/SocketContext";
+import { useContext, useEffect } from 'react';
+import { SocketContext } from '../../context/SocketContextProvider';
 
 function SocketHandler({
-  user,
-  setUser,
-  setMembers,
-  setMessages,
-  setQueue,
-  setPlayerStatus,
-  setButtonsClickable,
-  setAlbums,
-  setTracks,
-  setDisplayAlbumQuestion,
-  setAlbumMissingOn,
-  beenAdded,
-  setAdminId,
-  setSearchLoading,
-  setFullAlbum,
-  setDisplayFullAlbum,
-  setShuffle,
+	user,
+	setUser,
+	setMembers,
+	setMessages,
+	setQueue,
+	setPlayerStatus,
+	setButtonsClickable,
+	setAlbums,
+	setTracks,
+	setDisplayAlbumQuestion,
+	setAlbumMissingOn,
+	beenAdded,
+	setAdminId,
+	setSearchLoading,
+	setFullAlbum,
+	setDisplayFullAlbum,
+	setShuffle,
 }) {
-  const params = new URLSearchParams(window.location.search);
-  const token = params.get("token");
-  const refresh_token = params.get("refresh_token");
-  const [socket] = useContext(SocketContext);
+	const params = new URLSearchParams(window.location.search);
+	const token = params.get('token');
+	const refresh_token = params.get('refresh_token');
+	const [socket] = useContext(SocketContext);
 
-  useEffect(() => {
-    const localStorageData = JSON.parse(localStorage.getItem("user"));
+	useEffect(() => {
+		const localStorageData = JSON.parse(localStorage.getItem('user'));
 
-    if (!user) {
-      if (localStorageData.authorized) {
-        localStorageData.authorized = false;
-        localStorage.setItem("user", JSON.stringify(localStorageData));
-      } else {
-        socket.disconnect();
-        window.location.replace("http://localhost:3000");
-      }
-      setUser({ ...localStorageData, token, refresh_token });
-    } else {
-      socket.emit("attemptJoinLobby", {
-        lobby_id: localStorageData.lobby_id,
-        username: localStorageData.username,
-        token: token,
-        refresh_token: refresh_token,
-        music_provider: localStorageData.music_provider,
-        frontEndId: localStorageData.frontEndId,
-      });
+		if (!user) {
+			if (localStorageData.authorized) {
+				localStorageData.authorized = false;
+				localStorage.setItem('user', JSON.stringify(localStorageData));
+			} else {
+				socket.disconnect();
+				const url =
+					process.env.NODE_ENV === 'production' ? '.' : 'http://localhost:3000';
 
-      socket.on("lobbyMessage", (lobbyMessages) => {
-        setMessages(lobbyMessages);
-      });
+				window.location.replace(url);
+			}
+			setUser({ ...localStorageData, token, refresh_token });
+		} else {
+			socket.emit('attemptJoinLobby', {
+				lobby_id: localStorageData.lobby_id,
+				username: localStorageData.username,
+				token: token,
+				refresh_token: refresh_token,
+				music_provider: localStorageData.music_provider,
+				frontEndId: localStorageData.frontEndId,
+			});
 
-      socket.on("lobbyMaxReached", () => {
-        localStorage.setItem("capacity", JSON.stringify({ maxReached: true }));
-        window.location.replace("http://localhost:3000");
-      });
+			socket.on('lobbyMessage', (lobbyMessages) => {
+				setMessages(lobbyMessages);
+			});
 
-      socket.on("setLobbyInfo", (members, lobbyMessages) => {
-        setMembers(members);
-        setMessages(lobbyMessages);
-      });
+			socket.on('lobbyMaxReached', () => {
+				localStorage.setItem('capacity', JSON.stringify({ maxReached: true }));
+				const url =
+					process.env.NODE_ENV === 'production' ? '.' : 'http://localhost:3000';
 
-      socket.on("setMembers", (members) => {
-        setMembers(members);
-      });
+				window.location.replace(url);
+			});
 
-      socket.on("addSong", (queue) => {
-        var element = window;
-        var event = new Event("resize");
-        element.dispatchEvent(event);
-        setQueue(queue);
-      });
+			socket.on('setLobbyInfo', (members, lobbyMessages) => {
+				setMembers(members);
+				setMessages(lobbyMessages);
+			});
 
-      socket.on("setAdminsPlayerStatus", (playerData) => {
-        setPlayerStatus(playerData);
-      });
+			socket.on('setMembers', (members) => {
+				setMembers(members);
+			});
 
-      socket.on("deactivateButtons", () => {
-        setButtonsClickable(false);
-      });
+			socket.on('addSong', (queue) => {
+				var element = window;
+				var event = new Event('resize');
+				element.dispatchEvent(event);
+				setQueue(queue);
+			});
 
-      socket.on("activateButtons", () => {
-        setButtonsClickable(true);
-      });
+			socket.on('setAdminsPlayerStatus', (playerData) => {
+				setPlayerStatus(playerData);
+			});
 
-      socket.on("getUserReady", () => {
-        socket.emit("userReady", { user });
-      });
+			socket.on('deactivateButtons', () => {
+				setButtonsClickable(false);
+			});
 
-      socket.on("questionAlbumAdd", (missingOn) => {
-        setAlbumMissingOn(missingOn);
-        setDisplayAlbumQuestion(true);
-      });
+			socket.on('activateButtons', () => {
+				setButtonsClickable(true);
+			});
 
-      socket.on("uniSearchResults", ({ tracks, albums }) => {
-        setSearchLoading(false);
-        setAlbums(albums);
-        setTracks(tracks);
-      });
+			socket.on('getUserReady', () => {
+				socket.emit('userReady', { user });
+			});
 
-      socket.on("addCheck", (musicItemId) => {
-        beenAdded.current = [...beenAdded.current, musicItemId];
-      });
+			socket.on('questionAlbumAdd', (missingOn) => {
+				setAlbumMissingOn(missingOn);
+				setDisplayAlbumQuestion(true);
+			});
 
-      socket.on("setAdmin", (adminId) => {
-        setAdminId(adminId);
-      });
+			socket.on('uniSearchResults', ({ tracks, albums }) => {
+				setSearchLoading(false);
+				setAlbums(albums);
+				setTracks(tracks);
+			});
 
-      socket.on("kickUser", () => {
-        localStorage.setItem("loadingTooLong", true);
-        window.location.replace("http://localhost:3000");
-      });
+			socket.on('addCheck', (musicItemId) => {
+				beenAdded.current = [...beenAdded.current, musicItemId];
+			});
 
-      socket.on("displayAlbum", (tracks) => {
-        setFullAlbum(tracks);
-        setDisplayFullAlbum(true);
-      });
+			socket.on('setAdmin', (adminId) => {
+				setAdminId(adminId);
+			});
 
-      socket.on("shuffleToggled", (shuffleMode) => {
-        setShuffle(shuffleMode);
-      });
-    }
-  }, [
-    socket,
-    token,
-    refresh_token,
-    setMembers,
-    setMessages,
-    setUser,
-    setQueue,
-    setPlayerStatus,
-    setButtonsClickable,
-    user,
-    setAlbums,
-    setTracks,
-    setDisplayAlbumQuestion,
-    setAlbumMissingOn,
-    beenAdded,
-    setAdminId,
-    setSearchLoading,
-    setFullAlbum,
-    setDisplayFullAlbum,
-    setShuffle,
-  ]);
+			socket.on('kickUser', () => {
+				localStorage.setItem('loadingTooLong', true);
+				const url =
+					process.env.NODE_ENV === 'production' ? '.' : 'http://localhost:3000';
 
-  return null;
+				window.location.replace(url);
+			});
+
+			socket.on('displayAlbum', (tracks) => {
+				setFullAlbum(tracks);
+				setDisplayFullAlbum(true);
+			});
+
+			socket.on('shuffleToggled', (shuffleMode) => {
+				setShuffle(shuffleMode);
+			});
+		}
+	}, [
+		socket,
+		token,
+		refresh_token,
+		setMembers,
+		setMessages,
+		setUser,
+		setQueue,
+		setPlayerStatus,
+		setButtonsClickable,
+		user,
+		setAlbums,
+		setTracks,
+		setDisplayAlbumQuestion,
+		setAlbumMissingOn,
+		beenAdded,
+		setAdminId,
+		setSearchLoading,
+		setFullAlbum,
+		setDisplayFullAlbum,
+		setShuffle,
+	]);
+
+	return null;
 }
 
 export default SocketHandler;
